@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "start": "vue-cli-service serve"
   },
   "dependencies": {
     "@popperjs/core": "^2.9.2",
@@ -15,6 +16,7 @@
     "chart.js": "^2.9.4",
     "core-js": "^3.6.5",
     "dedent": "^0.7.0",
+    "express": "^4.17.1",
     "katex": "^0.12.0",
     "node-html-parser": "^3.1.5",
     "vue": "^2.6.11",
