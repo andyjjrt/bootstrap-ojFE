@@ -2,20 +2,33 @@
     <div>
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Status</h4>
+                <div class="d-flex justify-content-between">
+                    <h4 class="card-title">Status</h4>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" v-model="check_myself">
+                        <label class="form-check-label" for="flexSwitchCheckDefault">myself</label>
+                    </div>
+                </div>
                 <div v-if="status">
                     <div v-if="!status.error">
                         <ul class="list-group list-group-flush">
                             <div class="list-group-item" v-for="stat in status.data.results" :key="stat.id">
                                 <div class="row p-1">
-                                    <span class="col-2 text-truncate">{{new Date(stat.create_time).toLocaleString()}}</span>
-                                    <span class="col-2"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].name}}</span></span>
-                                    <a role="button" style="text-decoration: none;" class="col-2 text-truncate" @click="$router.push({ path:'/contest/' + $store.state.contest.data.id + '/problem/' + stat.problem})" v-if="mode == 'contest'">{{stat.problem}}</a>
-                                    <a role="button" style="text-decoration: none;" class="col-2 text-truncate" @click="$router.push({ name: 'Problem', params: { id:stat.problem }})" v-else>{{stat.problem}}</a>
-                                    <span class="col-1">{{stat.statistic_info.time_cost}}ms</span>
-                                    <span class="col-1">{{ parseInt(stat.statistic_info.memory_cost/1048576) }}MB</span>
-                                    <span class="col-2">{{stat.language}}</span>
-                                    <a role="button" style="text-decoration: none;" class="col-2 text-truncate" @click="$router.push({ name: 'User', query: { username:stat.username }})">{{stat.username}}</a>
+                                    <span class="col-2 text-truncate md-no-display">{{new Date(stat.create_time).toLocaleString()}}</span>
+                                    <span class="col-2 md-no-display"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].name}}</span></span>
+                                    <a role="button" style="text-decoration: none;" class="col-2 text-truncate md-no-display" @click="$router.push({ path:'/contest/' + $store.state.contest.data.id + '/problem/' + stat.problem})" v-if="mode == 'contest'">{{stat.problem}}</a>
+                                    <a role="button" style="text-decoration: none;" class="col-2 text-truncate md-no-display" @click="$router.push({ name: 'Problem', params: { id:stat.problem }})" v-else>{{stat.problem}}</a>
+                                    <span class="col-1 md-no-display">{{stat.statistic_info.time_cost}}ms</span>
+                                    <span class="col-1 md-no-display">{{ parseInt(stat.statistic_info.memory_cost/1048576) }}MB</span>
+                                    <span class="col-2 md-no-display">{{stat.language}}</span>
+                                    <a role="button" style="text-decoration: none;" class="col-2 text-truncate md-no-display" @click="$router.push({ name: 'User', query: { username:stat.username }})">{{stat.username}}</a>
+
+                                    <span class="col-3 text-truncate md-display">{{new Date(stat.create_time).toLocaleString()}}</span>
+                                    <span class="col-3 sm-md-display"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].name}}</span></span>
+                                    <span class="col-3 sm-display"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span></span>
+                                    <a role="button" style="text-decoration: none;" class="col-3 text-truncate md-display" @click="$router.push({ path:'/contest/' + $store.state.contest.data.id + '/problem/' + stat.problem})" v-if="mode == 'contest'">{{stat.problem}}</a>
+                                    <a role="button" style="text-decoration: none;" class="col-3 text-truncate md-display" @click="$router.push({ name: 'Problem', params: { id:stat.problem }})" v-else>{{stat.problem}}</a>
+                                    <a role="button" style="text-decoration: none;" class="col-3 text-truncate md-display" @click="$router.push({ name: 'User', query: { username:stat.username }})">{{stat.username}}</a>
                                 </div>
                             </div>
                         </ul>
@@ -62,68 +75,9 @@ export default {
             status: null,
             total: -1,
             page: undefined,
-            status_list:{
-                '-2': {
-                    name: 'Compile Error',
-                    short: 'CE',
-                    type: 'warning'
-                },
-                '-1': {
-                    name: 'Wrong Answer',
-                    short: 'WA',
-                    type: 'danger'
-                },
-                '0': {
-                    name: 'Accepted',
-                    short: 'AC',
-                    type: 'success'
-                },
-                '1': {
-                    name: 'Time Limit Exceeded',
-                    short: 'TLE',
-                    type: 'danger'
-                },
-                '2': {
-                    name: 'Time Limit Exceeded',
-                    short: 'TLE',
-                    type: 'danger'
-                },
-                '3': {
-                    name: 'Memory Limit Exceeded',
-                    short: 'MLE',
-                    type: 'danger'
-                },
-                '4': {
-                    name: 'Runtime Error',
-                    short: 'RE',
-                    type: 'danger'
-                },
-                '5': {
-                    name: 'System Error',
-                    short: 'SE',
-                    type: 'danger'
-                },
-                '6': {
-                    name: 'Pending',
-                    short: '...',
-                    type: 'warning'
-                },
-                '7': {
-                    name: 'Judging',
-                    short: 'JG',
-                    type: 'info'
-                },
-                '8': {
-                    name: 'Partial Accepted',
-                    short: 'PAC',
-                    type: 'primary'
-                },
-                '9': {
-                    name: 'Submitting',
-                    short: '...',
-                    type: 'warning'
-                }
-            }
+            myself: undefined,
+            status_list: this.$store.state.status_list,
+            check_myself: false
         }
     },
     created() {
@@ -134,11 +88,15 @@ export default {
             this.status = null
             window.scrollTo(0,0)
             this.page = this.$route.query.page
+            this.myself = this.$route.query.myself
             if(this.page == undefined){
                 this.page = 1
             }
+            if(this.myself == undefined){
+                this.myself = 0
+            }
             let offset = (this.page-1) * 20
-            this.$http.get(window.location.origin + this.status_url + 'myself=0&result=&username=&page=' + this.page +'&limit=12&offset=' + offset).then(response => {
+            this.$http.get(window.location.origin + this.status_url + 'myself=' + this.myself + '&result=&username=&page=' + this.page +'&limit=10&offset=' + offset).then(response => {
                 this.status = response.data
                 this.total = response.data.data.total
             });
@@ -147,7 +105,7 @@ export default {
             if(page < 1 || page > parseInt(this.total/20) + 1 || page == this.$route.query.page){
                 return
             }
-            this.$router.push({ path: 'status', query: { page: page }})
+            this.$router.push({ path: 'status', query: { page: page, myself: this.myself}})
             this.get_Status()
         },
         ac_rate(ac,total){
@@ -157,6 +115,15 @@ export default {
     watch: {
         $route(to) {
             this.page = to.query.page
+            this.get_Status()
+        },
+        check_myself(new_val){
+            if(new_val){
+                this.myself = 1
+            }else{
+                this.myself = 0
+            }
+            this.$router.push({ path: 'status', query: { page: 1, myself: this.myself}})
             this.get_Status()
         }
     }
@@ -170,12 +137,18 @@ export default {
   .sm-display{
     display: block;
   }
+  .md-display{
+    display: block;
+  }
   .md-no-display{
     display: none;
   }
   @media (min-width: 768px) {
     .md-no-display{
       display: block;
+    }
+    .md-display{
+        display: none;
     }
   }
   @media (min-width: 576px) {
@@ -186,4 +159,13 @@ export default {
       display: none;
     }
   }
+  .sm-md-display{
+      display: none;
+    }
+  @media (min-width: 576px) and (max-width: 768px) {
+    .sm-md-display{
+      display: block;
+    }
+  }
+  
 </style>

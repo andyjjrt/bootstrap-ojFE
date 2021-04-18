@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container">
         <Problem :problem_url="problem_url" />
     </div>
 </template>

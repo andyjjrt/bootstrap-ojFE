@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div style=" margin: 0 auto; position: relative; height:400px; width:100%">
+    <div style=" margin: 0 auto; position: relative; height:300x; width:100%; background-color: #FFFFFF;pading: 10px">
       <Chart :option="chart_option" :data="chart_data" v-if="rank" />
       <div class="text-center" v-else>
         <div class="spinner-border" role="status">
@@ -8,7 +8,7 @@
         </div>
       </div>
     </div>
-    <hr>
+    <br>
     <Announcement :announce_url="announce" />
   </div>
 </template>
@@ -29,6 +29,14 @@ export default {
       chart_option:{
         responsive: true,
         maintainAspectRatio: false,
+        layout: {
+          padding: {
+            left: 20,
+            right: 20,
+            top: 10,
+            bottom: 10
+          }
+        }
       },
       chart_data:{
         datasets: [

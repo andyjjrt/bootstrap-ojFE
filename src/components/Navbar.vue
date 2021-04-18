@@ -8,22 +8,26 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInput" placeholder="username" v-model="username">
-                            <label for="floatingInput">Username</label>
-                        </div>
-                        <div class="form-floating">
-                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password">
-                            <label for="floatingPassword">Password</label>
-                        </div>
-                        <div class="p-3"  v-if="login_error">
-                            <div class="alert alert-danger" role="alert">
-                                {{ login_error }}
+                        <form @submit.prevent="login" action="#">
+                            <div class="mb-3">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="floatingInput" placeholder="username" v-model="username">
+                                    <label for="floatingInput">Username</label>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" @click="login">Login</button>
+                            <div class="mb-3">
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password">
+                                    <label for="floatingPassword">Password</label>
+                                </div>
+                            </div>
+                            <div class="p-3"  v-if="login_error">
+                                <div class="alert alert-danger" role="alert">
+                                    {{ login_error }}
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" @click="login">Login</button>
+                        </form>
                     </div>
                 </div>
             </div>

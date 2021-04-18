@@ -30,7 +30,81 @@ const store = new Vuex.Store({
   state: {
     profile: null,
     site:{},
-    contest: null
+    contest: null,
+    status_list:{
+      '-2': {
+          name: 'Compile Error',
+          short: 'CE',
+          type: 'warning',
+          color:"#ffc107"
+      },
+      '-1': {
+          name: 'Wrong Answer',
+          short: 'WA',
+          type: 'danger',
+          color:"#dc3545"
+      },
+      '0': {
+          name: 'Accepted',
+          short: 'AC',
+          type: 'success',
+          color:"#198754"
+      },
+      '1': {
+          name: 'Time Limit Exceeded',
+          short: 'TLE',
+          type: 'danger',
+          color:"#dc3545"
+      },
+      '2': {
+          name: 'Time Limit Exceeded',
+          short: 'TLE',
+          type: 'danger',
+          color:"#dc3545"
+      },
+      '3': {
+          name: 'Memory Limit Exceeded',
+          short: 'MLE',
+          type: 'danger',
+          color:"#dc3545"
+      },
+      '4': {
+          name: 'Runtime Error',
+          short: 'RE',
+          type: 'danger',
+          color:"#dc3545"
+      },
+      '5': {
+          name: 'System Error',
+          short: 'SE',
+          type: 'danger',
+          color:"#dc3545"
+      },
+      '6': {
+          name: 'Pending',
+          short: '...',
+          type: 'warning',
+          color:"#ffc107"
+      },
+      '7': {
+          name: 'Judging',
+          short: 'JG',
+          type: 'info',
+          color:"#0dcaf0"
+      },
+      '8': {
+          name: 'Partial Accepted',
+          short: 'PAC',
+          type: 'primary',
+          color:"#0d6efd"
+      },
+      '9': {
+          name: 'Submitting',
+          short: '...',
+          type: 'warning',
+          color:"#ffc107"
+      }
+    }
   },
   mutations: {
     get_profile (state, status) {

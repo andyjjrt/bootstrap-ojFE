@@ -6,9 +6,12 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "start": "vue-cli-service serve"
+    "express": "vue-cli-service express:watch",
+    "express:run": "vue-cli-service express:run",
+    "start": "vue-cli-service express:run" 
   },
   "dependencies": {
+    "@vue/cli-service": "^4.1.1",
     "@popperjs/core": "^2.9.2",
     "axios": "^0.21.1",
     "bootstrap": "^5.0.0-beta3",
@@ -34,11 +37,11 @@
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
-    "@vue/cli-service": "^4.1.1",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "sass": "^1.32.8",
+    "vue-cli-plugin-express": "~1.0.2",
     "vue-template-compiler": "^2.6.11"
   }
 }
