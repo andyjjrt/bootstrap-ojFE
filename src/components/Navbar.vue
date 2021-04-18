@@ -42,6 +42,12 @@
                         <li class="nav-item">
                             <router-link to="/problem" class="nav-link" @click.native="toggle_collapse">Problem</router-link>
                         </li>
+                        <li class="nav-item">
+                            <router-link to="/contest" class="nav-link" @click.native="toggle_collapse">Contest</router-link>
+                        </li>
+                        <li class="nav-item">
+                            <router-link to="/status" class="nav-link" @click.native="toggle_collapse">Status</router-link>
+                        </li>
                     </ul>
                     <form class="d-flex">
                         <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#exampleModal" v-if="profile == null || profile.data == null">
@@ -55,6 +61,7 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li><h6 class="dropdown-header">{{profile.data.user.username}}</h6></li>
+                                    <li><a class="dropdown-item" role="button" @click="$router.push({ name: 'User'})">Home</a></li>
                                     <li><a class="dropdown-item" role="button" @click="logout">Logout</a></li>
                                 </ul>
                             </div>
@@ -65,6 +72,7 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu">
                                     <li><h6 class="dropdown-header">{{profile.data.user.username}}</h6></li>
+                                    <li><a class="dropdown-item" role="button" @click="$router.push({ name: 'User'})">Home</a></li>
                                     <li><a class="dropdown-item" role="button" @click="logout">Logout</a></li>
                                 </ul>
                             </div>

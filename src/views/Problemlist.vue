@@ -8,25 +8,27 @@
                         <div v-if="problems">
                             <ul class="list-group list-group-flush">
                                 <div role="button" class="list-group-item" v-for="problem in problems.data.results" :key="problem.id" @click="go_problem(problem._id)">
-                                    <div class="row">
+                                    <div class="row p-1">
                                         <span class="col-1">
                                             <!--<i class="bi bi-check"></i>-->
-                                            <span v-if="$store.state.profile.data.acm_problems_status.problems[problem.id]">
-                                                <span v-if="$store.state.profile.data.acm_problems_status.problems[problem.id].status == 0">
-                                                    <i class="bi bi-check text-success"></i>
+                                            <div v-if="$store.state.profile.data">
+                                                <span v-if="$store.state.profile.data.acm_problems_status.problems[problem.id]">
+                                                    <span v-if="$store.state.profile.data.acm_problems_status.problems[problem.id].status == 0">
+                                                        <i class="bi bi-check text-success" style="font-size: 1.3rem;"></i>
+                                                    </span>
+                                                    <span v-else>
+                                                        <i class="bi bi-x text-danger" style="font-size: 1.3rem;"></i>
+                                                    </span>
                                                 </span>
-                                                <span v-else>
-                                                    <i class="bi bi-x text-danger"></i>
+                                                <span v-if="$store.state.profile.data.oi_problems_status.problems[problem.id]">
+                                                    <span v-if="$store.state.profile.data.oi_problems_status.problems[problem.id].status == 0">
+                                                        <i class="bi bi-check text-success" style="font-size: 1.3rem;"></i>
+                                                    </span>
+                                                    <span v-else>
+                                                        <i class="bi bi-x text-danger" style="font-size: 1.3rem;"></i>
+                                                    </span>
                                                 </span>
-                                            </span>
-                                            <span v-if="$store.state.profile.data.oi_problems_status.problems[problem.id]">
-                                                <span v-if="$store.state.profile.data.oi_problems_status.problems[problem.id].status == 0">
-                                                    <i class="bi bi-check text-success"></i>
-                                                </span>
-                                                <span v-else>
-                                                    <i class="bi bi-x text-danger"></i>
-                                                </span>
-                                            </span>
+                                            </div>
                                         </span>
                                         <span class="col-1 text-nowrap overflow-hidden sm-no-display">{{ problem._id }}</span>
                                         <span class="col-5 sm-no-display text-truncate">{{ problem.title }}</span>

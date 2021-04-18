@@ -20,11 +20,9 @@ export default{
   created(){
     const api = window.location.origin + "/api";
     this.$http.get(api + "/website").then((response) => {
-      console.log(response.data);
       this.$store.commit('get_site', response.data)
     });
     this.$http.get(api + "/profile").then((response) => {
-      console.log(response.data);
       this.$store.commit('get_profile', response.data)
     });
   }
