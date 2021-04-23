@@ -2,11 +2,29 @@
     <div>
         <div class="card">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <h4 class="card-title">Status</h4>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" v-model="check_myself">
-                        <label class="form-check-label" for="flexSwitchCheckDefault">myself</label>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h4 class="card-title">Status</h4>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="d-flex flex-row-reverse">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{stats_string}}
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item" @click="query_status(undefined, 'All')" role="button">All</a></li>
+                                    <li v-for="stats in Object.keys($store.state.status_list)" :key="stats"><a class="dropdown-item" @click="query_status(stats, $store.state.status_list[stats].name)" role="button">{{$store.state.status_list[stats].name}}</a></li>
+                                </ul>
+                            </div>
+                            <form style="padding-right: 10px" action="#" @submit.prevent="search_user">
+                                <input class="form-control form-control-sm" type="text" placeholder="Search..." aria-label="search user" v-model="searching_user">
+                            </form>
+                            <div class="form-check form-switch" style="padding-top: 5px;padding-right:15px;">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" v-model="check_myself">
+                                <label class="form-check-label" for="flexSwitchCheckDefault">myself </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div v-if="status">
@@ -137,10 +155,12 @@ export default {
             status: null,
             total: -1,
             page: undefined,
-            myself: undefined,
-            problem_id: undefined,
             status_list: this.$store.state.status_list,
-            check_myself: false
+            check_myself: false,
+            query: {},
+            searching_user:"",
+            stats_string:"All",
+            select_stat:undefined
         }
     },
     created() {
@@ -150,23 +170,25 @@ export default {
         get_Status(){
             this.status = null
             window.scrollTo(0,0)
-            this.page = this.$route.query.page
-            this.myself = this.$route.query.myself
-            this.problem_id = this.$route.query.problemID
-            if(this.page == undefined){
+            this.query = this.$route.query
+            this.query["limit"] = 12
+            if(this.query.page == undefined){
+                this.query["page"] = 1
                 this.page = 1
+            }else{
+                this.page = this.query.page
             }
-            if(this.myself == undefined){
-                this.myself = 0
-            }
-            if(this.problem_id == undefined){
-                this.problem_id = ""
-            }
-            if(this.myself == 1){
+            this.query["offset"] = (this.query["page"]-1) * 12
+            if(this.query.myself == undefined || this.query.myself == 0){
+                this.query["myself"] = 0
+                this.check_myself = false
+            }else{
                 this.check_myself = true
             }
-            let offset = (this.page-1) * 12
-            this.$http.get(window.location.origin + this.status_url + 'myself=' + this.myself + '&result=&username=&page=' + this.page +'&limit=12&offset=' + offset + '&problem_id=' + this.problem_id).then(response => {
+            if(this.query.username){
+                this.searching_user = this.query.username
+            }
+            this.$http.get(window.location.origin + this.status_url,{params: this.query}).then(response => {
                 this.status = response.data
                 this.total = response.data.data.total
             });
@@ -175,8 +197,8 @@ export default {
             if(page < 1 || page > parseInt(this.total/12) + 1 || page == this.$route.query.page){
                 return
             }
-            this.$router.push({ path: 'status', query: { page: page, myself: this.myself, problemID: this.problem_id}})
-            this.get_Status()
+            this.query.page = page
+            this.pusher()
         },
         ac_rate(ac,total){
             return (parseInt(ac)*100/parseInt(total)).toFixed(2) + "%"
@@ -187,24 +209,37 @@ export default {
         date_format2(date){
             return (date.getMonth()+1) + '/' + date.getDate() + ' ' + (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes()
         },
+        pusher(){
+            let aaa = {}
+            aaa.page = this.query.page,
+            aaa.myself =  this.query.myself,
+            aaa.problem_id = this.query.problem_id ? this.query.problem_id : undefined
+            aaa.result = this.query.result ? this.query.result : undefined
+            aaa.username = this.query.username ? this.query.username : undefined
+            this.$router.push({ path: this.$route.path, query: aaa}).catch(err => {console.log(err)})
+        },
+        search_user(){
+            this.query.username = this.searching_user
+            this.pusher()
+        },
+        query_status(code, str){
+            this.query.result = code
+            this.stats_string = str
+            this.pusher()
+        }
     },
     watch: {
-        $route(to) {
-            this.page = to.query.page
+        $route(){
             this.get_Status()
         },
-        check_myself(new_val){
-            if(new_val){
-                this.myself = 1
+        check_myself(new_myself){
+            if(new_myself){
+                this.query.myself = 1
             }else{
-                this.myself = 0
+                this.query.myself = 0
             }
-            this.$router.replace({ path: 'status', query: { page: 1, myself: this.myself, problemID: this.problem_id}}).catch(err => {
-                if (err.name !== 'NavigationDuplicated' && !err.message.includes('Avoided redundant navigation to current location')) {
-                    console.error(err);
-                }
-            });
-            this.get_Status()
+            this.query.page = 1
+            this.pusher()
         }
     }
 }
@@ -214,42 +249,4 @@ export default {
     .can_see{
         background-color: #edfafd;
     }
-
-  .sm-no-display{
-    display: none;
-  }
-  .sm-display{
-    display: block;
-  }
-  .md-display{
-    display: block;
-  }
-  .md-no-display{
-    display: none;
-  }
-  @media (min-width: 768px) {
-    .md-no-display{
-      display: block;
-    }
-    .md-display{
-        display: none;
-    }
-  }
-  @media (min-width: 576px) {
-    .sm-no-display{
-      display: block;
-    }
-    .sm-display{
-      display: none;
-    }
-  }
-  .sm-md-display{
-      display: none;
-    }
-  @media (min-width: 576px) and (max-width: 768px) {
-    .sm-md-display{
-      display: block;
-    }
-  }
-  
 </style>

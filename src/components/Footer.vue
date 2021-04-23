@@ -5,7 +5,7 @@
             <br>
             <span>
                 FE redesign by 
-                <a href="https://github.com/andyjjrt">andyjjrt</a>
+                <a href="https://github.com/andyjjrt/bootstrap-ojFE">andyjjrt</a>
                 <span>
                     &nbsp;  Version: {{version}}
                 </span>

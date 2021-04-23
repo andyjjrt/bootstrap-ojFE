@@ -10,11 +10,11 @@
                         </div>
                         <hr>
                         <h4>Description</h4>
-                        <p v-html="problem.data.description" class="p-4 text-wrap codeder" v-katex style="background-color: #f4fcff;"></p>
+                        <p v-html="problem.data.description" class="p-4 text-wrap codeder" v-katex style="background-color: #f3f3f3;"></p>
                         <h4>Input</h4>
-                        <p v-html="problem.data.input_description" class="p-4 text-wrap codeder" v-katex style="background-color: #f4fcff;"></p>
+                        <p v-html="problem.data.input_description" class="p-4 text-wrap codeder" v-katex style="background-color: #f3f3f3;"></p>
                         <h4>Output</h4>
-                        <p v-html="problem.data.output_description" class="p-4 text-wrap codeder" v-katex style="background-color: #f4fcff;"></p>
+                        <p v-html="problem.data.output_description" class="p-4 text-wrap codeder" v-katex style="background-color: #f3f3f3;"></p>
                         <div class="row" v-for="tests in problem.data.samples" :key="tests.input">
                             <div class="col-6">
                                 <h4>
@@ -29,16 +29,16 @@
                             </div>
                         </div>
                         <h4 v-if="problem.data.hint != ''">Hint</h4>
-                        <p  v-if="problem.data.hint != ''" v-html="problem.data.hint" class="p-4 text-wrap codeder" v-katex style="background-color: #f4fcff;"></p>
+                        <p  v-if="problem.data.hint != ''" v-html="problem.data.hint" class="p-4 text-wrap codeder" v-katex style="background-color: #f3f3f3;"></p>
                         <CodeMirror :problem="problem" :type="type" class="p-2"/>
                     </div>
                 </div>
                 <div class="col-3 md-no-display">
                     <div class="list-group">
-                        <button type="button" class="list-group-item list-group-item-action" @click="$router.push({ path: '/contest/' + $route.params.id +  '/status', query: { problemID: problem.data._id}})" v-if="type == 'contest'">
+                        <button type="button" class="list-group-item list-group-item-action" @click="$router.push({ path: '/contest/' + $route.params.id +  '/status', query: { problem_id: problem.data._id}})" v-if="type == 'contest'">
                             <div class="p-1"><i class="bi bi-list-task"></i> Submissions</div>
                         </button>
-                        <button type="button" class="list-group-item list-group-item-action" @click="$router.push({ path: '/status', query: { problemID: problem.data._id}})" v-else>
+                        <button type="button" class="list-group-item list-group-item-action" @click="$router.push({ path: '/status', query: { problem_id: problem.data._id}})" v-else>
                             <div class="p-1"><i class="bi bi-list-task"></i> Submissions</div>
                         </button>
                     </div>
