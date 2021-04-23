@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <Problem :problem_url="problem_url" />
+        <Problem :problem_url="problem_url" type="normal" />
     </div>
 </template>
 

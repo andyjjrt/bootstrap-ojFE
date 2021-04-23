@@ -5,42 +5,35 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Problems</h4>
-                        <div v-if="problems">
-                            <ul class="list-group list-group-flush">
-                                <div role="button" class="list-group-item" v-for="problem in problems.data.results" :key="problem.id" @click="go_problem(problem._id)">
-                                    <div class="row p-1">
-                                        <span class="col-1">
-                                            <!--<i class="bi bi-check"></i>-->
-                                            <div v-if="$store.state.profile.data">
-                                                <span v-if="$store.state.profile.data.acm_problems_status.problems[problem.id]">
-                                                    <span v-if="$store.state.profile.data.acm_problems_status.problems[problem.id].status == 0">
-                                                        <i class="bi bi-check text-success" style="font-size: 1.3rem;"></i>
-                                                    </span>
-                                                    <span v-else>
-                                                        <i class="bi bi-x text-danger" style="font-size: 1.3rem;"></i>
-                                                    </span>
-                                                </span>
-                                                <span v-if="$store.state.profile.data.oi_problems_status.problems[problem.id]">
-                                                    <span v-if="$store.state.profile.data.oi_problems_status.problems[problem.id].status == 0">
-                                                        <i class="bi bi-check text-success" style="font-size: 1.3rem;"></i>
-                                                    </span>
-                                                    <span v-else>
-                                                        <i class="bi bi-x text-danger" style="font-size: 1.3rem;"></i>
-                                                    </span>
-                                                </span>
-                                            </div>
-                                        </span>
-                                        <span class="col-1 text-nowrap overflow-hidden sm-no-display">{{ problem._id }}</span>
-                                        <span class="col-5 sm-no-display text-truncate">{{ problem.title }}</span>
-                                        <span class="col-8 sm-display text-truncate">{{ problem.title }}</span>
-                                        <span class="col text-center sm-no-display" v-html="difficulty_tag(problem.difficulty)"></span>
-                                        <span class="col text-end sm-display" v-html="difficulty_tag(problem.difficulty)"></span>
-                                        <span class="col-3 sm-no-display text-center"><span>{{ ac_rate(problem.accepted_number, problem.submission_number) }}</span></span>
-                                    </div>
-                                </div>
-                            </ul>
+                        <div class="table-responsive" v-if="problems && $store.state.profile_ready">
+                            <table class="table text-nowrap">
+                                <thead>
+                                    <tr class="d-flex">
+                                        <th scope="col" class="col-2 d-none d-md-block" style="border-left: 5px #ffffff solid">#</th>
+                                        <th scope="col" class="col-6 d-none d-md-block">Problem</th>
+                                        <th scope="col" class="col-2 d-none d-md-block">Level</th>
+                                        <th scope="col" class="col-2 d-none d-md-block">AC rate</th>
+                                        <th scope="col" class="col d-block d-md-none" style="border-left: 5px #ffffff solid">
+                                            <span>Problem</span>
+                                            <span class="float-end d-none d-sm-block">Level</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="d-flex" role="button"  v-for="problem in problems.data.results" :key="problem.id" @click="go_problem(problem._id)">
+                                        <td class="text-truncate col-2 d-none d-md-block" :style="solved(problem.id)">{{ problem._id }}</td>
+                                        <td class="text-truncate col-6 d-none d-md-block">{{ problem.title }}</td>
+                                        <td class="col-2 d-none d-md-block" v-html="difficulty_tag(problem.difficulty)"></td>
+                                        <td class="col-2 d-none d-md-block" >{{ ac_rate(problem.accepted_number, problem.submission_number) }}</td>
+                                        <td class="col d-block d-md-none"  :style="solved(problem.id)">
+                                            <span class="text-truncate">{{ problem.title }}</span>
+                                            <span class="float-end d-none d-sm-block" v-html="difficulty_tag(problem.difficulty)"></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="d-flex justify-content-center" v-else>
+                        <div  class="d-flex justify-content-center" v-else>
                             <div class="spinner-border" role="status">
                                 <span class="visually-hidden">Loading...</span>
                             </div>
@@ -57,7 +50,7 @@
                     </ul>
                 </nav>
             </div>
-            <div class="col-3 md-no-display">
+            <div class="col-3 d-none d-sm-none d-md-none d-lg-block">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Tags</h4>
@@ -105,7 +98,6 @@ export default {
             if(this.page == undefined){
                 this.page = 1
             }
-            console.log(this.page)
             let offset = (this.page-1) * 20
             this.$http.get(window.location.origin + '/api/problem?paging=true&tag=' + this.select_tag + '&offset=' + offset + '&limit=20&page=' + this.page).then(response => {
                 this.problems = response.data
@@ -113,7 +105,6 @@ export default {
             });
         },
         to_page(page){
-            console.log(page)
             if(page < 1 || page > parseInt(this.total/20) + 1 || page == this.$route.query.page){
                 return
             }
@@ -142,6 +133,25 @@ export default {
         },
         go_problem(id){
             this.$router.push({ name: 'Problem', params: { id:id }})
+        },
+        solved(id){
+            if(this.$store.state.profile.data){
+                if(this.$store.state.profile.data.acm_problems_status.problems[id]){
+                    if(this.$store.state.profile.data.acm_problems_status.problems[id].status == 0){
+                        return "border-left: 5px #198754 solid"
+                    }else{
+                        return "border-left: 5px #dc3545 solid"
+                    }
+                }
+                if(this.$store.state.profile.data.oi_problems_status.problems[id]){
+                    if(this.$store.state.profile.data.oi_problems_status.problems[id].status == 0){
+                        return "border-left: 5px #198754 solid"
+                    }else{
+                        return "border-left: 5px #dc3545 solid"
+                    }
+                }
+            }
+            return ""
         }
     },
     watch: {
@@ -154,26 +164,4 @@ export default {
 </script>
 
 <style scoped>
-  .sm-no-display{
-    display: none;
-  }
-  .sm-display{
-    display: block;
-  }
-  .md-no-display{
-    display: none;
-  }
-  @media (min-width: 768px) {
-    .md-no-display{
-      display: block;
-    }
-  }
-  @media (min-width: 576px) {
-    .sm-no-display{
-      display: block;
-    }
-    .sm-display{
-      display: none;
-    }
-  }
 </style>

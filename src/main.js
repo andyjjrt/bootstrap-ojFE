@@ -7,11 +7,13 @@ import Vuex from 'vuex'
 import Message from 'vue-m-message'
 import Katex from 'vue-katex-auto-render'
 import VueClipboard from 'vue-clipboard2'
-import VueCodemirror from 'vue-codemirror'
 
-import 'codemirror/lib/codemirror.css'
 import 'vue-m-message/dist/index.css'
 import "bootstrap/dist/css/bootstrap.min.css";
+
+import VueHighlightJS from 'vue-highlightjs'
+import 'highlight.js/styles/atom-one-light.css'
+Vue.use(VueHighlightJS)
 
 Vue.use(VueAxios, axios)
 Vue.use(Vuex)
@@ -21,14 +23,12 @@ Vue.$http.defaults.xsrfHeaderName = "X-CSRFToken";
 Vue.$http.defaults.xsrfCookieName = "csrftoken";
 Vue.config.productionTip = false
 Vue.use(Message)
-Vue.use(VueCodemirror, /* {
-  options: { theme: 'base16-dark', ... },
-  events: ['scroll', ...]
-} */)
 
 const store = new Vuex.Store({
   state: {
     profile: null,
+    profile_ready: false,
+    login:null,
     site:{},
     contest: null,
     status_list:{
@@ -109,6 +109,7 @@ const store = new Vuex.Store({
   mutations: {
     get_profile (state, status) {
       state.profile = status
+      state.profile_ready = true
     },
     get_site (state, data) {
       state.site = data

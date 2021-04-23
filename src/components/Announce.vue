@@ -90,6 +90,19 @@
         created() {
             this.$http.get(window.location.origin + this.announce_url).then(response => {
                 this.announcements = response.data
+                this.announcements.data.results.unshift({
+                    "id": -1,
+                    "created_by": {
+                        "id": "aaa",
+                        "username": "andyjjrt",
+                        "real_name": null
+                    },
+                    "title": "新版OJ網頁測試中",
+                    "content": "新版OJ網頁測試中，有bug請截圖通知。",
+                    "create_time": "2021-04-23T00:00:00.000000Z",
+                    "last_update_time": "2021-04-23T00:00:00.000000Z",
+                    "visible": true
+                })
             });
             this.ModalAnnounce = new Modal(this.$refs.modal_announce)
         },

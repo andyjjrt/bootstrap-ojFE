@@ -66,14 +66,17 @@ export default {
     created(){
         this.username = this.$route.query.username
         if(this.username == undefined){
-            this.$http.get(window.location.origin + '/api/profile').then(response => {
-                this.profile = response.data
+            this.profile = this.$store.state.profile
+            if(this.profile.data != null){
                 this.username = this.profile.data.user.username
-            });   
+            }
+            this.push_back()
+        }else{
+            this.$http.get(window.location.origin + '/api/profile?username=' + this.username).then(response => {
+                this.profile = response.data
+                this.push_back()
+            });
         }
-        this.$http.get(window.location.origin + '/api/profile?username=' + this.username).then(response => {
-            this.profile = response.data
-        });
     },
     methods:{
         custom_avatar(src){
@@ -81,6 +84,31 @@ export default {
         },
         default_avatar(){
             return window.location.origin + "/public/avatar/default.png"
+        },
+        push_back(){
+            if(this.profile.data == null || this.login == false){
+                this.$message.error({
+                    message: "Please Login First",
+                    duration : 1500,
+                    zIndex: 1000000
+                })
+                this.$router.push({name: "Home"})
+                return
+            }
+            if(this.profile.error){
+                this.$message.error({
+                    message: this.profile.data,
+                    duration : 1500,
+                    zIndex: 1000000
+                })
+                this.$router.push({name: "Home"})
+                return
+            }
+        }
+    },
+    watch:{
+        login(){
+            this.push_back()
         }
     }
 }

@@ -5,38 +5,31 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Problems</h4>
-                        <div v-if="problems">
-                            <div v-if="!problems.error">
-                                <ul class="list-group list-group-flush">
-                                    <div role="button" class="list-group-item" v-for="problem in problems.data" :key="problem.id" @click="go_problem(problem._id)">
-                                        <div class="row p-1">
-                                            <span class="col-1">
-                                                <div v-if="problem.my_status || problem.my_status == 0">
-                                                    <span v-if="problem.my_status == 0">
-                                                        <i class="bi bi-check text-success" style="font-size: 1.3rem;"></i>
-                                                    </span>
-                                                    <span v-else>
-                                                        <i class="bi bi-x text-danger" style="font-size: 1.3rem;"></i>
-                                                    </span>
-                                                </div>
-                                            </span>
-                                            <span class="col-1 text-nowrap overflow-hidden sm-no-display">{{ problem._id }}</span>
-                                            <span class="col-5 sm-no-display text-truncate">{{ problem.title }}</span>
-                                            <span class="col-8 sm-display text-truncate">{{ problem.title }}</span>
-                                            <span class="col text-center sm-no-display" v-html="difficulty_tag(problem.difficulty)"></span>
-                                            <span class="col text-end sm-display" v-html="difficulty_tag(problem.difficulty)"></span>
-                                            <span class="col-3 sm-no-display text-center"><span>{{ ac_rate(problem.accepted_number, problem.submission_number) }}</span></span>
-                                        </div>
-                                    </div>
-                                </ul>
-                            </div>
-                            <div v-else>
-                                <div class="alert alert-danger" role="alert">
-                                    {{problems.data}}
-                                </div>
-                            </div>
+                        <div class="table-responsive" v-if="problems">
+                            <table class="table text-nowrap">
+                                <thead>
+                                    <tr class="d-flex">
+                                        <th scope="col" class="col-2 d-none d-md-block" style="border-left: 5px #ffffff solid">#</th>
+                                        <th scope="col" class="col-6 d-none d-md-block">Problem</th>
+                                        <th scope="col" class="col-2 d-none d-md-block">Level</th>
+                                        <th scope="col" class="col-2 d-none d-md-block">AC rate</th>
+                                        <th scope="col" class="col-10 d-block d-md-none" style="border-left: 5px #ffffff solid">Problem</th>
+                                        <th scope="col" class="col-2 d-block d-md-none">Level</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="d-flex" role="button"  v-for="problem in problems.data" :key="problem.id" @click="go_problem(problem._id)">
+                                        <td class="text-truncate col-2 d-none d-md-block" :style="solved(problem)">{{ problem._id }}</td>
+                                        <td class="text-truncate col-6 d-none d-md-block">{{ problem.title }}</td>
+                                        <td class="col-2 d-none d-md-block" v-html="difficulty_tag(problem.difficulty)"></td>
+                                        <td class="col-2 d-none d-md-block" >{{ ac_rate(problem.accepted_number, problem.submission_number) }}</td>
+                                        <td class="text-truncate col-10 d-block d-md-none" :style="solved(problem)">{{ problem.title }}</td>
+                                        <td class="col-2 d-block d-md-none" v-html="difficulty_tag(problem.difficulty)"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="d-flex justify-content-center" v-else>
+                        <div  class="d-flex justify-content-center" v-else>
                             <div class="spinner-border" role="status">
                                 <span class="visually-hidden">Loading...</span>
                             </div>
@@ -87,6 +80,16 @@ export default {
         },
         go_problem(id){
             this.$router.push({ path:'/contest/' + this.$store.state.contest.data.id + '/problem/' + id})
+        },
+        solved(problem){
+            if(problem.my_status || problem.my_status == 0){
+                if(problem.my_status == 0){
+                    return "border-left: 5px #198754 solid"
+                }else{
+                    return "border-left: 5px #dc3545 solid"
+                }
+            }
+            return "border-left: 5px #ffffff solid"
         }
     },
     watch: {

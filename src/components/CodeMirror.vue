@@ -1,89 +1,129 @@
 <template>
-  <codemirror v-model="code" :options="cmOption" />
+  <div>
+    <div class="row">
+      <div class="col-5 mb-3">
+        <select class="form-select" aria-label="Default select example" v-model="code_language">
+          <option :value="language" v-for="language in problem.data.languages" :key="language">{{language}}</option>
+        </select>
+      </div>
+    </div>
+    <codemirror v-model="code" :options="cm_options" />
+    <div class="p-2">
+      <div>
+        <span v-if="status_indicater">
+          <span role="button" @click="$router.push({ name: 'Submission', params: { submission_id:submission_id_pass }})" class="fs-4" v-html="status_indicater" v-if="submission_id_pass != '' && on_submit == false" />
+          <span class="fs-4" v-html="status_indicater" v-else />
+        </span>
+        <button class="btn btn-warning float-end" :class="{'disabled':on_submit}" type="button" @click="submit">Submit</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-  //import dedent from 'dedent'
-  import { codemirror } from 'vue-codemirror'
-  // language
-  import 'codemirror/mode/javascript/javascript.js'
-  // theme css
-  import 'codemirror/theme/monokai.css'
-  // require active-line.js
-  import'codemirror/addon/selection/active-line.js'
-  // styleSelectedText
-  import'codemirror/addon/selection/mark-selection.js'
-  import'codemirror/addon/search/searchcursor.js'
-  // hint
-  import'codemirror/addon/hint/show-hint.js'
-  import'codemirror/addon/hint/show-hint.css'
-  import'codemirror/addon/hint/javascript-hint.js'
-  import'codemirror/addon/selection/active-line.js'
-  // highlightSelectionMatches
-  import'codemirror/addon/scroll/annotatescrollbar.js'
-  import'codemirror/addon/search/matchesonscrollbar.js'
-  import'codemirror/addon/search/searchcursor.js'
-  import'codemirror/addon/search/match-highlighter.js'
-  // keyMap
-  import'codemirror/mode/clike/clike.js'
-  import'codemirror/addon/edit/matchbrackets.js'
-  import'codemirror/addon/comment/comment.js'
-  import'codemirror/addon/dialog/dialog.js'
-  import'codemirror/addon/dialog/dialog.css'
-  import'codemirror/addon/search/searchcursor.js'
-  import'codemirror/addon/search/search.js'
-  import'codemirror/keymap/sublime.js'
-  // foldGutter
-  import'codemirror/addon/fold/foldgutter.css'
-  import'codemirror/addon/fold/brace-fold.js'
-  import'codemirror/addon/fold/comment-fold.js'
-  import'codemirror/addon/fold/foldcode.js'
-  import'codemirror/addon/fold/foldgutter.js'
-  import'codemirror/addon/fold/indent-fold.js'
-  import'codemirror/addon/fold/markdown-fold.js'
-  import'codemirror/addon/fold/xml-fold.js'
-  
+import { codemirror } from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/mode/clike/clike.js'
+import 'codemirror/mode/python/python.js'
+import 'codemirror/mode/go/go.js'
+import 'codemirror/theme/solarized.css'
+
+
   export default {
-    name: 'codemirror-example-javascript',
-    title: 'Mode: text/javascript & Theme: monokai',
-    components: {
-      codemirror
-    },
+    name: 'code_space',
     props:{
-      mycode: String
+      problem:Object,
+      type: String
+    },
+    components:{
+      codemirror
     },
     data() {
       return {
-        code: this.mycode,
-        cmOption: {
-          tabSize: 4,
-          styleActiveLine: false,
+        code: "",
+        code_language:"",
+        on_submit: false,
+        status_indicater:"",
+        submission_id_pass:"",
+        ticker: null,
+        cm_options:{
+          theme: "solarized",
           lineNumbers: true,
-          styleSelectedText: false,
-          line: true,
-          foldGutter: true,
-          gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-          highlightSelectionMatches: { showToken: /\w/, annotateScrollbar: true },
-          mode: 'text/x-csrc',
-          // hint.js options
-          hintOptions:{
-            // 当匹配只有一项的时候是否自动补全
-            completeSingle: false
-          },
-          //快捷键 可提供三种模式 sublime、emacs、vim
-          keyMap: "sublime",
-          matchBrackets: true,
-          showCursorWhenSelecting: true,
-          theme: "monokai",
-          extraKeys: { "Ctrl": "autocomplete" }
+          mode: '',
+          tabSize: 4,
         }
       }
     },
-    mounted() {
-      setTimeout(() => {
-        //this.styleSelectedText = true,
-        this.cmOption.styleActiveLine = true
-      }, 1800)
+    created(){
+      this.code_language = this.problem.data.languages[0]
+      if(this.problem.data.template[this.code_language]){
+        this.code = this.problem.data.template[this.code_language]
+      }
+        
+      if(this.problem.data.my_status == 0){
+        this.status_indicater = '<span class="badge bg-success fw-light">Solved</span>'
+      }
+    },
+    methods:{
+      submit(){
+        if(this.code == "" || this.code == undefined){
+          this.$message.error({message: 'Code can not be empty',duration : 1500,zIndex: 1000000})
+          return
+        }
+        this.on_submit = true
+        this.status_indicater = ""
+        let param = {code: this.code ,language: this.code_language, problem_id: this.problem.data.id}
+        if(this.type == "contest"){
+          param.contest_id = this.problem.data.contest
+        }
+        this.$http.post(window.location.origin + '/api/submission', param)
+        .then((res) => {
+          if(res.data.error){
+            this.status_indicater = '<span class="badge bg-danger fw-light">' + res.data.data + '</span>'
+            this.on_submit = false
+          }else{
+            let vm = this
+            this.submission_id_pass = res.data.data.submission_id
+            this.status_indicater = '<span class="fw-light badge bg-' + this.$store.state.status_list[9].type + '">' + this.$store.state.status_list[9].name + '</span>'
+            this.ticker = window.setInterval(function(){vm.get_submit_status(res.data.data.submission_id)}, 1000)
+          }
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+      },
+      get_submit_status(id){
+        this.$http.get(window.location.origin + '/api/submission?id=' + id).then(response => {
+          this.status_indicater = '<span class="fw-light badge bg-' + this.$store.state.status_list[response.data.data.result].type + '">' + this.$store.state.status_list[response.data.data.result].name + '</span>'
+          if(response.data.data.result != 7 && response.data.data.result != 9){
+            window.clearInterval(this.ticker)
+            this.$http.get(window.location.origin + "/api/profile").then((response) => {
+              this.$store.commit('get_profile', response.data)
+              this.on_submit = false
+            });
+          }
+        })
+      },
+      get_mime(language){
+        if(language == "C"){
+          this.cm_options.mode = "text/x-csrc"
+        }else if(language == "C++"){
+          this.cm_options.mode = "text/x-c++src"
+        }else if(language == "Python2"){
+          this.cm_options.mode = "text/x-cython"
+        }else if(language == "Python3"){
+          this.cm_options.mode = "text/x-cython"
+        }else if(language == "Java"){
+          this.cm_options.mode = "text/x-java"
+        }else if(language == "Golang"){
+          this.cm_options.mode = "text/x-go"
+        }
+      }
+    },
+    watch:{
+      code_language(val){
+        this.get_mime(val)
+      }
     }
   }
 </script>

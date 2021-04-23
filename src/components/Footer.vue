@@ -1,6 +1,17 @@
 <template>
     <div>
-        <p class="text-center"><span v-html="footer"></span></p>
+        <div class="text-center" style="font-size: 0.9em;">
+            <span v-html="footer"></span>
+            <br>
+            <span>
+                FE redesign by 
+                <a href="https://github.com/andyjjrt">andyjjrt</a>
+                <span>
+                    &nbsp;  Version: {{version}}
+                </span>
+            </span>
+        </div>
+        <br>
     </div>
 </template>
 
@@ -12,6 +23,9 @@ export default {
                 return this.$store.state.site.data.website_footer
             }
             return ""
+        },
+        version(){
+            return process.env.VUE_APP_VERSION
         }
     }
 }

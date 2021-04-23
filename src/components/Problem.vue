@@ -2,16 +2,19 @@
     <div>
         <div v-if="problem">
             <div class="row" v-if="!problem.error">
-                <div class="col">
+                <div class="col-md-9">
                     <div class="card card-body">
-                        <h3>{{problem.data.title}}</h3>
+                        <div>
+                            <h3>{{problem.data.title}}</h3>
+                            <span class="float-end" v-if="problem.data.source">{{problem.data.source}}</span>
+                        </div>
                         <hr>
                         <h4>Description</h4>
-                        <p v-html="problem.data.description" class="p-4 text-wrap" v-katex></p>
+                        <p v-html="problem.data.description" class="p-4 text-wrap codeder" v-katex style="background-color: #f4fcff;"></p>
                         <h4>Input</h4>
-                        <p v-html="problem.data.input_description" class="p-4 text-wrap" v-katex></p>
+                        <p v-html="problem.data.input_description" class="p-4 text-wrap codeder" v-katex style="background-color: #f4fcff;"></p>
                         <h4>Output</h4>
-                        <p v-html="problem.data.output_description" class="p-4 text-wrap" v-katex></p>
+                        <p v-html="problem.data.output_description" class="p-4 text-wrap codeder" v-katex style="background-color: #f4fcff;"></p>
                         <div class="row" v-for="tests in problem.data.samples" :key="tests.input">
                             <div class="col-6">
                                 <h4>
@@ -25,21 +28,21 @@
                                 <pre class="p-4 text-wrap" style="border: black solid 2px;"><code v-html="replace_n(tests.output)"/></pre>
                             </div>
                         </div>
-                        <!--<CodeMirror :mycode="code" class="p-2"/>-->
-                        <select class="form-select" aria-label="Default select example" v-model="code_language">
-                            <option :value="language" v-for="language in problem.data.languages" :key="language">{{language}}</option>
-                        </select>
-                        <div class="p-2">
-                            <textarea v-model="code" style="width: 100%; height: 100px"/>
-                        </div>
-                        <div class="d-grid gap-2 d-md-flex justify-content-between">
-                            <span class="fs-4" v-html="status_indicater" v-if="status_indicater"/>
-                            <p></p>
-                            <button class="btn btn-warning me-md-2" :class="{'disabled':on_submit}" type="button" @click="submit">Submit</button>
-                        </div>
+                        <h4 v-if="problem.data.hint != ''">Hint</h4>
+                        <p  v-if="problem.data.hint != ''" v-html="problem.data.hint" class="p-4 text-wrap codeder" v-katex style="background-color: #f4fcff;"></p>
+                        <CodeMirror :problem="problem" :type="type" class="p-2"/>
                     </div>
                 </div>
                 <div class="col-3 md-no-display">
+                    <div class="list-group">
+                        <button type="button" class="list-group-item list-group-item-action" @click="$router.push({ path: '/contest/' + $route.params.id +  '/status', query: { problemID: problem.data._id}})" v-if="type == 'contest'">
+                            <div class="p-1"><i class="bi bi-list-task"></i> Submissions</div>
+                        </button>
+                        <button type="button" class="list-group-item list-group-item-action" @click="$router.push({ path: '/status', query: { problemID: problem.data._id}})" v-else>
+                            <div class="p-1"><i class="bi bi-list-task"></i> Submissions</div>
+                        </button>
+                    </div>
+                    <br>
                     <div class="card">
                         <div class="card-header">
                             <i class="bi bi-info-circle"></i> Information
@@ -79,8 +82,8 @@
                             <i class="bi bi-pie-chart"></i> Statistic
                         </div>
                         <div class="card-body">
-                            <Pie :data="donught_data()" :option="donught_options" class="lg-display"/>
-                            <Pie :data="donught_data()" class="lg-no-display" />
+                            <Pie :data="donught_data()" :option="donught_options" class="d-block d-lg-none d-xl-none d-xxl-none"/>
+                            <Pie :data="donught_data()" class="d-none d-lg-block d-xl-block d-xxl-block" />
                         </div>
                     </div>
                 </div>
@@ -101,7 +104,7 @@
 
 <script>
 import { parse } from 'node-html-parser';
-//import CodeMirror from '@/components/CodeMirror.vue'
+import CodeMirror from '@/components/CodeMirror.vue'
 import Pie from '@/components/Pie.vue'
 
 export default {
@@ -115,65 +118,31 @@ export default {
             thisid:"",
             problem:null,
             code:"",
-            code_language:"",
             donught_options:{
                 legend:{
                     display: false
                 }
             },
-            on_submit: false,
-            status_indicater:"",
-            ticker: null
         }
     },
     components:{
-        //CodeMirror,
+        CodeMirror,
         Pie
     },
     created(){
         this.thisid = this.$route.params.id
         this.$http.get(window.location.origin + this.problem_url).then(response => {
             this.problem = response.data
-            this.code = this.problem.data.template.C
             let root = parse(this.problem.data.description)
             for(let i in root.querySelectorAll("img")){
                 root.querySelectorAll("img")[i].removeAttribute("width")
                 root.querySelectorAll("img")[i].removeAttribute("height")
                 root.querySelectorAll("img")[i].setAttribute("class", "img-fluid")
-                console.log(root.querySelectorAll("img")[i])
             }
             this.problem.data.description = root.toString().replace(/\u00A0/g, " ");
-            this.code_language = this.problem.data.languages[0]
         })
     },
     methods:{
-        submit(){
-            console.log(this.code)
-            if(this.code == "" || this.code == undefined){
-                this.$message.error({message: 'Code can not be empty',duration : 1500})
-                return
-            }
-            this.on_submit = true
-            this.status_indicater = ""
-            this.$http.post(window.location.origin + '/api/submission', {code: this.code ,language: this.code_language, problem_id: this.problem.data.id})
-            .then((res) => {
-                let vm = this
-                vm.get_submit_status(res.data.data.submission_id)
-                this.ticker = window.setInterval(function(){vm.get_submit_status(res.data.data.submission_id)}, 1000)
-            })
-            .catch((error) => {
-                console.error(error)
-            })
-        },
-        get_submit_status(id){
-            this.$http.get(window.location.origin + '/api/submission?id=' + id).then(response => {
-                this.status_indicater = '<span class="badge bg-' + this.$store.state.status_list[response.data.data.result].type + '">' + this.$store.state.status_list[response.data.data.result].name + '</span>'
-                if(response.data.data.result != 7 && response.data.data.result != 9){
-                    window.clearInterval(this.ticker)
-                    this.on_submit = false
-                }
-            })
-        },
         difficulty_tag(difficulty){
             if(difficulty == "High"){
                 return '<span class="badge bg-warning text-dark">High</span>'
@@ -185,9 +154,9 @@ export default {
         doCopy: function (text) {
             let vue = this
             this.$copyText(text).then(function () {
-                vue.$message.success({message: 'Code coppied!',duration : 1500})
+                vue.$message.success({message: 'Code coppied!',duration : 1500,zIndex: 1000000})
             }, function () {
-                vue.$message.error({message: 'Fail coppying!',duration : 1500})
+                vue.$message.error({message: 'Fail coppying!',duration : 1500,zIndex: 1000000})
             })
         },
         replace_n(string){
@@ -243,5 +212,8 @@ export default {
         .lg-display{
         display: none;
         }
+  }
+  .codeder code{
+      padding: 0px 4px;
   }
 </style>
