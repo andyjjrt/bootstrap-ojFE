@@ -70,6 +70,7 @@ export default {
         this.sec_route = this.$route.meta.contest
         this.$http.get(window.location.origin + '/api/contest?id=' + this.$route.params.id).then(response => {
             this.contest = response.data
+            window.document.title = this.$store.state.site.data.website_name_shortcut + ' | ' + this.contest.data.title
             this.$store.commit('get_contest', response.data)
             let start_date = new Date(this.contest.data.start_time)
             let end_date = new Date(this.contest.data.end_time)
@@ -99,12 +100,18 @@ export default {
     },
     methods:{
         get_remain(end){
+            let end_date = new Date(this.contest.data.end_time)
+            let now_date = new Date()
+            if(now_date > end_date){
+                this.contest_data.remain_time = '<span class="p-2 fs-5 badge bg-danger">Ended</span>'
+                window.clearInterval(this.ticker)
+            }
             const total_ = Date.parse(new Date(end)) - Date.parse(new Date());
             const seconds_ = Math.floor( (total_/1000) % 60 );
             const minutes_ = Math.floor( (total_/1000/60) % 60 );
             const hours_ = Math.floor( (total_/(1000*60*60)) % 24 );
             const days_ = Math.floor( total_/(1000*60*60*24) );
-            this.contest_data.remain_time =  '<span class="p-2 fs-5 badge bg-success">' + days_ + "d " + hours_ + ":" + minutes_ + ":" + seconds_ + '</span>'
+            this.contest_data.remain_time =  '<span class="p-2 fs-5 badge bg-success">' + (days_==0?'':(days_ < 10 ? '0' + days_ : days_) + 'd ') + (hours_ < 10 ? '0' + hours_ : hours_) + ":" + (minutes_ < 10 ? '0' + minutes_ : minutes_) + ":" + (seconds_ < 10 ? '0' + seconds_ : seconds_) + '</span>'
         },
         check_active(name){
             if(this.sec_route == name){

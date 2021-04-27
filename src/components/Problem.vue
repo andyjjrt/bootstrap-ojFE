@@ -77,7 +77,7 @@
                         </div>
                     </div>
                     <br>
-                    <div class="card">
+                    <div class="card" v-if="problem.data.submission_number != 0">
                         <div class="card-header">
                             <i class="bi bi-pie-chart"></i> Statistic
                         </div>
@@ -133,6 +133,7 @@ export default {
         this.thisid = this.$route.params.id
         this.$http.get(window.location.origin + this.problem_url).then(response => {
             this.problem = response.data
+            window.document.title = this.$store.state.site.data.website_name_shortcut + ' | ' + this.problem.data.title
             let root = parse(this.problem.data.description)
             for(let i in root.querySelectorAll("img")){
                 root.querySelectorAll("img")[i].removeAttribute("width")

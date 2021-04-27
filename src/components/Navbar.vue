@@ -208,7 +208,9 @@ export default {
     watch: {
         $route(to) {
             this.top_route = to.meta.title
-            window.document.title = this.$store.state.site.data.website_name_shortcut + ' | ' + to.name
+            if(to.meta.title != 'Contest' || (to.meta.title == 'Contest' && !to.meta.contest )){
+                window.document.title = this.$store.state.site.data.website_name_shortcut + ' | ' + to.name
+            }
         }
     }
 }

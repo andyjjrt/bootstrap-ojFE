@@ -188,6 +188,10 @@ export default {
             if(this.query.username){
                 this.searching_user = this.query.username
             }
+            if(this.query.result){
+                this.select_stat = this.query.result
+                this.stats_string = this.$store.state.status_list[this.query.result].name
+            }
             this.$http.get(window.location.origin + this.status_url,{params: this.query}).then(response => {
                 this.status = response.data
                 this.total = response.data.data.total

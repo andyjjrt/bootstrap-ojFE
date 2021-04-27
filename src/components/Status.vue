@@ -30,7 +30,7 @@
                                 <span class="col">status</span>
                                 <span class="col d-none d-md-block d-lg-block d-xl-block d-xxl-block">memory</span>
                                 <span class="col d-none d-md-block d-lg-block d-xl-block d-xxl-block">time</span>
-                                <span class="col">score</span>
+                                <span v-if="response.data.statistic_info.score" class="col">score</span>
                             </div>
                         </div>
                         <div class="list-group-item" v-for="stat in response.data.info.data" :key="stat.test_case">
@@ -40,7 +40,7 @@
                                 <span class="col d-block d-sm-none"><span :class="'badge bg-' + $store.state.status_list[stat.result].type">{{$store.state.status_list[stat.result].short}}</span></span>
                                 <span class="col d-none d-md-block d-lg-block d-xl-block d-xxl-block">{{parseInt(stat.memory/1048576)+1}}MB</span>
                                 <span class="col d-none d-md-block d-lg-block d-xl-block d-xxl-block">{{stat.real_time}}ms</span>
-                                <span class="col">{{stat.score}}</span>
+                                <span v-if="response.data.statistic_info.score" class="col">{{stat.score}}</span>
                             </div>
                         </div>
                     </ul>

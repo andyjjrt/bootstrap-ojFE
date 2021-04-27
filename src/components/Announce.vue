@@ -6,10 +6,10 @@
                 <div v-if="announcements">
                     <div v-if="!announcements.error">
                         <ul class="list-group list-group-flush">
-                            <div v-for="announce in announcements.data.results" :key="announce.id" class="list-group-item">
+                            <div v-for="announce in announcements.data" :key="announce.id" class="list-group-item">
                                 <div role="button" class="d-flex justify-content-between p-1" @click="toggle_modal(announce)" data-bs-toggle="modal" data-bs-target="#modal_announce">
                                     <span>{{ announce.title }}</span>
-                                    <span class="md-no-display"><i class="bi-alarm"></i> {{ announce_time(announce.last_update_time) }} <i class="bi bi-person-fill"></i> {{ announce.created_by.username }}</span>
+                                    <span class="md-no-display"><i class="bi-alarm"></i> {{ announce_time(announce) }} <i class="bi bi-person-fill"></i> {{ announce.created_by.username }}</span>
                                 </div>
                             </div>
                         </ul>
@@ -91,7 +91,8 @@
             this.$http.get(window.location.origin + this.announce_url).then(response => {
                 this.announcements = response.data
                 if(this.announcements.data.results){
-                    this.announcements.data.results.unshift({
+                    this.announcements.data = this.announcements.data.results
+                    this.announcements.data.unshift({
                         "id": -1,
                         "created_by": {
                             "id": "aaa",
@@ -109,8 +110,11 @@
             this.ModalAnnounce = new Modal(this.$refs.modal_announce)
         },
         methods:{
-            announce_time(time_arr){
-                return time_arr.split('T')[0]
+            announce_time(announce){
+                if(announce.last_update_time){
+                    return announce.last_update_time.split('T')[0]
+                }
+                return announce.create_time.split('T')[0]
             },
             toggle_modal(a){
                 this.announce = a

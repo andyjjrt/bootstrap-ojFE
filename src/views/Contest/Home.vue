@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div v-html="contest.data.description"/>
+        <div class="card card-body" v-html="contest.data.description"/>
+        <br>
         <Announce :announce_url="announce_url"/>
     </div>
 </template>

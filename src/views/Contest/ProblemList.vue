@@ -76,6 +76,9 @@ export default {
             return '<span class="badge bg-success">Low</span>'
         },
         ac_rate(ac,total){
+            if(total == 0){
+                return '0.00%'
+            }
             return (parseInt(ac)*100/parseInt(total)).toFixed(2) + "%"
         },
         go_problem(id){

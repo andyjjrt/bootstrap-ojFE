@@ -120,6 +120,9 @@ export default {
             return '<span class="badge bg-success">Low</span>'
         },
         ac_rate(ac,total){
+            if(total == 0){
+                return '0.00%'
+            }
             return (parseInt(ac)*100/parseInt(total)).toFixed(2) + "%"
         },
         select_tag_func(name){
@@ -136,22 +139,26 @@ export default {
         },
         solved(id){
             if(this.$store.state.profile.data){
-                if(this.$store.state.profile.data.acm_problems_status.problems[id]){
-                    if(this.$store.state.profile.data.acm_problems_status.problems[id].status == 0){
-                        return "border-left: 5px #198754 solid"
-                    }else{
-                        return "border-left: 5px #dc3545 solid"
+                if(this.$store.state.profile.data.acm_problems_status.problems){
+                    if(this.$store.state.profile.data.acm_problems_status.problems[id]){
+                        if(this.$store.state.profile.data.acm_problems_status.problems[id].status == 0){
+                            return "border-left: 5px #198754 solid"
+                        }else{
+                            return "border-left: 5px #dc3545 solid"
+                        }
                     }
                 }
-                if(this.$store.state.profile.data.oi_problems_status.problems[id]){
-                    if(this.$store.state.profile.data.oi_problems_status.problems[id].status == 0){
-                        return "border-left: 5px #198754 solid"
-                    }else{
-                        return "border-left: 5px #dc3545 solid"
+                if(this.$store.state.profile.data.oi_problems_status.problems){
+                    if(this.$store.state.profile.data.oi_problems_status.problems[id]){
+                        if(this.$store.state.profile.data.oi_problems_status.problems[id].status == 0){
+                            return "border-left: 5px #198754 solid"
+                        }else{
+                            return "border-left: 5px #dc3545 solid"
+                        }
                     }
                 }
             }
-            return ""
+            return "border-left: 5px #ffffff solid"
         }
     },
     watch: {
