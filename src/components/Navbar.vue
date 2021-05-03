@@ -4,33 +4,88 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">
+                            Welcome to {{$store.state.site.data.website_name_shortcut}}
+                        </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form @submit.prevent="login" action="#">
-                            <div class="mb-3">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="floatingInput" placeholder="username" v-model="username">
-                                    <label for="floatingInput">Username</label>
+                        <ul class="nav nav-pills">
+                            <a class="flex-sm-fill text-sm-center nav-link" role="button" :class="{'active' : (current_action == 'login')}" @click="current_action = 'login'">Login</a>
+                            <a class="flex-sm-fill text-sm-center nav-link" role="button" :class="{'active' : (current_action == 'register')}"  @click="current_action = 'register'">Register</a>
+                        </ul>
+                        <br>
+                        <div v-if="current_action == 'login'">
+                            <form @submit.prevent="login" action="#">
+                                <div class="mb-3">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="floatingInput" placeholder="username" v-model="username">
+                                        <label for="floatingInput">Username</label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="form-floating">
-                                    <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password">
-                                    <label for="floatingPassword">Password</label>
+                                <div class="mb-3">
+                                    <div class="form-floating">
+                                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password">
+                                        <label for="floatingPassword">Password</label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="p-3"  v-if="login_error">
-                                <div class="alert alert-danger" role="alert">
-                                    {{ login_error }}
+                                <div class="p-3"  v-if="login_error">
+                                    <div class="alert alert-danger" role="alert">
+                                        {{ login_error }}
+                                    </div>
                                 </div>
-                            </div>
-                            <button type="submit" class="d-none">Login</button>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" @click="login" :class="{'disabled': login_btn}">Login</button>
+                                <div class="d-flex flex-row-reverse bd-highlight">
+                                    <button type="submit" class="btn btn-primary" :class="{'disabled': login_btn}">Login</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div v-else>
+                            <form @submit.prevent="register" action="#">
+                                <div class="mb-3">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="username" placeholder="username" v-model="reg.username">
+                                        <label for="username">Username</label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-floating mb-3">
+                                        <input type="email" class="form-control" id="email" placeholder="email" v-model="reg.email">
+                                        <label for="email">Email</label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-floating">
+                                        <input type="password" class="form-control" id="password" placeholder="Password" v-model="reg.password">
+                                        <label for="password">Password</label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-floating">
+                                        <input type="password" class="form-control" id="con_password" placeholder="Confirm Password" v-model="reg.password_con">
+                                        <label for="con_password">Confirm Password</label>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-8">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="captcha" placeholder="Captcha" v-model="reg.captcha">
+                                            <label for="captcha">Captcha</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 position-relative">
+                                        <img :src="reg.captcha_url" class="position-absolute top-50 start-50 translate-middle">
+                                    </div>
+                                </div>
+                                <div class="p-3"  v-if="register_error">
+                                    <div class="alert alert-danger" role="alert">
+                                        {{ register_error }}
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-row-reverse bd-highlight">
+                                    <button type="submit" class="btn btn-primary" :class="{'disabled': login_btn}">Register</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -120,8 +175,21 @@ export default {
             username: "",
             password:"",
             login_error: null,
+            register_error: null,
             top_route: null,
-            login_btn: false
+
+            current_action: "login",
+            login_btn: false,
+            register_btn: false,
+
+            reg:{
+                username: "",
+                email:"",
+                password:"",
+                password_con: "",
+                captcha: "",
+                captcha_url: ""
+            }
         }
     },
     mounted(){
@@ -149,18 +217,50 @@ export default {
             this.login_error = null
             this.$http.post(window.location.origin + '/api/login', {username: this.username, password: this.password})
             .then((res) => {
-                this.$http.get(window.location.origin + "/api/profile").then((response) => {
-                    this.$store.commit('get_profile', response.data)
-                });
                 this.login_btn = false
                 if(res.data.error){
                     this.login_error = res.data.data
                     return
+                }else{
+                    this.$store.commit('get_profile', null)
+                    this.$http.get(window.location.origin + "/api/profile").then((response) => {
+                        this.$store.commit('get_profile', response.data)
+                    });
+                    this.LoginModal.toggle()
+                    this.toggle_collapse()
+                    this.$message.success({
+                        message: "Welcome back to OJ",
+                        duration : 1500,
+                        zIndex: 1000000
+                    })
                 }
+            })
+            .catch((error) => {
+                console.error(error)
                 this.LoginModal.toggle()
-                this.toggle_collapse()
+            })
+        },
+        register(){
+            if(this.reg.password != this.reg.password_con || this.reg.password == ""){
+                this.register_error = "confirm password"
+                this.captcha();
+                this.reg.captcha = ""
+                return
+            }
+            this.register_btn = true
+            this.register_error = null
+            this.$http.post(window.location.origin + '/api/register', {username: this.reg.username, password: this.reg.password, captcha: this.reg.captcha, email: this.reg.email})
+            .then((res) => {
+                this.register_btn = false
+                if(res.data.error){
+                    this.register_error = res.data.data
+                    this.captcha();
+                    this.reg.captcha = ""
+                    return
+                }
+                this.current_action = "login"
                 this.$message.success({
-                    message: "Welcome back to OJ",
+                    message: "Register Succeed!",
                     duration : 1500,
                     zIndex: 1000000
                 })
@@ -204,6 +304,12 @@ export default {
             }
             return false
         },
+        captcha(){
+            this.reg.captcha_url = ""
+            this.$http.get(window.location.origin + '/api/captcha').then((response) => {
+                this.reg.captcha_url = response.data.data
+            });
+        }
     },
     watch: {
         $route(to) {
@@ -211,7 +317,24 @@ export default {
             if(to.meta.title != 'Contest' || (to.meta.title == 'Contest' && !to.meta.contest )){
                 window.document.title = this.$store.state.site.data.website_name_shortcut + ' | ' + to.name
             }
-        }
+        },
+        current_action(a){
+            if(a == 'register'){
+                this.reg = {
+                    username: "",
+                    email:"",
+                    password:"",
+                    password_con: "",
+                    captcha: "",
+                    captcha_url: ""
+                }
+                this.$http.get(window.location.origin + '/api/captcha').then((response) => {
+                    this.reg.captcha_url = response.data.data
+                });
+            }else{
+                this.reg.captcha_url = ""
+            }
+        },
     }
 }
 </script>

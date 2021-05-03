@@ -19,7 +19,7 @@
             </div>
             <div class="col">
                 <div class="d-grid gap-2 p-2" v-if="pic != ''">
-                    <button class="btn btn-primary" type="button" @click="uploadAvatar">Upload</button>
+                    <button class="btn btn-primary" type="button" @click="uploadAvatar" :disabled="uploading">Upload</button>
                 </div>
             </div>
         </div>
@@ -46,7 +46,8 @@ export default {
     data(){
         return{
             pic:"",
-            pic_data:null
+            pic_data:null,
+            uploading: false
         }
     },
     methods:{
@@ -59,7 +60,11 @@ export default {
             const file = e.target.files[0]
             const reader = new FileReader();
             if (file.type.indexOf('image/') === -1) {
-                alert('Please select an image file');
+                this.$message.error({
+                    message: "Please upload an image",
+                    duration : 1500,
+                    zIndex: 1000000
+                })
                 return;
             }
             reader.onload = (event) => {
@@ -71,19 +76,20 @@ export default {
             this.pic_data = e.detail
         },
         uploadAvatar () {
+            this.uploading = true
             this.$refs.cropper.getCroppedCanvas().toBlob(blob => {
                 let form = new window.FormData()
                 let file = new window.File([blob], 'avatar.png')
-                if (file.size > 2 * 1024 * 1024){
+                if (file.size > 1 * 1024 * 1024){
                     this.$message.error({
-                        message: "Upload limit is 2MB",
+                        message: "Upload limit is 1MB",
                         duration : 1500,
                         zIndex: 1000000
                     })
+                    this.uploading = false
                     return
                 }
                 form.append('image', file)
-                this.loadingUploadBtn = true
                 this.$http({
                     method: 'post',
                     url: 'api/upload_avatar',
@@ -108,6 +114,7 @@ export default {
                         });
                     }
                     this.reset_pic()
+                    this.uploading = false
                 })
             })
         },

@@ -2,7 +2,7 @@
   <div class="container">
     <div style=" margin: 0 auto; position: relative; height:300x; width:100%;" class="card card-body">
       <div class="d-flex justify-content-between">
-        <button type="button" class="btn btn-success btn-sm" disabled>V1.0.0-beta9</button>
+        <button type="button" class="btn btn-success btn-sm" disabled>V1.0.0-beta10</button>
         <button class="btn btn-primary btn-sm" type="button" @click="change()" :class="{'disabled':chart_btn}">{{next_chart_type}}</button>
       </div>
       <Chart :option="chart_option" :data="chart_data" v-if="rank" />

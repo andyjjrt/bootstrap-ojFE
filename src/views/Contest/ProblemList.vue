@@ -1,11 +1,11 @@
 <template>
     <div class="container">
         <div>
-            <div>
+            <div v-if="problems">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Problems</h4>
-                        <div class="table-responsive" v-if="problems">
+                        <div class="table-responsive" v-if="!problems.error">
                             <table class="table text-nowrap">
                                 <thead>
                                     <tr class="d-flex">
@@ -29,12 +29,17 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div  class="d-flex justify-content-center" v-else>
-                            <div class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
+                        <div class="card-body" v-else>
+                            <div class="alert alert-danger" role="alert">
+                                {{problems.data}}
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div  class="d-flex justify-content-center" v-else>
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
         </div>
