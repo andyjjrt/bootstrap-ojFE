@@ -1,6 +1,6 @@
 {
-  "name": "bs-oj",
-  "version": "1.0.0-beta10",
+  "name": "bootstrap-ojfe",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

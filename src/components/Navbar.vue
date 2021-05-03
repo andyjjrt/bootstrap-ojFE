@@ -192,6 +192,11 @@ export default {
             }
         }
     },
+    created(){
+        try {
+            document.body.removeChild(document.getElementById('app-loader'))
+        } catch (e) {console.error(e)}
+    },
     mounted(){
         this.LoginModal = new Modal(this.$refs.login_modal)
         this.NavCollapse = new Collapse(this.$refs.nav_collapse, {toggle: false})
@@ -334,7 +339,7 @@ export default {
             }else{
                 this.reg.captcha_url = ""
             }
-        },
+        }
     }
 }
 </script>

@@ -1,24 +1,24 @@
-# bs-oj
+# bootstrap-ojFE
 
-## Project setup
+More responsive web page for Online Judge using Bootstrap5 and Vuejs
+[https://github.com/QingdaoU/OnlineJudge](https://github.com/QingdaoU/OnlineJudge "https://github.com/QingdaoU/OnlineJudge")
+
+### Run in local for modification
 ```
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
 npm run serve
 ```
+You can install `express` and use `server.js` for proxy transfer.
+Modify nginx config to fit port number.
 
 ### Compiles and minifies for production
 ```
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### TODO
+- Better loading performance
+- i18in support
+- Code memory when switching pages
+- Avatar Loading
+- And more...

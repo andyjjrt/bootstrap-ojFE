@@ -29,7 +29,7 @@ export default{
     this.$http.get(api + "/profile").then((response) => {
       this.$store.commit('get_profile', response.data)
     });
-  },
+  }
 }
 </script>
 

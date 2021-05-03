@@ -11,6 +11,7 @@ const Submission = () => import('../views/Submission.vue')
 const Judger = () => import('../views/Judger.vue')
 const Setting = () => import(/* webpackChunkName: "setting" */'../views/Setting.vue')
 const User = () => import('../views/User.vue')
+const NullPage = () => import('../views/404.vue')
 
 const Contest_Home = () => import(/* webpackChunkName: "contest" */'../views/Contest/Home.vue')
 const Contest_ProblemList = () => import(/* webpackChunkName: "contest" */'../views/Contest/ProblemList.vue')
@@ -171,6 +172,14 @@ const routes = [
     component: User,
     meta:{
       title: 'User'
+    }
+  },
+  {
+    path: '*',
+    name: '404',
+    component: NullPage,
+    meta:{
+      title: 'Not Found'
     }
   }
 ]
