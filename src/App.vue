@@ -1,6 +1,6 @@
 <template>
   <div id="app" v-if="$store.state.profile_ready == true">
-    <Navbar/>
+    <Navbar v-if="$store.state.site" />
     <br><br><br>
     <transition name="component-fade" mode="out-in">
       <router-view />

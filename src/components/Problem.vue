@@ -103,6 +103,7 @@
 </template>
 
 <script>
+import {parse} from 'node-html-parser'
 import CodeMirror from '@/components/CodeMirror.vue'
 import Pie from '@/components/Pie.vue'
 
@@ -133,15 +134,13 @@ export default {
         this.$http.get(window.location.origin + this.problem_url).then(response => {
             this.problem = response.data
             window.document.title = this.$store.state.site.data.website_name_shortcut + ' | ' + this.problem.data.title
-            import(/* webpackChunkName: "parser" */'node-html-parser/dist/parse').then((parse) => {
-                let root = parse(this.problem.data.description)
-                for(let i in root.querySelectorAll("img")){
-                    root.querySelectorAll("img")[i].removeAttribute("width")
-                    root.querySelectorAll("img")[i].removeAttribute("height")
-                    root.querySelectorAll("img")[i].setAttribute("class", "img-fluid")
-                }
-                this.problem.data.description = root.toString().replace(/\u00A0/g, " ");
-            })
+            let root = parse(this.problem.data.description)
+            for(let i in root.querySelectorAll("img")){
+                root.querySelectorAll("img")[i].removeAttribute("width")
+                root.querySelectorAll("img")[i].removeAttribute("height")
+                root.querySelectorAll("img")[i].setAttribute("class", "img-fluid")
+            }
+            this.problem.data.description = root.toString().replace(/\u00A0/g, " ");
         })
     },
     methods:{

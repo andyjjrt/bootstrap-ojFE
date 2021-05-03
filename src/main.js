@@ -26,7 +26,7 @@ const store = new Vuex.Store({
     profile: null,
     profile_ready: false,
     login:null,
-    site:{},
+    site:null,
     contest: null,
     status_list:{
       '-2': {
