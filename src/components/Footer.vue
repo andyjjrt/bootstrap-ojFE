@@ -19,7 +19,7 @@
 export default {
     computed:{
         footer(){
-            if(this.$store.state.site.data){
+            if(this.$store.state.site){
                 return this.$store.state.site.data.website_footer
             }
             return ""

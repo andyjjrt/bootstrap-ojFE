@@ -6,7 +6,7 @@
       <router-view />
     </transition>
     <br>
-    <Footer/>
+    <Footer v-if="$store.state.site" />
   </div>
 </template>
 
