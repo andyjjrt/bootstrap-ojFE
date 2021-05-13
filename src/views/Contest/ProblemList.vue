@@ -19,11 +19,11 @@
                                 </thead>
                                 <tbody>
                                     <tr class="d-flex" role="button"  v-for="problem in problems.data" :key="problem.id" @click="go_problem(problem._id)">
-                                        <td class="text-truncate col-2 d-none d-md-block" :style="solved(problem)">{{ problem._id }}</td>
-                                        <td class="text-truncate col-6 d-none d-md-block">{{ problem.title }}</td>
+                                        <td class="text-truncate col-2 d-none d-md-block">{{ problem._id }}</td>
+                                        <td class="text-truncate col-6 d-none d-md-block"><span v-html="solved(problem)"></span> {{ problem.title }}</td>
                                         <td class="col-2 d-none d-md-block" v-html="difficulty_tag(problem.difficulty)"></td>
                                         <td class="col-2 d-none d-md-block" >{{ ac_rate(problem.accepted_number, problem.submission_number) }}</td>
-                                        <td class="text-truncate col-10 d-block d-md-none" :style="solved(problem)">{{ problem.title }}</td>
+                                        <td class="text-truncate col-10 d-block d-md-none"><span v-html="solved(problem)"></span> {{ problem.title }}</td>
                                         <td class="col-2 d-block d-md-none" v-html="difficulty_tag(problem.difficulty)"></td>
                                     </tr>
                                 </tbody>
@@ -92,12 +92,12 @@ export default {
         solved(problem){
             if(problem.my_status || problem.my_status == 0){
                 if(problem.my_status == 0){
-                    return "border-left: 5px #198754 solid"
+                    return '<i class="bi bi-check-square text-success"></i>'
                 }else{
-                    return "border-left: 5px #dc3545 solid"
+                    return '<i class="bi bi-x-square text-danger"></i>'
                 }
             }
-            return "border-left: 5px #ffffff solid"
+            return '<i class="bi bi-square text-white"></i>'
         }
     },
     watch: {

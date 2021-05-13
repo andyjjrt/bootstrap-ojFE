@@ -130,7 +130,7 @@ export default {
         Pie
     },
     created(){
-        this.thisid = this.$route.params.id
+        this.thisid = this.$route.params.pid
         this.$http.get(window.location.origin + this.problem_url).then(response => {
             this.problem = response.data
             window.document.title = this.$store.state.site.data.website_name_shortcut + ' | ' + this.problem.data.title
@@ -146,7 +146,7 @@ export default {
     methods:{
         difficulty_tag(difficulty){
             if(difficulty == "High"){
-                return '<span class="badge bg-warning text-dark">High</span>'
+                return '<span class="badge bg-warning">High</span>'
             }else if(difficulty == "Mid"){
                 return '<span class="badge bg-primary">Mid</span>'
             }

@@ -61,11 +61,11 @@
                                     </td>
                                     <td class="col-2 d-none d-lg-block">
                                         <a role="button" class="link-primary text-decoration-none" @click="$router.push({ path:'/contest/' + $store.state.contest.data.id + '/problem/' + stat.problem})" v-if="mode == 'contest'">{{stat.problem}}</a>
-                                        <a role="button" class="link-primary text-decoration-none" @click="$router.push({ name: 'Problem', params: { id:stat.problem }})" v-else>{{stat.problem}}</a>
+                                        <a role="button" class="link-primary text-decoration-none" @click="$router.push({ name: 'Problem', params: { pid:stat.problem }})" v-else>{{stat.problem}}</a>
                                     </td>
                                     <td class="col-5 d-none d-md-block d-lg-none">
                                         <a role="button" class="link-primary text-decoration-none" @click="$router.push({ path:'/contest/' + $store.state.contest.data.id + '/problem/' + stat.problem})" v-if="mode == 'contest'">{{stat.problem}}</a>
-                                        <a role="button" class="link-primary text-decoration-none" @click="$router.push({ name: 'Problem', params: { id:stat.problem }})" v-else>{{stat.problem}}</a>
+                                        <a role="button" class="link-primary text-decoration-none" @click="$router.push({ name: 'Problem', params: { pid:stat.problem }})" v-else>{{stat.problem}}</a>
                                     </td>
                                     <td class="col-1 d-none d-lg-block"><span v-if="stat.statistic_info.err_info">----</span><span v-else>{{stat.statistic_info.time_cost}}ms</span></td>
                                     <td class="col-1 d-none d-lg-block"><span v-if="stat.statistic_info.err_info">----</span><span v-else>{{ parseInt(stat.statistic_info.memory_cost/1048576)+1 }}MB</span></td>

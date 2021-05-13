@@ -21,12 +21,12 @@
                                 </thead>
                                 <tbody>
                                     <tr class="d-flex" role="button"  v-for="problem in problems.data.results" :key="problem.id" @click="go_problem(problem._id)">
-                                        <td class="text-truncate col-2 d-none d-md-block" :style="solved(problem.id)">{{ problem._id }}</td>
-                                        <td class="text-truncate col-6 d-none d-md-block">{{ problem.title }}</td>
+                                        <td class="text-truncate col-2 d-none d-md-block">{{ problem._id }}</td>
+                                        <td class="text-truncate col-6 d-none d-md-block"><span v-html="solved(problem.id)"></span> {{ problem.title }}</td>
                                         <td class="col-2 d-none d-md-block" v-html="difficulty_tag(problem.difficulty)"></td>
                                         <td class="col-2 d-none d-md-block" >{{ ac_rate(problem.accepted_number, problem.submission_number) }}</td>
-                                        <td class="col d-block d-md-none"  :style="solved(problem.id)">
-                                            <span class="text-truncate">{{ problem.title }}</span>
+                                        <td class="col-12 d-block d-md-none">
+                                            <span class="text-truncate"><span v-html="solved(problem.id)"></span> {{ problem.title }}</span>
                                             <span class="float-end d-none d-sm-block" v-html="difficulty_tag(problem.difficulty)"></span>
                                         </td>
                                     </tr>
@@ -113,7 +113,7 @@ export default {
         },
         difficulty_tag(difficulty){
             if(difficulty == "High"){
-                return '<span class="badge bg-warning text-dark">High</span>'
+                return '<span class="badge bg-warning">High</span>'
             }else if(difficulty == "Mid"){
                 return '<span class="badge bg-primary">Mid</span>'
             }
@@ -135,30 +135,30 @@ export default {
             this.get_problem()
         },
         go_problem(id){
-            this.$router.push({ name: 'Problem', params: { id:id }})
+            this.$router.push({ name: 'Problem', params: { pid:id }})
         },
         solved(id){
             if(this.$store.state.profile.data){
                 if(this.$store.state.profile.data.acm_problems_status.problems){
                     if(this.$store.state.profile.data.acm_problems_status.problems[id]){
                         if(this.$store.state.profile.data.acm_problems_status.problems[id].status == 0){
-                            return "border-left: 5px #198754 solid"
+                            return '<i class="bi bi-check-square text-success"></i>'
                         }else{
-                            return "border-left: 5px #dc3545 solid"
+                            return '<i class="bi bi-x-square text-danger"></i>'
                         }
                     }
                 }
                 if(this.$store.state.profile.data.oi_problems_status.problems){
                     if(this.$store.state.profile.data.oi_problems_status.problems[id]){
                         if(this.$store.state.profile.data.oi_problems_status.problems[id].status == 0){
-                            return "border-left: 5px #198754 solid"
+                            return '<i class="bi bi-check-square text-success"></i>'
                         }else{
-                            return "border-left: 5px #dc3545 solid"
+                            return '<i class="bi bi-x-square text-danger"></i>'
                         }
                     }
                 }
             }
-            return "border-left: 5px #ffffff solid"
+            return '<i class="bi bi-square text-white"></i>'
         }
     },
     watch: {

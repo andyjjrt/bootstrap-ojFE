@@ -27,7 +27,7 @@ import 'codemirror/mode/clike/clike.js'
 import 'codemirror/mode/python/python.js'
 import 'codemirror/mode/go/go.js'
 import 'codemirror/theme/solarized.css'
-
+import storage from '@/util/storage.js'
 
   export default {
     name: 'code_space',
@@ -51,18 +51,35 @@ import 'codemirror/theme/solarized.css'
           lineNumbers: true,
           mode: '',
           tabSize: 4,
-        }
+        },
+        current_route: null
       }
     },
     created(){
+      this.current_route = this.$route
+      let problemCode = storage.get(this.buildProblemCodeKey(this.$route.params.pid, this.$route.params.id))
+      if (problemCode) {
+        this.code = problemCode.code
+        this.code_language = problemCode.language
+      }
+      if(this.problem.data.my_status == 0){
+        this.status_indicater = '<span class="badge bg-success fw-light">Solved</span>'
+      }
+
+      if(this.code != ''){
+        return
+      }
+
       this.code_language = this.problem.data.languages[0]
       if(this.problem.data.template[this.code_language]){
         this.code = this.problem.data.template[this.code_language]
       }
-        
-      if(this.problem.data.my_status == 0){
-        this.status_indicater = '<span class="badge bg-success fw-light">Solved</span>'
-      }
+    },
+    beforeDestroy(){
+      storage.set(this.buildProblemCodeKey(this.current_route.params.pid, this.current_route.params.id), {
+        code: this.code,
+        language: this.code_language,
+      })
     },
     methods:{
       submit(){
@@ -118,12 +135,18 @@ import 'codemirror/theme/solarized.css'
         }else if(language == "Golang"){
           this.cm_options.mode = "text/x-go"
         }
+      },
+      buildProblemCodeKey (problemID, contestID = null) {
+        if (contestID) {
+          return `problemCode_${contestID}_${problemID}`
+        }
+        return `problemCode_NaN_${problemID}`
       }
     },
     watch:{
       code_language(val){
         this.get_mime(val)
-      }
+      },
     }
   }
 </script>

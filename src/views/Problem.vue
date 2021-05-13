@@ -11,7 +11,7 @@ export default {
     name:"problem_page",
     data(){
         return{
-            problem_url: '/api/problem?problem_id=' + this.$route.params.id
+            problem_url: '/api/problem?problem_id=' + this.$route.params.pid
         }
     },
     components:{

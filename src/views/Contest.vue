@@ -76,7 +76,7 @@ export default {
             let end_date = new Date(this.contest.data.end_time)
             let now_date = new Date()
             if(now_date < start_date){
-                this.contest_data.remain_time = '<span class="p-2 fs-5 badge bg-warning text-dark">Not Started</span>'
+                this.contest_data.remain_time = '<span class="p-2 fs-5 badge bg-warning">Not Started</span>'
             }else if(now_date > end_date){
                 this.contest_data.remain_time = '<span class="p-2 fs-5 badge bg-danger">Ended</span>'
             }else{

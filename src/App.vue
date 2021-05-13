@@ -1,7 +1,9 @@
 <template>
   <div id="app" v-if="$store.state.profile_ready == true">
     <Navbar v-if="$store.state.site" />
-    <br><br><br>
+    <div>
+      <br><br><br><br>
+    </div>
     <transition name="component-fade" mode="out-in">
       <router-view />
     </transition>

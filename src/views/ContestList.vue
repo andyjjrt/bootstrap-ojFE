@@ -47,7 +47,7 @@ export default {
     check_time(start,end){
       let time_now = new Date()
       if(time_now < new Date(start)){
-        return '<span class="badge bg-warning text-dark">Not Started</span>'; 
+        return '<span class="badge bg-warning">Not Started</span>'; 
       }else if(time_now > new Date(end)){
         return '<span class="badge bg-danger">Ended</span>'; 
       }

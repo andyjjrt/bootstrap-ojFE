@@ -11,35 +11,11 @@
                     </div>
                     <div class="modal-body">
                         <ul class="nav nav-pills">
-                            <a class="flex-sm-fill text-sm-center nav-link" role="button" :class="{'active' : (current_action == 'login')}" @click="current_action = 'login'">Login</a>
+                            <a class="flex-sm-fill text-sm-center nav-link" role="button" :class="{'active' : (current_action == 'login' || current_action == 'forget')}" @click="current_action = 'login'">Login</a>
                             <a class="flex-sm-fill text-sm-center nav-link" role="button" :class="{'active' : (current_action == 'register')}"  @click="current_action = 'register'">Register</a>
                         </ul>
                         <br>
-                        <div v-if="current_action == 'login'">
-                            <form @submit.prevent="login" action="#">
-                                <div class="mb-3">
-                                    <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" id="floatingInput" placeholder="username" v-model="username">
-                                        <label for="floatingInput">Username</label>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="form-floating">
-                                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password">
-                                        <label for="floatingPassword">Password</label>
-                                    </div>
-                                </div>
-                                <div class="p-3"  v-if="login_error">
-                                    <div class="alert alert-danger" role="alert">
-                                        {{ login_error }}
-                                    </div>
-                                </div>
-                                <div class="d-flex flex-row-reverse bd-highlight">
-                                    <button type="submit" class="btn btn-primary" :class="{'disabled': login_btn}">Login</button>
-                                </div>
-                            </form>
-                        </div>
-                        <div v-else>
+                        <div v-if="current_action == 'register'">
                             <form @submit.prevent="register" action="#">
                                 <div class="mb-3">
                                     <div class="form-floating mb-3">
@@ -86,11 +62,68 @@
                                 </div>
                             </form>
                         </div>
+                        <div v-else>
+                            <div v-if="current_action == 'login'">
+                                <form @submit.prevent="login" action="#">
+                                    <div class="mb-3">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="floatingInput" placeholder="username" v-model="username">
+                                            <label for="floatingInput">Username</label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-floating">
+                                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password">
+                                            <label for="floatingPassword">Password</label>
+                                        </div>
+                                    </div>
+                                    <div class="p-3"  v-if="login_error">
+                                        <div class="alert alert-danger" role="alert">
+                                            {{ login_error }}
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <a role="button" class="text-decoration-none" @click="current_action = 'forget'">Forget Password?</a>
+                                        <button type="submit" class="btn btn-primary" :class="{'disabled': login_btn}">Login</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div v-else>
+                                <form @submit.prevent="forgetPass" action="#">
+                                    <div class="mb-3">
+                                        <div class="form-floating mb-3">
+                                            <input type="email" class="form-control" id="floatingInput" placeholder="username" v-model="forget.email">
+                                            <label for="floatingInput">Email</label>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-8">
+                                            <div class="form-floating">
+                                                <input type="text" class="form-control" id="fcaptcha" placeholder="Captcha" v-model="forget.captcha">
+                                                <label for="fcaptcha">Captcha</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4 position-relative">
+                                            <img :src="forget.captcha_url" class="position-absolute top-50 start-50 translate-middle">
+                                        </div>
+                                    </div>
+                                    <div class="p-3"  v-if="forget.error">
+                                        <div class="alert alert-danger" role="alert">
+                                            {{ forget.error }}
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <a role="button" class="text-decoration-none" @click="current_action = 'login'">Got Password?</a>
+                                        <button type="submit" class="btn btn-primary" :class="{'disabled': forget.btn}">Send Reset Email</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <nav class="navbar navbar-expand-md navbar-light fixed-top" style="background-color: #f4f4f4;">
+        <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
             <div class="container-fluid">
                 <router-link to="/" class="navbar-brand" @click.native="toggle_collapse">{{ nav_brand }}</router-link>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -117,7 +150,7 @@
                     <form class="d-flex">
                         <div v-if="profile != null">
                             <div v-if="profile.data == null">
-                                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="current_action = 'login'">
                                     Login
                                 </button>
                             </div>
@@ -132,7 +165,7 @@
                                         <li><a class="dropdown-item" role="button" @click="to_user">Home</a></li>
                                         <li><a class="dropdown-item" role="button" @click="to_submission">Submissions</a></li>
                                         <li><a class="dropdown-item" role="button" @click="to_setting">Setting</a></li>
-                                        <li><a class="dropdown-item" role="button" href="/admin" v-if="profile.data.user.admin_type == 'Admin' || profile.data.user.admin_type == 'Super Admin'">Management</a></li>
+                                        <li><a class="dropdown-item" role="button" @click="$router.push({ path: '/admin'})" v-if="profile.data.user.admin_type == 'Admin' || profile.data.user.admin_type == 'Super Admin'">Management</a></li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item" role="button" @click="logout">Logout</a></li>
                                     </ul>
@@ -147,7 +180,7 @@
                                         <li><a class="dropdown-item" role="button" @click="to_user">Home</a></li>
                                         <li><a class="dropdown-item" role="button" @click="to_submission">Submissions</a></li>
                                         <li><a class="dropdown-item" role="button" @click="to_setting">Setting</a></li>
-                                        <li><a class="dropdown-item" role="button" href="/admin" v-if="profile.data.user.admin_type == 'Admin' || profile.data.user.admin_type == 'Super Admin'">Management</a></li>
+                                        <li><a class="dropdown-item" role="button" @click="$router.push({ path: '/admin'})" v-if="profile.data.user.admin_type == 'Admin' || profile.data.user.admin_type == 'Super Admin'">Management</a></li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item" role="button" @click="logout">Logout</a></li>
                                     </ul>
@@ -165,6 +198,7 @@
 import Modal from 'bootstrap/js/dist/modal.js'
 import Collapse from 'bootstrap/js/dist/collapse.js'
 import Dropdown from 'bootstrap/js/dist/dropdown.js'
+import storage from '@/util/storage.js'
 
 export default {
     data(){
@@ -189,6 +223,14 @@ export default {
                 password_con: "",
                 captcha: "",
                 captcha_url: ""
+            },
+
+            forget:{
+                email:"",
+                captcha:"",
+                captcha_url: "",
+                error:null,
+                btn: false
             }
         }
     },
@@ -275,10 +317,42 @@ export default {
                 this.LoginModal.toggle()
             })
         },
+        forgetPass(){
+            if(this.forget.email == "" || this.forget.captcha == ""){
+                this.forget.error = "Please fill blanks"
+                this.forget_captcha();
+                this.forget.captcha = ""
+                return
+            }
+            this.forget.btn = true
+            this.forget.error = null
+            this.$http.post(window.location.origin + '/api/apply_reset_password', {captcha: this.forget.captcha, email: this.forget.email})
+            .then((res) => {
+                this.forget.btn = false
+                if(res.data.error){
+                    this.forget.error = res.data.data
+                    this.forget_captcha();
+                    this.forget.captcha = ""
+                    return
+                }
+                this.LoginModal.toggle()
+                this.toggle_collapse()
+                this.$message.success({
+                    message: "Email sent! Please check mailbox",
+                    duration : 1500,
+                    zIndex: 1000000
+                })
+            })
+            .catch((error) => {
+                console.error(error)
+                this.LoginModal.toggle()
+            })
+        },
         logout(){
             this.toggle_collapse()
             this.$http.get(window.location.origin + '/api/logout').then((response) => {
                 this.$store.commit('get_profile', response.data)
+                storage.clear()
                 this.$router.push({ name: 'Home'})
             });
         },
@@ -314,6 +388,12 @@ export default {
             this.$http.get(window.location.origin + '/api/captcha').then((response) => {
                 this.reg.captcha_url = response.data.data
             });
+        },
+        forget_captcha(){
+            this.forget.captcha_url = ""
+            this.$http.get(window.location.origin + '/api/captcha').then((response) => {
+                this.forget.captcha_url = response.data.data
+            });
         }
     },
     watch: {
@@ -336,6 +416,15 @@ export default {
                 this.$http.get(window.location.origin + '/api/captcha').then((response) => {
                     this.reg.captcha_url = response.data.data
                 });
+            }else if(a == 'forget'){
+                this.forget={
+                    email:"",
+                    captcha: "",
+                    captcha_url: ""
+                }
+                this.$http.get(window.location.origin + '/api/captcha').then((response) => {
+                    this.forget.captcha_url = response.data.data
+                });
             }else{
                 this.reg.captcha_url = ""
             }
@@ -343,20 +432,3 @@ export default {
     }
 }
 </script>
-
-<style>
-  .sm-no-display{
-    display: none;
-  }
-  .sm-display{
-    display: block;
-  }
-  @media (min-width: 576px) {
-    .sm-no-display{
-      display: block;
-    }
-    .sm-display{
-      display: none;
-    }
-  }
-</style>
