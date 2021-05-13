@@ -3,6 +3,7 @@ node_modules
 dist
 *.sh
 server.js
+src/scss
 
 # local env files
 .env.local
