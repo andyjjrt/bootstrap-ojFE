@@ -132,19 +132,19 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent" ref="nav_collapse">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <router-link to="/" class="nav-link" @click.native="toggle_collapse" :class="{'active':check_active('Home')}"><i class="bi bi-house" style="padding: 0px 6px;"></i>Home</router-link>
+                            <router-link to="/" class="nav-link text-nowrap" @click.native="toggle_collapse" :class="{'active':check_active('Home')}"><i class="bi bi-house" style="padding: 0px 6px;"></i>Home</router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link to="/problem" class="nav-link" @click.native="toggle_collapse" :class="{'active':check_active('Problem')}"><i class="bi bi-grid-3x3-gap" style="padding: 0px 6px;"></i>Problem</router-link>
+                            <router-link to="/problem" class="nav-link text-nowrap" @click.native="toggle_collapse" :class="{'active':check_active('Problem')}"><i class="bi bi-grid-3x3-gap" style="padding: 0px 6px;"></i>Problem</router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link to="/contest" class="nav-link" @click.native="toggle_collapse" :class="{'active':check_active('Contest')}"><i class="bi bi-trophy" style="padding: 0px 6px;"></i>Contest</router-link>
+                            <router-link to="/contest" class="nav-link text-nowrap" @click.native="toggle_collapse" :class="{'active':check_active('Contest')}"><i class="bi bi-trophy" style="padding: 0px 6px;"></i>Contest</router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link to="/status" class="nav-link" @click.native="toggle_collapse" :class="{'active':check_active('Status')}"><i class="bi bi-graph-up" style="padding: 0px 6px;"></i>Status</router-link>
+                            <router-link to="/status" class="nav-link text-nowrap" @click.native="toggle_collapse" :class="{'active':check_active('Status')}"><i class="bi bi-graph-up" style="padding: 0px 6px;"></i>Status</router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link to="/judger" class="nav-link" @click.native="toggle_collapse" :class="{'active':check_active('Judger')}"><i class="bi bi-info-circle" style="padding: 0px 6px;"></i>Judger</router-link>
+                            <router-link to="/judger" class="nav-link text-nowrap" @click.native="toggle_collapse" :class="{'active':check_active('Judger')}"><i class="bi bi-info-circle" style="padding: 0px 6px;"></i>Judger</router-link>
                         </li>
                     </ul>
                     <form class="d-flex">

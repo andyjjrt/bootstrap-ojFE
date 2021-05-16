@@ -1,10 +1,10 @@
 <template>
     <div class="container">
-        <div class="modal fade" id="AnnounceEditModal" tabindex="-1" aria-labelledby="AnnounceEditModalLabel" aria-hidden="true" ref="announce_modal">
+        <div class="modal fade" id="ProblemModal" tabindex="-1" aria-labelledby="ProblemModalLabel" aria-hidden="true" ref="problem_modal">
             <div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="AnnounceEditModalLabel">Problem</h5>
+                        <h5 class="modal-title" id="ProblemModalLabel">Problem</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" v-if="languages">
@@ -19,15 +19,22 @@
                             </div>
                             <div class="col-sm-12">
                                 <label class="form-label">Description</label>
-                                <Editor v-model="open_problem.description" />
+                                <v-md-editor
+                                    v-model="open_problem.description"
+                                    :disabled-menus="[]"
+                                    :toolbar="toolbar"
+                                    height="400px"
+                                    @upload-image="handleUploadImage"
+                                    left-toolbar="undo redo clear | h bold italic strikethrough quote | ul ol table hr | link image code tip Katex"
+                                />
                             </div>
                             <div class="col-sm-12">
                                 <label class="form-label">Input Description</label>
-                                <Editor v-model="open_problem.input_description" />
+                                <v-md-editor v-model="open_problem.input_description" v-katex height="400px"></v-md-editor>
                             </div>
                             <div class="col-sm-12">
                                 <label class="form-label">Output Description</label>
-                                <Editor v-model="open_problem.output_description" />
+                                <v-md-editor v-model="open_problem.output_description" v-katex height="400px"></v-md-editor>
                             </div>
                             <div class="col-sm-4">
                                 <label class="form-label">Time Limit(ms)</label>
@@ -53,8 +60,8 @@
                             </div>
                             <div class="col-sm-2">
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="Problem_visible" v-model="open_problem.share_submission">
-                                    <label class="form-check-label" for="Problem_visible">Share</label>
+                                    <input class="form-check-input" type="checkbox" id="Problem_share" v-model="open_problem.share_submission">
+                                    <label class="form-check-label" for="Problem_share">Share</label>
                                 </div>
                             </div>
                             <div class="col-sm-8">
@@ -107,19 +114,109 @@
                             </div>
                             <div class="col-sm-12">
                                 <label class="form-label">Hint</label>
-                                <Editor v-model="open_problem.hint" />
+                                <v-md-editor v-model="open_problem.hint" v-katex height="400px"></v-md-editor>
                             </div>
                             <div class="col-sm-12">
                                 <label class="form-label">Code Templates</label>
-                                <div v-for="i in languages.data.languages.length" :key="i">
+                                <div v-for="(v,k) in open_problem.template" :key="'template'+k">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" :value="languages.data.languages[i-1].name" v-model="open_problem.template" :id="'template' + languages.data.languages[i-1].name">
-                                        <label class="form-check-label" :for="'template' + languages.data.languages[i-1].name">
-                                            {{languages.data.languages[i-1].name}}
+                                        <input class="form-check-input" type="checkbox" v-model="v.checked" :id="'template' + k">
+                                        <label class="form-check-label" :for="'template' + k">
+                                            {{k}}
                                         </label>
                                     </div>
-                                    <codemirror v-if="open_problem.template.indexOf(languages.data.languages[i-1].name) != -1" v-model="open_problem_variables.templates[i-1]" :options="open_problem_variables.options[i-1]" />
+                                    <codemirror v-model="v.code" :options="v.option" v-if="v.checked" />
+                                 </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="spjswitch"  v-model="open_problem.spj" disabled>
+                                    <label class="form-check-label" for="spjswitch">Use special judge(maintaining)</label>
                                 </div>
+                            </div>
+                            <div class="col-sm-12" v-if="open_problem.spj">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="form-check form-check-inline" v-for="i in languages.data.spj_languages.length" :key="i">
+                                            <input class="form-check-input" type="radio" :id="'inlineRadio'+i" :value="languages.data.spj_languages[i-1].name" v-model="open_problem.spj_language">
+                                            <label class="form-check-label" :for="'inlineRadio'+i">{{languages.data.spj_languages[i-1].name}}</label>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <codemirror :options="open_problem_spj.options[0]" v-model="open_problem.spj_code" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="form-label">Type</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="type_acm" value="ACM" v-model="open_problem.rule_type">
+                                        <label class="form-check-label" for="type_acm">ACM</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="type_oi" value="OI" v-model="open_problem.rule_type">
+                                        <label class="form-check-label" for="type_oi">OI</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="form-label">IO Mode</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="mode_std" value="Standard IO" v-model="open_problem.io_mode.io_mode">
+                                        <label class="form-check-label" for="mode_std">Standard IO</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="mode_file" value="File IO" v-model="open_problem.io_mode.io_mode">
+                                        <label class="form-check-label" for="mode_file">File IO</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div v-if="open_problem.io_mode.io_mode == 'File IO'">
+                                    <label class="form-label">Input file</label>
+                                    <input type="text" class="form-control" v-model="open_problem.io_mode.input">
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div v-if="open_problem.io_mode.io_mode == 'File IO'">
+                                    <label class="form-label">Output file</label>
+                                    <input type="text" class="form-control" v-model="open_problem.io_mode.output">
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="btn btn-primary">
+                                    <input style="display:none;" type="file" @change="upload_event">
+                                    Upload Testcase
+                                </label>
+                            </div>
+                            <div class="col-sm-12">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Input</th>
+                                            <th scope="col">Output</th>
+                                            <th scope="col">Last</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody v-if="open_problem.test_case_id == ''">
+                                        <tr>
+                                            <td colspan="3" class="text-center">No Data</td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody v-else>
+                                        <tr v-for="testcase in open_problem.test_case_score" :key="testcase.input_name">
+                                            <td class="col-3">{{testcase.input_name}}</td>
+                                            <td class="col-3">{{testcase.output_name}}</td>
+                                            <td class="col-3"><input class="form-control form-control-sm" type="text" v-model="testcase.score" :disabled="open_problem.rule_type == 'ACM'"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="form-label">Source</label>
+                                <input type="text" class="form-control" v-model="open_problem.source" >
                             </div>
                         </div>
                     </div>
@@ -129,11 +226,11 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="AnnouncedeleteModal" tabindex="-1" aria-labelledby="AnnouncedeleteModalLabel" aria-hidden="true" ref="delete_modal">
+        <div class="modal fade" id="ProblemdeleteModal" tabindex="-1" aria-labelledby="ProblemdeleteModalLabel" aria-hidden="true" ref="delete_modal">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="AnnouncedeleteModalLabel">Confirm</h5>
+                        <h5 class="modal-title" id="ProblemdeleteModalLabel">Confirm</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -173,9 +270,9 @@
                                 </div>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#AnnounceEditModal" @click="edit(announce)"><i class="bi bi-pencil-square"></i></button>
+                                <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#ProblemModal" @click="edit(problem)"><i class="bi bi-pencil-square"></i></button>
                                 &nbsp;
-                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#AnnouncedeleteModal" @click="announce_1 = announce"><i class="bi bi-trash"></i></button>
+                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#ProblemdeleteModal" @click="open_problem = problem"><i class="bi bi-trash"></i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -184,7 +281,7 @@
             <br>
             <div class="d-flex justify-content-between">
                 <div>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AnnounceEditModal" @click="create_new">Create</button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ProblemModal" @click="create_new">Create</button>
                 </div>
                 <ul class="pagination">
                     <li class="page-item"><a class="page-link" role="button" @click="to_page(1)"><i class="bi bi-chevron-double-left"></i></a></li>
@@ -206,11 +303,30 @@ import 'codemirror/mode/go/go.js'
 import 'codemirror/theme/solarized.css'
 
 import Modal from 'bootstrap/js/dist/modal.js'
-import Editor from '@/views/Admin/components/Editor.vue'
+
 export default {
-    name:"EditAnnounce",
+    name:"EditProblem",
     data(){
         return{
+            toolbar : {
+                Katex: {
+                    title: 'Katex',
+                    icon: 'v-md-icon-code',
+                    action(editor) {
+                    editor.insert(function (selected) {
+                        const prefix = '$';
+                        const suffix = '$';
+                        const placeholder = 'Katex';
+                        const content = selected || placeholder;
+
+                        return {
+                        text: `${prefix}${content}${suffix}`,
+                        selected: content,
+                        };
+                    });
+                    },
+                },
+            },
             problems: null,
             languages: null,
             total: 0,
@@ -229,28 +345,43 @@ export default {
                 tags:[],
                 samples:[{input:"", output:""}],
                 hint:"",
-                template:[]
+                template:{},
+                spj:false,
+                spj_language:"",
+                spj_code:"",
+                rule_type:"ACM",
+                io_mode:{
+                    io_mode: 'Standard IO',
+                    input: 'input.txt',
+                    output: 'output.txt'
+                },
+                test_case_id: "",
+                test_case_score: [],
+                source:""
             },
             open_problem_variables:{
                 tmp_tag:"",
                 templates:[],
-                options:[]
+                options:[],
+                testCaseUploaded:false
+            },
+            open_problem_spj:{
+                options:[],
             },
             mode:"create",
-            AnnounceModal: null,
+            ProblemModal: null,
             DeleteModal: null,
             page:1,
         }
     },
     components:{
-        Editor,
         codemirror
     },
     created(){
         this.init()
     },
     mounted(){
-        this.AnnounceModal = new Modal(this.$refs.announce_modal)
+        this.ProblemModal = new Modal(this.$refs.problem_modal)
         this.DeleteModal = new Modal(this.$refs.delete_modal)
     },
     methods:{
@@ -261,36 +392,64 @@ export default {
             });
             this.$http.get(window.location.origin + '/api/languages').then(response => {
                 this.languages = response.data
-                for(let i in this.languages.data.languages){
-                    this.open_problem_variables.templates.push(this.languages.data.languages[i].config.template)
-                    this.open_problem_variables.options.push({
-                        theme: "solarized",
-                        lineNumbers: true,
-                        mode: this.languages.data.languages[i].content_type,
-                        tabSize: 4
-                    })
-                }
             });
         },
-        edit(announce){
-            this.announce_1 = announce
+        reset_problem(){
+            this.open_problem = {
+                title:"",
+                _id:"",
+                description:"",
+                input_description:"",
+                output_description:"",
+                time_limit:"1000",
+                memory_limit:"256",
+                difficulty:"Low",
+                share_submission:false,
+                visible:true,
+                languages: [],
+                tags:[],
+                samples:[{input:"", output:""}],
+                hint:"",
+                template:{},
+                spj:false,
+                spj_language:"",
+                spj_code:"",
+                rule_type:"ACM",
+                io_mode:{
+                    io_mode: 'Standard IO',
+                    input: 'input.txt',
+                    output: 'output.txt'
+                },
+                test_case_id: "",
+                test_case_score: [],
+                source:""
+            }
+            this.open_problem_variables.tmp_tag = ""
+            this.open_problem_variables.testCaseUploaded = false
+        },
+        edit(problem){
+            this.open_problem = JSON.parse(JSON.stringify(problem))
+            this.problem_language()
             this.mode = "edit"
         },
         create_new(){
-            this.announce_1 = {
-                title:"",
-                content:"",
-                visible:true,
-                id: null
-            }
+            this.reset_problem()
+            this.problem_language()
             this.mode = "create"
         },
         save(){
+            let temp = {}
+            for(let lan in this.open_problem.template){
+                if(this.open_problem.template[lan].checked){
+                    temp[lan] = this.open_problem.template[lan].code
+                }
+            }
+            this.open_problem.template = JSON.parse(JSON.stringify(temp))
             if(this.mode == "edit" || this.mode == "vis"){
-                this.$http.put(window.location.origin + '/api/admin/announcement', this.announce_1).then(response => {
+                this.$http.put(window.location.origin + '/api/admin/problem', this.open_problem).then(response => {
                     if(!response.data.error){
                         if(this.mode == "edit"){
-                            this.AnnounceModal.toggle();
+                            this.ProblemModal.toggle();
                         }
                         this.$message.success({
                             message: "Succeed",
@@ -307,9 +466,9 @@ export default {
                     }
                 });
             }else{
-                this.$http.post(window.location.origin + '/api/admin/announcement', this.announce_1).then(response => {
+                this.$http.post(window.location.origin + '/api/admin/problem', this.open_problem).then(response => {
                     if(!response.data.error){
-                        this.AnnounceModal.toggle();
+                        this.ProblemModal.toggle();
                         this.$message.success({
                             message: "Succeed",
                             duration : 1500,
@@ -326,13 +485,13 @@ export default {
                 });
             }
         },
-        visible(announce){
-            this.announce_1 = announce
+        visible(problem){
+            this.open_problem = problem
             this.mode="vis"
             this.save();
         },
         delete_id(){
-            this.$http.delete(window.location.origin + '/api/admin/announcement?id=' + this.announce_1.id).then(response => {
+            this.$http.delete(window.location.origin + '/api/admin/problem?id=' + this.open_problem.id).then(response => {
                 if(!response.data.error){
                     this.DeleteModal.toggle()
                     this.$message.success({
@@ -364,12 +523,81 @@ export default {
                     duration : 1500,
                     zIndex: 1000000
                 })
+                return
             }
             this.$http.get(window.location.origin + '/api/problem/tags?keyword=' + this.open_problem_variables.tmp_tag).then(() => {
                 this.open_problem.tags.push(this.open_problem_variables.tmp_tag)
                 this.open_problem_variables.tmp_tag = ""
             })
-        }
+        },
+        upload_event(e){
+            let formData = new FormData();
+            formData.append("file", e.target.files[0]);
+            formData.append("spj", this.open_problem.spj)
+            this.$http.post(window.location.origin + '/api/admin/test_case',formData).then(response => {
+                if (response.data.error) {
+                    this.$message.error({
+                        message: response.data.data,
+                        duration : 1500,
+                        zIndex: 1000000
+                    })
+                    return
+                }
+                this.open_problem.test_case_id = response.data.data.id
+                let fileList = response.data.data.info
+                for (let file in fileList) {
+                    fileList[file].score = (100 / fileList.length).toFixed(0)
+                    if (!fileList[file].output_name && this.open_problem.spj) {
+                        fileList[file].output_name = '-'
+                    }
+                }
+                this.open_problem.test_case_score = fileList
+                this.open_problem_variables.testCaseUploaded = true
+            })
+        },
+        problem_language(){
+            let data = new Object
+            // use deep copy to avoid infinite loop
+            for (let i in this.languages.data.languages) {
+                let item = this.languages.data.languages[i].name
+                let langConfig = this.languages.data.languages[i]
+                let opt = {
+                    theme: "solarized",
+                    lineNumbers: true,
+                    mode: langConfig.content_type,
+                    tabSize: 4
+                }
+                if (this.open_problem.template[item] === undefined) {
+                    data[item] = {checked: false, code: langConfig.config.template, option: opt}
+                } else {
+                    data[item] = {checked: true, code: this.open_problem.template[item], option: opt}
+                }
+            }
+            this.open_problem.template = data
+        },
+        handleUploadImage(event, insertImage, files) {
+            // Get the files and upload them to the file server, then insert the corresponding content into the editor
+            console.log(files);
+            let formData = new FormData();
+            formData.append("original_filename", files[0].name);
+            formData.append("image", files[0]);
+            this.$http.post(window.location.origin + '/api/admin/upload_image',formData).then(response => {
+                if(response.data.success){
+                    insertImage({
+                        url: response.data.file_path,
+                        desc: files[0].name,
+                        width: 'auto',
+                        height: 'auto',
+                    });
+                }
+            })
+            // Here is just an example
+        },
+    },
+    beforeRouteLeave(to, from, next) {
+        this.ProblemModal.hide()
+        this.DeleteModal.hide()
+        next()
     }
 }
 </script>

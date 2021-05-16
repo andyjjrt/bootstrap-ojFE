@@ -23,6 +23,7 @@
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                             <li><router-link :to="'/admin/users'" class="link-dark rounded" :class="{'active':check_active('Users')}">Users</router-link></li>
                                             <li><router-link :to="'/admin/announce'" class="link-dark rounded" :class="{'active':check_active('Announce')}">Announce</router-link></li>
+                                            <li><router-link :to="'/admin/config'" class="link-dark rounded" :class="{'active':check_active('Config')}">Config</router-link></li>
                                         </ul>
                                     </div>
                                 </li>

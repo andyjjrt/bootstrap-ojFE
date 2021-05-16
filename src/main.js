@@ -7,6 +7,20 @@ import Message from 'vue-m-message'
 import Katex from 'vue-katex-auto-render'
 import VueClipboard from 'vue-clipboard2'
 
+import VueMarkdownEditor from '@kangc/v-md-editor';
+import '@/css/base-editor.css';
+import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
+import createTipPlugin from '@kangc/v-md-editor/lib/plugins/tip/index';
+import '@/css/vuepress.css';
+import '@kangc/v-md-editor/lib/plugins/tip/tip.css';
+import createKatexPlugin from '@kangc/v-md-editor/lib/plugins/katex/cdn';
+
+VueMarkdownEditor.use(createKatexPlugin());
+VueMarkdownEditor.use(createTipPlugin());
+VueMarkdownEditor.use(vuepressTheme);
+
+Vue.use(VueMarkdownEditor);
+
 import 'vue-m-message/dist/index.css'
 import "@/scss/bootstrap-5.0.0/scss/bootstrap.scss";
 
@@ -48,6 +62,7 @@ Vue.directive('highlightjs', {
     })
   }
 })
+
 
 new Vue({
   router,

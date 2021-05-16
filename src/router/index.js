@@ -28,6 +28,7 @@ const Setting_Security = () => import(/* webpackChunkName: "setting" */'../views
 const Admin_General = () => import(/* webpackChunkName: "admin" */'../views/Admin/General.vue')
 const Admin_Users = () => import(/* webpackChunkName: "admin" */'../views/Admin/Users.vue')
 const Admin_Announce = () => import(/* webpackChunkName: "admin" */'../views/Admin/Announce.vue')
+const Admin_Config = () => import(/* webpackChunkName: "admin" */'../views/Admin/Config.vue')
 const Admin_Problem = () => import(/* webpackChunkName: "admin" */'../views/Admin/Problem.vue')
 
 Vue.use(VueRouter)
@@ -205,6 +206,15 @@ const routes = [
         }
       },
       {
+        path: 'config',
+        name: 'Config',
+        component: Admin_Config,
+        meta:{
+          title: 'Admin',
+          admin: 'Config'
+        }
+      },
+      {
         path: 'problem',
         name: 'PublicProblem',
         component: Admin_Problem,
@@ -247,6 +257,5 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
-
 
 export default router

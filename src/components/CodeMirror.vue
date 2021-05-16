@@ -63,7 +63,7 @@ import storage from '@/util/storage.js'
         this.code_language = problemCode.language
       }
       if(this.problem.data.my_status == 0){
-        this.status_indicater = '<span class="badge bg-success fw-light">Solved</span>'
+        this.status_indicater = '<span class="badge bg-success">Solved</span>'
       }
 
       if(this.code != ''){
@@ -96,12 +96,12 @@ import storage from '@/util/storage.js'
         this.$http.post(window.location.origin + '/api/submission', param)
         .then((res) => {
           if(res.data.error){
-            this.status_indicater = '<span class="badge bg-danger fw-light">' + res.data.data + '</span>'
+            this.status_indicater = '<span class="badge bg-danger">' + res.data.data + '</span>'
             this.on_submit = false
           }else{
             let vm = this
             this.submission_id_pass = res.data.data.submission_id
-            this.status_indicater = '<span class="fw-light badge bg-' + this.$store.state.status_list[9].type + '">' + this.$store.state.status_list[9].name + '</span>'
+            this.status_indicater = '<span class="badge bg-' + this.$store.state.status_list[9].type + '">' + this.$store.state.status_list[9].name + '</span>'
             this.ticker = window.setInterval(function(){vm.get_submit_status(res.data.data.submission_id)}, 1000)
           }
         })
@@ -111,7 +111,7 @@ import storage from '@/util/storage.js'
       },
       get_submit_status(id){
         this.$http.get(window.location.origin + '/api/submission?id=' + id).then(response => {
-          this.status_indicater = '<span class="fw-light badge bg-' + this.$store.state.status_list[response.data.data.result].type + '">' + this.$store.state.status_list[response.data.data.result].name + '</span>'
+          this.status_indicater = '<span class="badge bg-' + this.$store.state.status_list[response.data.data.result].type + '">' + this.$store.state.status_list[response.data.data.result].name + '</span>'
           if(response.data.data.result != 7 && response.data.data.result != 9){
             window.clearInterval(this.ticker)
             this.$http.get(window.location.origin + "/api/profile").then((response) => {

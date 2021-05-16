@@ -3,18 +3,18 @@
         <div v-if="problem">
             <div class="row" v-if="!problem.error">
                 <div class="col-md-9">
-                    <div class="card card-body">
+                    <div class="card card-body" v-katex>
                         <div>
                             <h3>{{problem.data.title}}</h3>
                             <span class="float-end" v-if="problem.data.source">{{problem.data.source}}</span>
                         </div>
                         <hr>
                         <h4>Description</h4>
-                        <p v-html="problem.data.description" class="p-4 text-wrap codeder" v-katex style="background-color: #f3f3f3;"></p>
+                        <v-md-editor :value="problem.data.description" mode="preview"></v-md-editor>
                         <h4>Input</h4>
-                        <p v-html="problem.data.input_description" class="p-4 text-wrap codeder" v-katex style="background-color: #f3f3f3;"></p>
+                        <v-md-editor :value="problem.data.input_description" mode="preview"></v-md-editor>
                         <h4>Output</h4>
-                        <p v-html="problem.data.output_description" class="p-4 text-wrap codeder" v-katex style="background-color: #f3f3f3;"></p>
+                        <v-md-editor :value="problem.data.output_description" mode="preview"></v-md-editor>
                         <div class="row" v-for="tests in problem.data.samples" :key="tests.input">
                             <div class="col-6">
                                 <h4>
@@ -29,17 +29,17 @@
                             </div>
                         </div>
                         <h4 v-if="problem.data.hint != ''">Hint</h4>
-                        <p  v-if="problem.data.hint != ''" v-html="problem.data.hint" class="p-4 text-wrap codeder" v-katex style="background-color: #f3f3f3;"></p>
+                        <v-md-editor v-if="problem.data.hint != ''" :value="problem.data.hint" mode="preview"></v-md-editor>
                         <CodeMirror :problem="problem" :type="type" class="p-2"/>
                     </div>
                 </div>
                 <div class="col-3 md-no-display">
                     <div class="list-group">
                         <button type="button" class="list-group-item list-group-item-action" @click="$router.push({ path: '/contest/' + $route.params.id +  '/status', query: { problem_id: problem.data._id}})" v-if="type == 'contest'">
-                            <div class="p-1"><i class="bi bi-list-task"></i> Submissions</div>
+                            <div class="p-1 text-nowrap"><i class="bi bi-list-task"></i> Submissions</div>
                         </button>
                         <button type="button" class="list-group-item list-group-item-action" @click="$router.push({ path: '/status', query: { problem_id: problem.data._id}})" v-else>
-                            <div class="p-1"><i class="bi bi-list-task"></i> Submissions</div>
+                            <div class="p-1 text-nowrap"><i class="bi bi-list-task"></i> Submissions</div>
                         </button>
                     </div>
                     <br>
@@ -48,26 +48,26 @@
                             <i class="bi bi-info-circle"></i> Information
                         </div>
                         <div class="card-body">
-                            <ul class="list-group list-group-flush" style="font-size: smaller;">
+                            <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span>ID</span>
-                                    <span>{{problem.data._id}}</span>
+                                    <span style="font-size: smaller;">{{problem.data._id}}</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span><i class="bi bi-clock"></i></span>
-                                    <span>{{problem.data.time_limit}}ms</span>
+                                    <span style="font-size: smaller;">{{problem.data.time_limit}}ms</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span><i class="bi bi-hdd"></i></span>
-                                    <span>{{problem.data.memory_limit}}MB</span>
+                                    <span style="font-size: smaller;">{{problem.data.memory_limit}}MB</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span><i class="bi bi-code-slash"></i></span>
-                                    <span>{{problem.data.io_mode.io_mode}}</span>
+                                    <span style="font-size: smaller;">{{problem.data.io_mode.io_mode}}</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span><i class="bi bi-person-circle"></i></span>
-                                    <span>{{problem.data.created_by.username}}</span>
+                                    <span style="font-size: smaller;">{{problem.data.created_by.username}}</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span><i class="bi bi-star"></i></span>
