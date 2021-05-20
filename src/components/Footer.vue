@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="text-center" style="font-size: 0.9em;">
+        <div class="text-center" style="font-size: 0.7em;">
             <span v-html="footer"></span>
             <br>
             <span>

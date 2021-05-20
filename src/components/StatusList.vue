@@ -51,12 +51,12 @@
                                     <td class="col-3 d-none d-md-block">{{date_format(new Date(stat.create_time))}}</td>
                                     <td class="col-2 d-none d-md-block">
                                         <span v-if="stat.show_link" role="button" @click="$router.push({ name: 'Submission', params: { submission_id:stat.id }})">
-                                            <span class="d-none d-lg-block" :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].name}}</span>
-                                            <span class="d-block d-lg-none" :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span>
+                                            <span class="d-none d-lg-block"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].name}}</span></span>
+                                            <span class="d-block d-lg-none"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span></span>
                                         </span>
                                         <span v-else>
-                                            <span class="d-none d-lg-block" :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].name}}</span>
-                                            <span class="d-block d-lg-none" :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span>
+                                            <span class="d-none d-lg-block"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].name}}</span></span>
+                                            <span class="d-block d-lg-none"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span></span>
                                         </span>
                                     </td>
                                     <td class="col-2 d-none d-lg-block">
@@ -75,10 +75,10 @@
                                     <td class="col-4 d-block d-md-none"><span>{{date_format2(new Date(stat.create_time))}}</span></td>
                                     <td class="col-3 d-block d-md-none">
                                         <span v-if="stat.show_link" role="button" @click="$router.push({ name: 'Submission', params: { submission_id:stat.id }})">
-                                            <span class="d-block" :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span>
+                                            <span class="d-block"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span></span>
                                         </span>
                                         <span v-else>
-                                            <span class="d-block" :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span>
+                                            <span class="d-block"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span></span>
                                         </span>
                                     </td>
                                     <td class="col-5 d-block d-md-none">

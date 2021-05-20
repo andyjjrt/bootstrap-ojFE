@@ -12,7 +12,7 @@ import '@/css/base-editor.css';
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
 import createTipPlugin from '@kangc/v-md-editor/lib/plugins/tip/index';
 import '@/css/vuepress.css';
-import '@kangc/v-md-editor/lib/plugins/tip/tip.css';
+import '@/css/tip.css';
 import createKatexPlugin from '@kangc/v-md-editor/lib/plugins/katex/cdn';
 
 VueMarkdownEditor.use(createKatexPlugin());

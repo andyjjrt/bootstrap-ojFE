@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div>
         <div class="modal fade" id="ProblemModal" tabindex="-1" aria-labelledby="ProblemModalLabel" aria-hidden="true" ref="problem_modal">
             <div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable">
                 <div class="modal-content">
@@ -30,11 +30,25 @@
                             </div>
                             <div class="col-sm-12">
                                 <label class="form-label">Input Description</label>
-                                <v-md-editor v-model="open_problem.input_description" v-katex height="400px"></v-md-editor>
+                                <v-md-editor
+                                    v-model="open_problem.input_description"
+                                    :disabled-menus="[]"
+                                    :toolbar="toolbar"
+                                    height="400px"
+                                    @upload-image="handleUploadImage"
+                                    left-toolbar="undo redo clear | h bold italic strikethrough quote | ul ol table hr | link image code tip Katex"
+                                />
                             </div>
                             <div class="col-sm-12">
                                 <label class="form-label">Output Description</label>
-                                <v-md-editor v-model="open_problem.output_description" v-katex height="400px"></v-md-editor>
+                                <v-md-editor
+                                    v-model="open_problem.output_description"
+                                    :disabled-menus="[]"
+                                    :toolbar="toolbar"
+                                    height="400px"
+                                    @upload-image="handleUploadImage"
+                                    left-toolbar="undo redo clear | h bold italic strikethrough quote | ul ol table hr | link image code tip Katex"
+                                />
                             </div>
                             <div class="col-sm-4">
                                 <label class="form-label">Time Limit(ms)</label>
@@ -114,7 +128,14 @@
                             </div>
                             <div class="col-sm-12">
                                 <label class="form-label">Hint</label>
-                                <v-md-editor v-model="open_problem.hint" v-katex height="400px"></v-md-editor>
+                                <v-md-editor
+                                    v-model="open_problem.hint"
+                                    :disabled-menus="[]"
+                                    :toolbar="toolbar"
+                                    height="400px"
+                                    @upload-image="handleUploadImage"
+                                    left-toolbar="undo redo clear | h bold italic strikethrough quote | ul ol table hr | link image code tip Katex"
+                                />
                             </div>
                             <div class="col-sm-12">
                                 <label class="form-label">Code Templates</label>
@@ -234,11 +255,67 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to delete this announcement?
+                        Are you sure you want to delete this problem?
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-danger" @click="delete_id">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="AddPublicProblemModal" tabindex="-1" aria-labelledby="AddPublicProblemModalLabel" aria-hidden="true" ref="add_public_modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="AddPublicProblemModalLabel">Add Problem from Public</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table text-nowrap table-hover" v-if="contest.public_problems">
+                            <thead>
+                                <tr>
+                                    <th class="col-4">#</th>
+                                    <th class="col-4">Display ID</th>
+                                    <th class="col-4">Title</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="p in contest.public_problems.data.results" :key="p.id" role="button" @click="contest.select_import = p" :class="{'table-primary': contest.select_import == p}" class=" text-black">
+                                    <td class="col-4">{{p.id}}</td>
+                                    <td class="col-4">{{p._id}}</td>
+                                    <td class="col-4">{{p.title}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-body">
+                        <div v-if="contest.select_import">
+                            <div class="mb-3">
+                                <label class="form-label">Display ID for the contest problem</label>
+                                <input type="text" class="form-control" placeholder="Display ID" v-model="contest.display_id">
+                            </div>
+                            <button type="button" class="btn btn-primary float-end" @click="add_problem_from_public">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="MakePublicProblemModal" tabindex="-1" aria-labelledby="MakePublicProblemModalLabel" aria-hidden="true" ref="make_public_modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="MakePublicProblemModalLabel">Make Problem Public</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <div class="mb-3">
+                                <label class="form-label">Display ID for the problem</label>
+                                <input type="text" class="form-control" placeholder="Display ID" v-model="make_public_problem.display_id">
+                            </div>
+                            <button type="button" class="btn btn-primary float-end" @click="make_problem_public">Add</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -270,10 +347,17 @@
                                 </div>
                             </td>
                             <td>
+                                <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#MakePublicProblemModal" @click="make_public_problem.problem = problem" v-if="$route.params.manage_contest_id != undefined"><i class="bi bi-upload"></i></button>
+                                &nbsp;
                                 <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#ProblemModal" @click="edit(problem)"><i class="bi bi-pencil-square"></i></button>
+                                &nbsp;
+                                <button class="btn btn-sm btn-outline-primary" @click="downloadTestCase(problem.id)"><i class="bi bi-cloud-arrow-down"></i></button>
                                 &nbsp;
                                 <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#ProblemdeleteModal" @click="open_problem = problem"><i class="bi bi-trash"></i></button>
                             </td>
+                        </tr>
+                        <tr v-if="problems.data.results.length == 0">
+                            <td colspan="7" class="text-center">No Data</td>
                         </tr>
                     </tbody>
                 </table>
@@ -281,7 +365,8 @@
             <br>
             <div class="d-flex justify-content-between">
                 <div>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ProblemModal" @click="create_new">Create</button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ProblemModal" @click="create_new"><i class="bi bi-plus"></i> Create</button>&nbsp;
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AddPublicProblemModal" @click="create_new" v-if="$route.params.manage_contest_id != undefined"><i class="bi bi-plus"></i> Add Public Problem</button>
                 </div>
                 <ul class="pagination">
                     <li class="page-item"><a class="page-link" role="button" @click="to_page(1)"><i class="bi bi-chevron-double-left"></i></a></li>
@@ -328,6 +413,15 @@ export default {
                 },
             },
             problems: null,
+            contest:{
+                public_problems: null,
+                select_import: null,
+                display_id:""
+            },
+            make_public_problem:{
+                display_id:"",
+                problem: null
+            },
             languages: null,
             total: 0,
             open_problem:{
@@ -371,22 +465,40 @@ export default {
             mode:"create",
             ProblemModal: null,
             DeleteModal: null,
+            AddPublicProblemModal: null,
+            MakePublicProblemModal: null,
             page:1,
+            url:"/api/admin/problem"
         }
+    },
+    props:{
+        contest_rule: String
     },
     components:{
         codemirror
     },
     created(){
+        if(this.$route.params.manage_contest_id != undefined){
+            this.url = '/api/admin/contest/problem'
+        }
         this.init()
     },
     mounted(){
         this.ProblemModal = new Modal(this.$refs.problem_modal)
         this.DeleteModal = new Modal(this.$refs.delete_modal)
+        this.AddPublicProblemModal = new Modal(this.$refs.add_public_modal)
+        this.MakePublicProblemModal = new Modal(this.$refs.make_public_modal)
     },
     methods:{
         init(){
-            this.$http.get(window.location.origin + '/api/admin/problem?offset=' + this.offset + '&limit=10').then(response => {
+            let tmp = "?offset=" + this.offset + "&limit=10"
+            if(this.$route.params.manage_contest_id != undefined){
+                tmp += '&contest_id=' + this.$route.params.manage_contest_id
+                this.$http.get(window.location.origin + '/api/admin/problem?rule_type=' + this.contest_rule).then(response => {
+                    this.contest.public_problems = response.data
+                });
+            }
+            this.$http.get(window.location.origin + this.url + tmp).then(response => {
                 this.problems = response.data
                 this.total = response.data.data.total
             });
@@ -445,8 +557,11 @@ export default {
                 }
             }
             this.open_problem.template = JSON.parse(JSON.stringify(temp))
+            if(this.$route.params.manage_contest_id != undefined){
+                this.open_problem.contest_id = this.$route.params.manage_contest_id
+            }
             if(this.mode == "edit" || this.mode == "vis"){
-                this.$http.put(window.location.origin + '/api/admin/problem', this.open_problem).then(response => {
+                this.$http.put(window.location.origin + this.url, this.open_problem).then(response => {
                     if(!response.data.error){
                         if(this.mode == "edit"){
                             this.ProblemModal.toggle();
@@ -466,7 +581,7 @@ export default {
                     }
                 });
             }else{
-                this.$http.post(window.location.origin + '/api/admin/problem', this.open_problem).then(response => {
+                this.$http.post(window.location.origin + this.url, this.open_problem).then(response => {
                     if(!response.data.error){
                         this.ProblemModal.toggle();
                         this.$message.success({
@@ -491,7 +606,7 @@ export default {
             this.save();
         },
         delete_id(){
-            this.$http.delete(window.location.origin + '/api/admin/problem?id=' + this.open_problem.id).then(response => {
+            this.$http.delete(window.location.origin + this.url + '?id=' + this.open_problem.id).then(response => {
                 if(!response.data.error){
                     this.DeleteModal.toggle()
                     this.$message.success({
@@ -520,6 +635,14 @@ export default {
             if(this.open_problem_variables.tmp_tag == ""){
                 this.$message.error({
                     message: "Please give tag name.",
+                    duration : 1500,
+                    zIndex: 1000000
+                })
+                return
+            }
+            if(this.open_problem.tags.indexOf(this.open_problem_variables.tmp_tag) != -1){
+                this.$message.error({
+                    message: "Duplicated tag",
                     duration : 1500,
                     zIndex: 1000000
                 })
@@ -593,6 +716,108 @@ export default {
             })
             // Here is just an example
         },
+        downloadTestCase (problemID) {
+            let url = '/api/admin/test_case?problem_id=' + problemID
+            // eslint-disable-next-line no-unused-vars
+            new Promise((resolve, reject) => {
+                this.$http.get(url, {responseType: 'blob'}).then(resp => {
+                    let headers = resp.headers
+                    if (headers['content-type'].indexOf('json') !== -1) {
+                        let fr = new window.FileReader()
+                        if (resp.data.error) {
+                            this.$message.error({
+                                message: resp.data.error,
+                                duration : 1500,
+                                zIndex: 1000000
+                            })
+                        } else {
+                            this.$message.error({
+                                message: 'Invalid file format',
+                                duration : 1500,
+                                zIndex: 1000000
+                            })
+                        }
+                        fr.onload = (event) => {
+                            let data = JSON.parse(event.target.result)
+                            if (data.error) {
+                                this.$message.error({
+                                    message: data.data,
+                                    duration : 1500,
+                                    zIndex: 1000000
+                                })
+                            } else {
+                                this.$message.error({
+                                    message: 'Invalid file format',
+                                    duration : 1500,
+                                    zIndex: 1000000
+                                })
+                            }
+                        }
+                        let b = new window.Blob([resp.data], {type: 'application/json'})
+                        fr.readAsText(b)
+                        return
+                    }
+                    let link = document.createElement('a')
+                    link.href = window.URL.createObjectURL(new window.Blob([resp.data], {type: headers['content-type']}))
+                    link.download = (headers['content-disposition'] || '').split('filename=')[1]
+                    document.body.appendChild(link)
+                    link.click()
+                    link.remove()
+                    resolve()
+                }).catch(() => {})
+            })
+        },
+        add_problem_from_public(){
+            let param = {
+                contest_id: this.$route.params.manage_contest_id,
+                display_id: this.contest.display_id,
+                problem_id: this.contest.select_import.id
+            }
+            this.$http.post(window.location.origin + '/api/admin/contest/add_problem_from_public', param).then(response => {
+                if(!response.data.error){
+                    this.AddPublicProblemModal.toggle();
+                    this.contest.select_import = null
+                    this.contest.display_id = ""
+                    this.$message.success({
+                        message: "Succeed",
+                        duration : 1500,
+                        zIndex: 1000000
+                    })
+                    this.init();
+                }else{
+                    this.$message.error({
+                        message: response.data.data,
+                        duration : 1500,
+                        zIndex: 1000000
+                    })
+                }
+            });
+        },
+        make_problem_public(){
+            let param = {
+                id: this.make_public_problem.problem.id,
+                display_id: this.make_public_problem.display_id,
+            }
+            console.log(param)
+            this.$http.post(window.location.origin + '/api/admin/contest_problem/make_public', param).then(response => {
+                if(!response.data.error){
+                    this.$message.success({
+                        message: "Succeed",
+                        duration : 1500,
+                        zIndex: 1000000
+                    })
+                    this.init();
+                }else{
+                    this.$message.error({
+                        message: response.data.data,
+                        duration : 1500,
+                        zIndex: 1000000
+                    })
+                }
+                this.MakePublicProblemModal.toggle();
+                this.make_public_problem.display_id = ""
+            });
+        }
     },
     beforeRouteLeave(to, from, next) {
         this.ProblemModal.hide()

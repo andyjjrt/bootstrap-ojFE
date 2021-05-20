@@ -1,14 +1,11 @@
 <template>
     <div v-if="profile" class="container-fluid">
         <div v-if="profile.user.admin_type == 'Admin' || profile.user.admin_type == 'Super Admin'">
-            <div class="alert alert-primary" role="alert">
-                admin開發中，原admin<a href="https://oj.ebg.tw/admin" class="link-primary">請按我</a>
-            </div>
             <div class="d-none d-md-block d-lg-block d-xl-block d-xxl-block">
                 <div class="row">
                     <div class="col-3">
                         <div class="p-3 bg-white">
-                            <span class="d-flex pb-3 mb-3 border-bottom fs-5 fw-semibold">Collapsible</span>
+                            <span class="d-flex pb-3 mb-3 border-bottom fs-5 fw-semibold">Admin</span>
                             <ul class="list-unstyled ps-0">
                                 <li class="mb-1 btn-toggle-nav">
                                     <router-link :to="'/admin'" class="link-dark rounded fw-bold" :class="{'active':check_active('DashBoard')}">Dash Board</router-link>
@@ -31,6 +28,11 @@
                             <ul class="list-unstyled ps-0">
                                 <li class="mb-1 btn-toggle-nav">
                                     <router-link :to="'/admin/problem'" class="link-dark rounded fw-bold" :class="{'active':check_active('Problem')}">Problem</router-link>
+                                </li>
+                            </ul>
+                            <ul class="list-unstyled ps-0">
+                                <li class="mb-1 btn-toggle-nav">
+                                    <router-link :to="'/admin/contest'" class="link-dark rounded fw-bold" :class="{'active':check_active('ContestList')}">Contest</router-link>
                                 </li>
                             </ul>
                         </div>

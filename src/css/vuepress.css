@@ -351,6 +351,11 @@
 .vuepress-markdown-body p a code {
   color: #3eaf7c;
 }
+
+.vuepress-markdown-body a:hover {
+  color: #2e835d;
+}
+
 .vuepress-markdown-body p a code {
   font-weight: 400;
 }
@@ -392,8 +397,7 @@
   margin: 0.67em 0;
   font-size: 2.2rem;
 }
-.vuepress-markdown-body > :last-child,
-.vuepress-markdown-body > :last-child > :last-child {
+.vuepress-markdown-body > :last-child {
   margin-bottom: 0 !important;
 }
 .vuepress-markdown-body h2 {

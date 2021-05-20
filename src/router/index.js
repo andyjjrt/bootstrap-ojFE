@@ -30,6 +30,8 @@ const Admin_Users = () => import(/* webpackChunkName: "admin" */'../views/Admin/
 const Admin_Announce = () => import(/* webpackChunkName: "admin" */'../views/Admin/Announce.vue')
 const Admin_Config = () => import(/* webpackChunkName: "admin" */'../views/Admin/Config.vue')
 const Admin_Problem = () => import(/* webpackChunkName: "admin" */'../views/Admin/Problem.vue')
+const Admin_ContestList = () => import(/* webpackChunkName: "admin" */'../views/Admin/ContestList.vue')
+const Admin_Contest = () => import(/* webpackChunkName: "admin" */'../views/Admin/Contest.vue')
 
 Vue.use(VueRouter)
 
@@ -221,6 +223,24 @@ const routes = [
         meta:{
           title: 'Admin',
           admin: 'Problem'
+        }
+      },
+      {
+        path: 'contest',
+        name: 'PublicContest',
+        component: Admin_ContestList,
+        meta:{
+          title: 'Admin',
+          admin: 'ContestList'
+        }
+      },
+      {
+        path: 'contest/:manage_contest_id',
+        name: 'ManageContest',
+        component: Admin_Contest,
+        meta:{
+          title: 'Admin',
+          admin: 'Contest'
         }
       },
     ],
