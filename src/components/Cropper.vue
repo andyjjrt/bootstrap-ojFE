@@ -60,11 +60,7 @@ export default {
             const file = e.target.files[0]
             const reader = new FileReader();
             if (file.type.indexOf('image/') === -1) {
-                this.$message.error({
-                    message: "Please upload an image",
-                    duration : 1500,
-                    zIndex: 1000000
-                })
+                this.$error("Please upload an image")
                 return;
             }
             reader.onload = (event) => {
@@ -81,11 +77,7 @@ export default {
                 let form = new window.FormData()
                 let file = new window.File([blob], 'avatar.png')
                 if (file.size > 1 * 1024 * 1024){
-                    this.$message.error({
-                        message: "Upload limit is 1MB",
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$error("Upload limit is 1MB")
                     this.uploading = false
                     return
                 }
@@ -97,18 +89,9 @@ export default {
                     headers: {'content-type': 'multipart/form-data'}
                 }).then(res => {
                     if(res.data.error){
-                        this.$message.error({
-                            message: res.data.data,
-                            duration : 1500,
-                            zIndex: 1000000
-                        })
+                        this.$error(res.data.data)
                     }else{
-                        this.$message.success({
-                            message: "Upload successful",
-                            duration : 1500,
-                            zIndex: 1000000
-                        })
-                        
+                        this.$success("Upload successful")
                         this.$http.get(window.location.origin + "/api/profile").then((response) => {
                             this.$store.commit('get_profile', response.data)
                         });

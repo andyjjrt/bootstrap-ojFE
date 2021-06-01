@@ -1,14 +1,14 @@
 <template>
     <div v-if="profile" class="container-fluid">
         <div v-if="profile.user.admin_type == 'Admin' || profile.user.admin_type == 'Super Admin'">
-            <div class="d-none d-md-block d-lg-block d-xl-block d-xxl-block">
+            <div>
                 <div class="row">
-                    <div class="col-3">
-                        <div class="p-3 bg-white">
+                    <div class="col-lg-3">
+                        <div class="card card-body d-none d-lg-block">
                             <span class="d-flex pb-3 mb-3 border-bottom fs-5 fw-semibold">Admin</span>
                             <ul class="list-unstyled ps-0">
                                 <li class="mb-1 btn-toggle-nav">
-                                    <router-link :to="'/admin'" class="link-dark rounded fw-bold" :class="{'active':check_active('DashBoard')}">Dash Board</router-link>
+                                    <router-link :to="'/admin'" class="link-dark rounded fw-bold" :class="{'active':check_active('DashBoard')}"><i class="bi bi-palette-fill" style="padding-right: 5px;"></i>Dashboard</router-link>
                                 </li>
                             </ul>
                             <ul class="list-unstyled ps-0">
@@ -18,42 +18,113 @@
                                     </button>
                                     <div class="collapse show" id="home-collapse">
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                            <li><router-link :to="'/admin/users'" class="link-dark rounded" :class="{'active':check_active('Users')}">Users</router-link></li>
-                                            <li><router-link :to="'/admin/announce'" class="link-dark rounded" :class="{'active':check_active('Announce')}">Announce</router-link></li>
-                                            <li><router-link :to="'/admin/config'" class="link-dark rounded" :class="{'active':check_active('Config')}">Config</router-link></li>
+                                            <li><router-link :to="'/admin/users'" class="link-dark rounded" :class="{'active':check_active('Users')}"><i class="bi bi-people-fill" style="padding-right: 5px;"></i>Users</router-link></li>
+                                            <li><router-link :to="'/admin/announce'" class="link-dark rounded" :class="{'active':check_active('Announce')}"><i class="bi bi-megaphone-fill" style="padding-right: 5px;"></i>Announce</router-link></li>
+                                            <li><router-link :to="'/admin/config'" class="link-dark rounded" :class="{'active':check_active('Config')}"><i class="bi bi-wrench" style="padding-right: 5px;"></i>Config</router-link></li>
+                                            <li><router-link :to="'/admin/judgeserver'" class="link-dark rounded" :class="{'active':check_active('Judge Server')}"><i class="bi bi-server" style="padding-right: 5px;"></i>Judge Server</router-link></li>
+                                            <li><router-link :to="'/admin/prunetestcase'" class="link-dark rounded" :class="{'active':check_active('Prune Testcase')}"><i class="bi bi-safe-fill" style="padding-right: 5px;"></i>Prune testcase</router-link></li>
                                         </ul>
                                     </div>
                                 </li>
                             </ul>
                             <ul class="list-unstyled ps-0">
                                 <li class="mb-1 btn-toggle-nav">
-                                    <router-link :to="'/admin/problem'" class="link-dark rounded fw-bold" :class="{'active':check_active('Problem')}">Problem</router-link>
+                                    <router-link :to="'/admin/problem'" class="link-dark rounded fw-bold" :class="{'active':check_active('Problem')}"><i class="bi bi-grid-3x3-gap-fill" style="padding-right: 5px;"></i>Problem</router-link>
                                 </li>
                             </ul>
                             <ul class="list-unstyled ps-0">
                                 <li class="mb-1 btn-toggle-nav">
-                                    <router-link :to="'/admin/contest'" class="link-dark rounded fw-bold" :class="{'active':check_active('ContestList')}">Contest</router-link>
+                                    <router-link :to="'/admin/contest'" class="link-dark rounded fw-bold" :class="{'active':check_active('ContestList')}"><i class="bi bi-trophy-fill" style="padding-right: 5px;"></i>Contest</router-link>
                                 </li>
                             </ul>
                         </div>
+                        <div class="mb-3 d-block d-lg-none">
+                            <div class="card card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h4>Admin</h4>
+                                    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions">
+                                        Menu
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-9">
+                    <div class="col-lg-9">
                         <router-view />
                     </div>
                 </div>
             </div>
-            <div class="d-block d-md-none d-lg-none d-xl-none d-xxl-none text-center">
-                <h5>
-                    你可以考慮用電腦
-                </h5>
-                <br>
-                <img :src="require('@/assets/too_small.jpg')" class="img-fluid w-75">
+        </div>
+        <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Admin</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="list-unstyled ps-0">
+                    <li class="mb-1 btn-toggle-nav">
+                        <span data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions">
+                            <router-link :to="'/admin'" class="link-dark rounded fw-bold" :class="{'active':check_active('DashBoard')}"><i class="bi bi-palette-fill" style="padding-right: 5px;"></i>Dashboard</router-link>
+                        </span>
+                    </li>
+                </ul>
+                <ul class="list-unstyled ps-0">
+                    <li class="mb-1">
+                        <button class="btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+                            General
+                        </button>
+                        <div class="collapse show" id="home-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                <li>
+                                    <span data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions">
+                                        <router-link :to="'/admin/users'" class="link-dark rounded" :class="{'active':check_active('Users')}"><i class="bi bi-people-fill" style="padding-right: 5px;"></i>Users</router-link>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions">
+                                        <router-link :to="'/admin/announce'" class="link-dark rounded" :class="{'active':check_active('Announce')}"><i class="bi bi-megaphone-fill" style="padding-right: 5px;"></i>Announce</router-link>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions">
+                                        <router-link :to="'/admin/config'" class="link-dark rounded" :class="{'active':check_active('Config')}"><i class="bi bi-wrench" style="padding-right: 5px;"></i>Config</router-link>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions">
+                                        <router-link :to="'/admin/judgeserver'" class="link-dark rounded" :class="{'active':check_active('Judge Server')}"><i class="bi bi-server" style="padding-right: 5px;"></i>Judge Server</router-link>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions">
+                                        <router-link :to="'/admin/prunetestcase'" class="link-dark rounded" :class="{'active':check_active('Prune Testcase')}"><i class="bi bi-safe-fill" style="padding-right: 5px;"></i>Prune testcase</router-link>
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="list-unstyled ps-0">
+                    <li class="mb-1 btn-toggle-nav">
+                        <span data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions">
+                            <router-link :to="'/admin/problem'" class="link-dark rounded fw-bold" :class="{'active':check_active('Problem')}"><i class="bi bi-grid-3x3-gap-fill" style="padding-right: 5px;"></i>Problem</router-link>
+                        </span>
+                    </li>
+                </ul>
+                <ul class="list-unstyled ps-0">
+                    <li class="mb-1 btn-toggle-nav">
+                        <span data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions">
+                            <router-link :to="'/admin/contest'" class="link-dark rounded fw-bold" :class="{'active':check_active('ContestList')}"><i class="bi bi-trophy-fill" style="padding-right: 5px;"></i>Contest</router-link>
+                        </span>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import Offcanvas from 'bootstrap/js/dist/offcanvas.js'
 export default {
     name:"Admin",
     computed:{
@@ -78,6 +149,12 @@ export default {
             })
             this.$router.push({ name: 'Home'})
         }
+    },
+    mounted(){
+        var offcanvasElementList = [].slice.call(document.querySelectorAll('.offcanvas'))
+        offcanvasElementList.map(function (offcanvasEl) {
+            return new Offcanvas(offcanvasEl)
+        })
     },
     methods:{
         check_active(name){

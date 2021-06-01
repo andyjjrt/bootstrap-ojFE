@@ -4,11 +4,14 @@ import VueRouter from 'vue-router'
 const Home = () => import('../views/Home.vue')
 const Problem = () => import('../views/Problem.vue')
 const Problemlist = () => import('../views/Problemlist.vue')
-const Contest = () => import(/* webpackChunkName: "contest" */'../views/Contest.vue')
-const ContestList = () => import(/* webpackChunkName: "contest" */'../views/ContestList.vue')
-const Status = () => import('../views/Status.vue')
-const Submission = () => import('../views/Submission.vue')
-const Judger = () => import('../views/Judger.vue')
+const Contest = () => import('../views/Contest.vue')
+const ContestList = () => import('../views/ContestList.vue')
+const Status = () => import(/* webpackChunkName: "status" */'../views/Status.vue')
+const Submission = () => import(/* webpackChunkName: "status" */'../views/Submission.vue')
+const Judger = () => import(/* webpackChunkName: "about" */'../views/Judger.vue')
+const Faq = () => import(/* webpackChunkName: "about" */'../views/Faq.vue')
+const OIRank = () => import(/* webpackChunkName: "rank" */'../views/OIRank.vue')
+const ACMRank = () => import(/* webpackChunkName: "rank" */'../views/ACMRank.vue')
 const Setting = () => import(/* webpackChunkName: "setting" */'../views/Setting.vue')
 const Admin = () => import(/* webpackChunkName: "admin" */'../views/Admin.vue')
 const User = () => import('../views/User.vue')
@@ -29,6 +32,8 @@ const Admin_General = () => import(/* webpackChunkName: "admin" */'../views/Admi
 const Admin_Users = () => import(/* webpackChunkName: "admin" */'../views/Admin/Users.vue')
 const Admin_Announce = () => import(/* webpackChunkName: "admin" */'../views/Admin/Announce.vue')
 const Admin_Config = () => import(/* webpackChunkName: "admin" */'../views/Admin/Config.vue')
+const Admin_JudgeServer = () => import(/* webpackChunkName: "admin" */'../views/Admin/JudgeServer.vue')
+const Admin_PruneTestcase = () => import(/* webpackChunkName: "admin" */'../views/Admin/PruneTestcase.vue')
 const Admin_Problem = () => import(/* webpackChunkName: "admin" */'../views/Admin/Problem.vue')
 const Admin_ContestList = () => import(/* webpackChunkName: "admin" */'../views/Admin/ContestList.vue')
 const Admin_Contest = () => import(/* webpackChunkName: "admin" */'../views/Admin/Contest.vue')
@@ -144,6 +149,30 @@ const routes = [
     }
   },
   {
+    path: '/faq',
+    name: 'FAQ',
+    component: Faq,
+    meta:{
+      title: 'FAQ'
+    }
+  },
+  {
+    path: '/acm-rank',
+    name: 'ACM Rank',
+    component: ACMRank,
+    meta:{
+      title: 'ACM Rank'
+    }
+  },
+  {
+    path: '/oi-rank',
+    name: 'OI Rank',
+    component: OIRank,
+    meta:{
+      title: 'OI Rank'
+    }
+  },
+  {
     path: '/setting',
     component: Setting,
     children:[
@@ -214,6 +243,24 @@ const routes = [
         meta:{
           title: 'Admin',
           admin: 'Config'
+        }
+      },
+      {
+        path: 'judgeserver',
+        name: 'Judge Server',
+        component: Admin_JudgeServer,
+        meta:{
+          title: 'Admin',
+          admin: 'Judge Server'
+        }
+      },
+      {
+        path: 'prunetestcase',
+        name: 'Prune Testcase',
+        component: Admin_PruneTestcase,
+        meta:{
+          title: 'Admin',
+          admin: 'Prune Testcase'
         }
       },
       {

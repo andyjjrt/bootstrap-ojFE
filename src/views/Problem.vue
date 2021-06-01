@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container-fluid">
         <Problem :problem_url="problem_url" type="normal" />
     </div>
 </template>

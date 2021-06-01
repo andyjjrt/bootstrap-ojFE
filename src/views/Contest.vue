@@ -6,7 +6,7 @@
                     <h2>{{contest.data.title}}</h2>
                     <span v-html="contest_data.remain_time"/>
                 </div>
-                <ul class="nav nav-pills" v-if="pass_protected == false">
+                <ul class="nav nav-pills" v-if="pass_protected == false || $store.state.profile.data.user.admin_type == 'Admin' || $store.state.profile.data.user.admin_type == 'Super Admin'">
                     <li class="nav-item">
                         <router-link :to="'/contest/' + $store.state.contest.data.id" class="nav-link" :class="{'active':check_active('Overview')}">Overview</router-link>
                     </li>
@@ -19,10 +19,17 @@
                     <li class="nav-item">
                         <router-link :to="'/contest/' + $store.state.contest.data.id + '/rank'" class="nav-link" :class="{'active':check_active('Rank')}">Rank</router-link>
                     </li>
+                    <template v-if="$store.state.profile.data">
+                        <template v-if="$store.state.profile.data.user.admin_type == 'Admin' || $store.state.profile.data.user.admin_type == 'Super Admin'">
+                            <li class="nav-item">
+                                <router-link :to="'/admin/contest/' + $store.state.contest.data.id" class="nav-link">Setting</router-link>
+                            </li>
+                        </template>
+                    </template>
                 </ul>
                 <hr>
             </div>
-            <div class="container" v-if="pass_protected == false">
+            <div class="container-fluid" v-if="pass_protected == false || $store.state.profile.data.user.admin_type == 'Admin' || $store.state.profile.data.user.admin_type == 'Super Admin'">
                 <transition name="component-fade" mode="out-in">
                     <router-view />
                 </transition>
@@ -68,10 +75,23 @@ export default {
     },
     created(){
         this.sec_route = this.$route.meta.contest
+        if(this.$store.state.contest){
+            if(this.$store.state.contest.data.id == this.$route.params.id){
+                this.contest = this.$store.state.contest
+                window.document.title = this.$store.state.site.data.website_name_shortcut + ' | ' + this.contest.data.title
+                this.init(this.contest)
+                return
+            }
+        }
         this.$http.get(window.location.origin + '/api/contest?id=' + this.$route.params.id).then(response => {
             this.contest = response.data
             window.document.title = this.$store.state.site.data.website_name_shortcut + ' | ' + this.contest.data.title
             this.$store.commit('get_contest', response.data)
+            this.init(this.contest)
+        });
+    },
+    methods:{
+        init(response){
             let start_date = new Date(this.contest.data.start_time)
             let end_date = new Date(this.contest.data.end_time)
             let now_date = new Date()
@@ -80,12 +100,12 @@ export default {
             }else if(now_date > end_date){
                 this.contest_data.remain_time = '<span class="p-2 fs-5 badge bg-danger">Ended</span>'
             }else{
-                let end = response.data.data.end_time
+                let end = response.data.end_time
                 this.get_remain(end)
                 let vm = this
                 this.ticker = window.setInterval(function(){vm.get_remain(end)}, 1000)
             }
-            if(response.data.data.contest_type == "Password Protected"){
+            if(response.data.contest_type == "Password Protected"){
                 this.pass_protected = true;
                 this.$http.get(window.location.origin + '/api/contest/access?contest_id=' + this.$route.params.id).then(check_response => {
                     if(check_response.data.data.access == true){
@@ -96,9 +116,7 @@ export default {
             }else{
                 this.all_varified = true
             }
-        });
-    },
-    methods:{
+        },
         get_remain(end){
             let end_date = new Date(this.contest.data.end_time)
             let now_date = new Date()

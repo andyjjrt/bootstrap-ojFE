@@ -6,6 +6,10 @@ import Vuex from 'vuex'
 import Message from 'vue-m-message'
 import Katex from 'vue-katex-auto-render'
 import VueClipboard from 'vue-clipboard2'
+import Pagination from 'vue-pagination-2';
+
+import '@/css/bootstrap-icon@1.5.0/bootstrap-icon.css'
+import '@/css/Noto-Sans-Tc.css'
 
 import VueMarkdownEditor from '@kangc/v-md-editor';
 import '@/css/base-editor.css';
@@ -14,9 +18,11 @@ import createTipPlugin from '@kangc/v-md-editor/lib/plugins/tip/index';
 import '@/css/vuepress.css';
 import '@/css/tip.css';
 import createKatexPlugin from '@kangc/v-md-editor/lib/plugins/katex/cdn';
+import enUS from '@kangc/v-md-editor/lib/lang/en-US';
 
 VueMarkdownEditor.use(createKatexPlugin());
 VueMarkdownEditor.use(createTipPlugin());
+VueMarkdownEditor.lang.use('en-US', enUS);
 VueMarkdownEditor.use(vuepressTheme);
 
 Vue.use(VueMarkdownEditor);
@@ -62,7 +68,22 @@ Vue.directive('highlightjs', {
     })
   }
 })
+Vue.component('pagination', Pagination);
 
+Vue.prototype.$success = (s) => {
+  Vue.prototype.$message.success({
+    message: s,
+    duration : 1500,
+    zIndex: 1000000
+  })
+}
+Vue.prototype.$error = (s) => {
+  Vue.prototype.$message.error({
+    message: s,
+    duration : 3000,
+    zIndex: 1000000
+  })
+}
 
 new Vue({
   router,

@@ -24,13 +24,13 @@
                     </div>
                     <br><br>
                     <p class="text-center">
-                        <a role="button" class="btn btn-light btn-lg" :href="'mailto:' + profile.data.user.email">
+                        <a role="button" class="btn btn-light btn-lg text-black" :href="'mailto:' + profile.data.user.email">
                             <i class="bi bi-envelope"></i>
                         </a>
-                        <a role="button" class="btn btn-light btn-lg" :href="profile.data.github">
+                        <a role="button" class="btn btn-light btn-lg text-black" :href="profile.data.github">
                             <i class="bi bi-github"></i>
                         </a>
-                        <a role="button" class="btn btn-light btn-lg" :href="profile.data.blog">
+                        <a role="button" class="btn btn-light btn-lg text-black" :href="profile.data.blog">
                             <i class="bi bi-globe"></i>
                         </a>
                     </p>

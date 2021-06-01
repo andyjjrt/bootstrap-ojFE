@@ -46,6 +46,9 @@
             </div>
         </div>
         <div class="card card-body">
+            <div class="mb-3">
+                <div class="fs-4">Announce</div>
+            </div>
             <div class="table-responsive">
                 <table class="table text-nowrap">
                     <thead>
@@ -70,10 +73,9 @@
                                 </div>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#AnnounceEditModal" @click="edit(announce)"><i class="bi bi-pencil-square"></i></button>
+                                <span data-bs-toggle="modal" data-bs-target="#AnnounceEditModal"><button class="btn btn-sm btn-outline-dark" @click="edit(announce)" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i class="bi bi-pencil-square"></i></button></span>
                                 &nbsp;
-                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#AnnouncedeleteModal" @click="announce_1 = announce"><i class="bi bi-trash"></i></button>
-                            </td>
+                                <span data-bs-toggle="modal" data-bs-target="#AnnouncedeleteModal"><button class="btn btn-sm btn-danger" @click="announce_1 = announce"  data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"><i class="bi bi-trash"></i></button></span>                            </td>
                         </tr>
                         <tr v-if="announcements.length == 0">
                             <td colspan="6" class="text-center">No Data</td>
@@ -82,16 +84,13 @@
                 </table>
             </div>
             <br>
-            <div class="d-flex justify-content-between">
-                <div>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AnnounceEditModal" @click="create_new"><i class="bi bi-plus"></i> Create</button>
+            <div class="row">
+                <div class="col-sm mb-3">
+                    <button class="btn btn-primary text-nowrap" data-bs-toggle="modal" data-bs-target="#AnnounceEditModal" @click="create_new"><i class="bi bi-plus"></i> Create</button>
                 </div>
-                <ul class="pagination" v-if="$route.params.manage_contest_id == undefined">
-                    <li class="page-item"><a class="page-link" role="button" @click="to_page(1)"><i class="bi bi-chevron-double-left"></i></a></li>
-                    <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(page)-1)"><i class="bi bi-chevron-left"></i></a></li>
-                    <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(page)+1)"><i class="bi bi-chevron-right"></i></a></li>
-                    <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(total/10) + 1)"><i class="bi bi-chevron-double-right"></i></a></li>
-                </ul>
+                <div class="col-sm float-end mb-3" v-if="$route.params.manage_contest_id == undefined">
+                    <Pagination @nav="to_page" :total="total" :page="page" :perpage="10" :dress_class="''" />
+                </div>
             </div>
         </div>
     </div>
@@ -99,6 +98,8 @@
 
 <script>
 import Modal from 'bootstrap/js/dist/modal.js'
+import Tooltip from 'bootstrap/js/dist/tooltip.js'
+import Pagination from '@/components/Pagination.vue'
 export default {
     name:"EditAnnounce",
     data(){
@@ -138,19 +139,40 @@ export default {
             type: "Public"
         }
     },
+    components:{
+        Pagination
+    },
     created(){
         if(this.$route.params.manage_contest_id != undefined){
             this.url = '/api/admin/contest/announcement'
         }
-        this.init()
     },
     mounted(){
         this.AnnounceModal = new Modal(this.$refs.announce_modal)
         this.DeleteModal = new Modal(this.$refs.delete_modal)
+        this.init()
+        if(this.$route.query.announce_id != undefined){
+            this.$http.get(window.location.origin + this.url + '?id=' + this.$route.query.announce_id).then(response => {
+                if(response.data.error){
+                    this.$error(response.data.data)
+                }else if(this.$route.params.manage_contest_id != undefined){
+                    if(response.data.data.contest != this.$route.params.manage_contest_id){
+                        this.$error("This announce doesn't belong to this contest.")
+                    }else{
+                        this.edit(response.data.data)
+                        this.AnnounceModal.toggle()
+                    }
+                }else{
+                    this.edit(response.data.data)
+                    this.AnnounceModal.toggle()
+                }
+            })
+        }
     },
     methods:{
         init(){
-            let tmp = "?offset=" + this.offset + "&limit=10"
+            let offset = (this.page-1) * 10
+            let tmp = "?offset=" + offset + "&limit=10"
             if(this.$route.params.manage_contest_id != undefined){
                 tmp = '?contest_id=' + this.$route.params.manage_contest_id
             }
@@ -160,7 +182,9 @@ export default {
                     this.announcements = response.data.data
                 }
                 this.total = response.data.data.total
-            });
+            }).then(()=>{
+                Array.from(document.querySelectorAll('button[data-bs-toggle="tooltip"]')).forEach(tooltipNode => new Tooltip(tooltipNode))
+            })
         },
         edit(announce){
             this.announce_1 = announce
@@ -185,36 +209,20 @@ export default {
                         if(this.mode == "edit"){
                             this.AnnounceModal.toggle();
                         }
-                        this.$message.success({
-                            message: "Succeed",
-                            duration : 1500,
-                            zIndex: 1000000
-                        })
+                        this.$success("Succeed")
                         this.init();
                     }else{
-                        this.$message.error({
-                            message: response.data.data,
-                            duration : 1500,
-                            zIndex: 1000000
-                        })
+                        this.$error(response.data.data)
                     }
                 });
             }else{
                 this.$http.post(window.location.origin + this.url, this.announce_1).then(response => {
                     if(!response.data.error){
                         this.AnnounceModal.toggle();
-                        this.$message.success({
-                            message: "Succeed",
-                            duration : 1500,
-                            zIndex: 1000000
-                        })
+                        this.$success("Succeed")
                         this.init();
                     }else{
-                        this.$message.error({
-                            message: response.data.data,
-                            duration : 1500,
-                            zIndex: 1000000
-                        })
+                        this.$error(response.data.data)
                     }
                 });
             }
@@ -228,25 +236,14 @@ export default {
             this.$http.delete(window.location.origin + this.url + '?id=' + this.announce_1.id).then(response => {
                 if(!response.data.error){
                     this.DeleteModal.toggle()
-                    this.$message.success({
-                        message: "Succeed",
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$success("Succeed")
                     this.init();
                 }else{
-                    this.$message.error({
-                        message: response.data.data,
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$error(response.data.data)
                 }
             });
         },
         to_page(page){
-            if(page < 1 || page > parseInt(this.total/10) + 1){
-                return
-            }
             this.page = page
             this.init()
         },
@@ -268,6 +265,15 @@ export default {
             })
             // Here is just an example
         },
+    },
+    beforeRouteLeave(to, from, next) {
+        this.AnnounceModal.hide()
+        this.DeleteModal.hide()
+        next()
+    },
+    beforeDestroy(){
+        this.AnnounceModal.hide()
+        this.DeleteModal.hide()
     }
 }
 </script>

@@ -106,9 +106,11 @@
 
 .form-switch {
   padding-left: $form-switch-padding-start;
-
+  
   .form-check-input {
+    cursor: pointer;
     width: $form-switch-width;
+    height: $form-switch-height;
     margin-left: $form-switch-padding-start * -1;
     background-image: escape-svg($form-switch-bg-image);
     background-position: left center;
@@ -128,6 +130,9 @@
         background-image: escape-svg($form-switch-checked-bg-image);
       }
     }
+  }
+  .form-check-label {
+    cursor: pointer;
   }
 }
 

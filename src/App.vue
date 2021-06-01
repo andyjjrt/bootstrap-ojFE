@@ -44,4 +44,7 @@ export default{
 /* .component-fade-leave-active for below version 2.1.8 */ {
   opacity: 0;
 }
+pre {
+  word-wrap:normal;
+}
 </style>

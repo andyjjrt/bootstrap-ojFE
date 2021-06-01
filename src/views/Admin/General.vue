@@ -25,7 +25,7 @@
             </div>
         </div>
         <br>
-        <div v-if="update_note" style="max-height: 350px; overflow-y: auto;">
+        <div v-if="update_note">
             <div class="list-group">
                 <div class="list-group-item" v-for="note in update_note.data.update" :key="note.version">
                     <h6>{{note.title}}</h6>

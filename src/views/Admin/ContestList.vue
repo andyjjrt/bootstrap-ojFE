@@ -93,7 +93,30 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="DownloadModal" tabindex="-1" aria-labelledby="DownloadModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="DownloadModalLabel">Download Contest Submissions</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="download_submissions" v-model="download.admin">
+                            <label class="form-check-label" for="download_submissions" >Exclude admin submissions</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="dl_submission">Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card card-body">
+            <div class="d-flex justify-content-between">
+                <h4>Contest List</h4>
+                <input class="form-control w-50" type="text" placeholder="Keyword" v-model="keyword">
+            </div>
             <div class="table-responsive">
                 <table class="table text-nowrap">
                     <thead>
@@ -120,23 +143,27 @@
                                 </div>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-outline-dark" @click="goto(i.id)"><i class="bi bi-pencil-square"></i></button>
+                                <span  data-bs-toggle="modal" data-bs-target="#DownloadModal">
+                                    <button class="btn btn-sm btn-outline-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Download submissions" @click="download.id = i.id"><i class="bi bi-download"></i></button>
+                                </span>
+                                &nbsp;
+                                <button class="btn btn-sm btn-outline-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" @click="goto(i.id)" ><i class="bi bi-pencil-square"></i></button>
                             </td>
+                        </tr>
+                        <tr v-if="contests.data.results.length == 0">
+                            <td colspan="7" class="text-center">No Data</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <br>
-            <div class="d-flex justify-content-between">
-                <div>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#NewContestModal">Create</button>
+            <div class="row">
+                <div class="col-sm mb-3">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#NewContestModal"><i class="bi bi-plus"></i> Create</button>
                 </div>
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link" role="button" @click="to_page(1)"><i class="bi bi-chevron-double-left"></i></a></li>
-                    <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(page)-1)"><i class="bi bi-chevron-left"></i></a></li>
-                    <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(page)+1)"><i class="bi bi-chevron-right"></i></a></li>
-                    <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(total/10) + 1)"><i class="bi bi-chevron-double-right"></i></a></li>
-                </ul>
+                <div class="col-sm mb-3">
+                    <Pagination @nav="to_page" :total="total" :page="page" :perpage="10" :dress_class="'float-end'" />
+                </div>
             </div>
         </div>
     </div>
@@ -145,6 +172,9 @@
 <script>
 import DatePicker from 'v-calendar/lib/components/date-picker.umd'
 import Modal from 'bootstrap/js/dist/modal.js'
+import Tooltip from 'bootstrap/js/dist/tooltip.js'
+
+import Pagination from '@/components/Pagination.vue'
 
 export default {
     name: "ContestList",
@@ -153,7 +183,6 @@ export default {
             NewContestModal: null,
             contests: null,
             total: null,
-            offset: 0,
             new_contest:{
                 title: "",
                 description:"",
@@ -187,7 +216,13 @@ export default {
             DatePicker_popover:{
                 placement: "top"
             },
-            add_ip:""
+            add_ip:"",
+            page: 1,
+            keyword:"",
+            download:{
+                id:"",
+                admin:true
+            }
         }
     },
     mounted(){
@@ -195,19 +230,20 @@ export default {
         this.init()
     },
     components: {
-        DatePicker
+        DatePicker,
+        Pagination
     },
     methods:{
         init(){
-            this.$http.get(window.location.origin + '/api/admin/contest?offset=' + this.offset + '&limit=10').then(response => {
+            let offset = (this.page-1) * 10
+            this.$http.get(window.location.origin + '/api/admin/contest?keyword=' + this.keyword + '&offset=' + offset + '&limit=10').then(response => {
                 this.contests = response.data
                 this.total = response.data.data.total
+            }).then(()=>{
+                Array.from(document.querySelectorAll('button[data-bs-toggle="tooltip"]')).forEach(tooltipNode => new Tooltip(tooltipNode))
             });
         },
         to_page(page){
-            if(page < 1 || page > parseInt(this.total/10) + 1){
-                return
-            }
             this.page = page
             this.init()
         },
@@ -240,36 +276,20 @@ export default {
             this.$http.post(window.location.origin + '/api/admin/contest', this.new_contest).then(response => {
                 if(!response.data.error){
                     this.NewContestModal.toggle();
-                    this.$message.success({
-                        message: "Succeed",
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$success("Succeed")
                     this.init();
                 }else{
-                    this.$message.error({
-                        message: response.data.data,
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$error(response.data.data)
                 }
             });
         },
         addip(){
             if(this.add_ip == ""){
-                this.$message.error({
-                    message: "Please enter IP",
-                    duration : 1500,
-                    zIndex: 1000000
-                })
+                this.$error("Please enter IP")
                 return
             }
             if(this.new_contest.allowed_ip_ranges.indexOf(this.add_ip) != -1){
-                this.$message.error({
-                    message: "Duplicated IP",
-                    duration : 1500,
-                    zIndex: 1000000
-                })
+                this.$error("Duplicated IP")
                 return
             }
             this.new_contest.allowed_ip_ranges.push(this.add_ip)
@@ -278,18 +298,10 @@ export default {
         visible(con){
             this.$http.put(window.location.origin + '/api/admin/contest', con).then(response => {
                 if(!response.data.error){
-                    this.$message.success({
-                        message: "Succeed",
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$success("Succeed")
                     this.init();
                 }else{
-                    this.$message.error({
-                        message: response.data.data,
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$error(response.data.data)
                 }
             });
         },
@@ -310,7 +322,60 @@ export default {
                 return '<span class="badge bg-danger">Ended</span>'; 
             }
                 return '<span class="badge bg-success">Underway</span>'; 
+        },
+        dl_submission() {
+            let url = '/api/admin/download_submissions?contest_id=' + this.download.id + '&exclude_admin='
+            if(this.download.admin){
+                url += 1
+            }else{
+                url += 0
+            }
+            // eslint-disable-next-line no-unused-vars
+            new Promise((resolve, reject) => {
+                this.$http.get(url, {responseType: 'blob'}).then(resp => {
+                    let headers = resp.headers
+                    if (headers['content-type'].indexOf('json') !== -1) {
+                        let fr = new window.FileReader()
+                        if (resp.data.error) {
+                            this.$error(resp.data.error)
+                        } else {
+                            this.$error('Invalid file format')
+                        }
+                        fr.onload = (event) => {
+                            let data = JSON.parse(event.target.result)
+                            if (data.error) {
+                                this.$error(data.data)
+                            } else {
+                                this.$error('Invalid file format')
+                            }
+                        }
+                        let b = new window.Blob([resp.data], {type: 'application/json'})
+                        fr.readAsText(b)
+                        return
+                    }
+                    let link = document.createElement('a')
+                    link.href = window.URL.createObjectURL(new window.Blob([resp.data], {type: headers['content-type']}))
+                    link.download = (headers['content-disposition'] || '').split('filename=')[1]
+                    document.body.appendChild(link)
+                    link.click()
+                    link.remove()
+                    resolve()
+                }).catch(() => {})
+            })
+        },
+    },
+    watch:{
+        keyword(){
+            this.page = 1
+            this.init()
         }
+    },
+    beforeRouteLeave(to, from, next) {
+        this.NewContestModal.hide()
+        Array.from(document.querySelectorAll('div.tooltip')).forEach(tooltipNode => {
+            tooltipNode.remove();
+        })
+        next()
     }
 }
 </script>

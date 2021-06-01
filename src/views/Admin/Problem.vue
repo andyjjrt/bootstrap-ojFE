@@ -82,7 +82,7 @@
                                 <label class="form-label">Languages</label>
                                 <div>
                                     <div class="form-check form-check-inline"  v-for="lang in languages.data.languages" :key="lang.name">
-                                        <input class="form-check-input" type="checkbox" :value="lang.name" :id="lang.name" v-model="open_problem.languages">
+                                        <input class="form-check-input" type="checkbox" :value="lang.name" :id="lang.name" v-model="open_problem.languages" @change="change_problem_language">
                                         <label class="form-check-label" :for="lang.name">
                                             {{lang.name}}
                                         </label>
@@ -92,7 +92,10 @@
                             <div class="col-sm-4">
                                 <label class="form-label">New Tag</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="New Tag" v-model="open_problem_variables.tmp_tag">
+                                    <input type="text" class="form-control" list="tagOptions" placeholder="New Tag" v-model="open_problem_variables.tmp_tag">
+                                    <datalist id="tagOptions" v-if="tags">
+                                        <option :value="tag.name"  v-for="tag in tags.data" :key="tag.id" />
+                                    </datalist>
                                     <button class="btn btn-outline-primary" type="button" @click="create_tag">Add</button>
                                 </div>
                             </div>
@@ -140,31 +143,43 @@
                             <div class="col-sm-12">
                                 <label class="form-label">Code Templates</label>
                                 <div v-for="(v,k) in open_problem.template" :key="'template'+k">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" v-model="v.checked" :id="'template' + k">
-                                        <label class="form-check-label" :for="'template' + k">
-                                            {{k}}
-                                        </label>
-                                    </div>
-                                    <codemirror v-model="v.code" :options="v.option" v-if="v.checked" />
+                                    <template v-if="v.vis">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" v-model="v.checked" :id="'template' + k">
+                                            <label class="form-check-label" :for="'template' + k">
+                                                {{k}}
+                                            </label>
+                                        </div>
+                                        <codemirror v-model="v.code" :options="v.option" v-if="v.checked" />
+                                    </template>
                                  </div>
                             </div>
                             <div class="col-sm-12">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="spjswitch"  v-model="open_problem.spj" disabled>
-                                    <label class="form-check-label" for="spjswitch">Use special judge(maintaining)</label>
+                                <div class="form-check form-switch" >
+                                    <input class="form-check-input" type="checkbox" id="spjswitch" v-model="open_problem.spj" @click="switch_spj">
+                                    <label class="form-check-label" for="spjswitch">Use special judge</label>
                                 </div>
                             </div>
                             <div class="col-sm-12" v-if="open_problem.spj">
                                 <div class="card">
                                     <div class="card-header">
-                                        <div class="form-check form-check-inline" v-for="i in languages.data.spj_languages.length" :key="i">
-                                            <input class="form-check-input" type="radio" :id="'inlineRadio'+i" :value="languages.data.spj_languages[i-1].name" v-model="open_problem.spj_language">
-                                            <label class="form-check-label" :for="'inlineRadio'+i">{{languages.data.spj_languages[i-1].name}}</label>
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <div class="form-check form-check-inline" v-for="i in languages.data.spj_languages.length" :key="i">
+                                                    <input class="form-check-input" type="radio" :id="'inlineRadio'+i" :value="languages.data.spj_languages[i-1].name" v-model="open_problem.spj_language">
+                                                    <label class="form-check-label" :for="'inlineRadio'+i">{{languages.data.spj_languages[i-1].name}}</label>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-primary btn-sm" @click="compile_spj"><i class="bi bi-command"></i> Compile</button>
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <codemirror :options="open_problem_spj.options[0]" v-model="open_problem.spj_code" />
+                                        <template v-if="open_problem_variables.spj_response">
+                                            <div class="alert alert-danger" role="alert" v-if="open_problem_variables.spj_response.error">
+                                                {{open_problem_variables.spj_response.data}}
+                                            </div>
+                                        </template>
+                                        <codemirror :options="open_problem_spj[open_problem.spj_language].opt" v-model="open_problem.spj_code" />
                                     </div>
                                 </div>
                             </div>
@@ -172,11 +187,11 @@
                                 <label class="form-label">Type</label>
                                 <div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" id="type_acm" value="ACM" v-model="open_problem.rule_type">
+                                        <input class="form-check-input" type="radio" id="type_acm" value="ACM" v-model="open_problem.rule_type" :disabled="this.$route.params.manage_contest_id != undefined">
                                         <label class="form-check-label" for="type_acm">ACM</label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" id="type_oi" value="OI" v-model="open_problem.rule_type">
+                                        <input class="form-check-input" type="radio" id="type_oi" value="OI" v-model="open_problem.rule_type" :disabled="this.$route.params.manage_contest_id != undefined">
                                         <label class="form-check-label" for="type_oi">OI</label>
                                     </div>
                                 </div>
@@ -218,7 +233,7 @@
                                         <tr>
                                             <th scope="col">Input</th>
                                             <th scope="col">Output</th>
-                                            <th scope="col">Last</th>
+                                            <th scope="col">Score</th>
                                         </tr>
                                     </thead>
                                     <tbody v-if="open_problem.test_case_id == ''">
@@ -265,13 +280,16 @@
             </div>
         </div>
         <div class="modal fade" id="AddPublicProblemModal" tabindex="-1" aria-labelledby="AddPublicProblemModalLabel" aria-hidden="true" ref="add_public_modal">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="AddPublicProblemModalLabel">Add Problem from Public</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <input class="form-control" type="text" placeholder="Keyword" v-model="add_from_public_list.keyword">
+                    </div>
+                    <div class="modal-body" style="max-height: 280px;">
                         <table class="table text-nowrap table-hover" v-if="contest.public_problems">
                             <thead>
                                 <tr>
@@ -286,10 +304,14 @@
                                     <td class="col-4">{{p._id}}</td>
                                     <td class="col-4">{{p.title}}</td>
                                 </tr>
+                                <tr v-if="contest.public_problems.data.results.length == 0">
+                                    <td colspan="7" class="text-center">No Data</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="modal-body">
+                        <Pagination @nav="make_public_topage" :total="add_from_public_list.total" :page="add_from_public_list.page" :perpage="10" :dress_class="'float-end mb-3'" />
                         <div v-if="contest.select_import">
                             <div class="mb-3">
                                 <label class="form-label">Display ID for the contest problem</label>
@@ -321,6 +343,10 @@
             </div>
         </div>
         <div class="card card-body">
+            <div class="d-flex justify-content-between">
+                <h4>Problem</h4>
+                <input class="form-control w-50" type="text" placeholder="Keyword" v-model="keyword">
+            </div>
             <div class="table-responsive">
                 <table class="table text-nowrap">
                     <thead>
@@ -347,13 +373,19 @@
                                 </div>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#MakePublicProblemModal" @click="make_public_problem.problem = problem" v-if="$route.params.manage_contest_id != undefined"><i class="bi bi-upload"></i></button>
+                                <span data-bs-toggle="modal" data-bs-target="#MakePublicProblemModal">
+                                    <button class="btn btn-sm btn-outline-dark" @click="make_public_problem.problem = problem" v-if="$route.params.manage_contest_id != undefined" data-bs-toggle="tooltip" data-bs-placement="top" title="Make Public"><i class="bi bi-upload"></i></button>
+                                </span>
                                 &nbsp;
-                                <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#ProblemModal" @click="edit(problem)"><i class="bi bi-pencil-square"></i></button>
+                                <span data-bs-toggle="modal" data-bs-target="#ProblemModal">
+                                    <button class="btn btn-sm btn-outline-dark" @click="edit(problem)" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                                </span>
                                 &nbsp;
-                                <button class="btn btn-sm btn-outline-primary" @click="downloadTestCase(problem.id)"><i class="bi bi-cloud-arrow-down"></i></button>
+                                <button class="btn btn-sm btn-outline-primary" @click="downloadTestCase(problem.id)" data-bs-toggle="tooltip" data-bs-placement="top" title="Download testcase"><i class="bi bi-cloud-arrow-down"></i></button>
                                 &nbsp;
-                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#ProblemdeleteModal" @click="open_problem = problem"><i class="bi bi-trash"></i></button>
+                                <span data-bs-toggle="modal" data-bs-target="#ProblemdeleteModal">
+                                    <button class="btn btn-sm btn-danger" @click="open_problem = problem" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"><i class="bi bi-trash"></i></button>
+                                </span>
                             </td>
                         </tr>
                         <tr v-if="problems.data.results.length == 0">
@@ -363,17 +395,14 @@
                 </table>
             </div>
             <br>
-            <div class="d-flex justify-content-between">
-                <div>
+            <div class="row">
+                <div class="col-md mb-3">
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ProblemModal" @click="create_new"><i class="bi bi-plus"></i> Create</button>&nbsp;
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AddPublicProblemModal" @click="create_new" v-if="$route.params.manage_contest_id != undefined"><i class="bi bi-plus"></i> Add Public Problem</button>
                 </div>
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link" role="button" @click="to_page(1)"><i class="bi bi-chevron-double-left"></i></a></li>
-                    <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(page)-1)"><i class="bi bi-chevron-left"></i></a></li>
-                    <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(page)+1)"><i class="bi bi-chevron-right"></i></a></li>
-                    <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(total/10) + 1)"><i class="bi bi-chevron-double-right"></i></a></li>
-                </ul>
+                <div class="col-md mb-3">
+                    <Pagination @nav="to_page" :total="total" :page="page" :perpage="10" :dress_class="'float-end'" />
+                </div>
             </div>
         </div>
     </div>
@@ -387,7 +416,10 @@ import 'codemirror/mode/python/python.js'
 import 'codemirror/mode/go/go.js'
 import 'codemirror/theme/solarized.css'
 
+import Tooltip from 'bootstrap/js/dist/tooltip.js'
 import Modal from 'bootstrap/js/dist/modal.js'
+
+import Pagination from '@/components/Pagination.vue'
 
 export default {
     name:"EditProblem",
@@ -443,6 +475,7 @@ export default {
                 spj:false,
                 spj_language:"",
                 spj_code:"",
+                spj_compile_ok: false,
                 rule_type:"ACM",
                 io_mode:{
                     io_mode: 'Standard IO',
@@ -457,30 +490,40 @@ export default {
                 tmp_tag:"",
                 templates:[],
                 options:[],
-                testCaseUploaded:false
+                testCaseUploaded:false,
+                spj_response: null
             },
-            open_problem_spj:{
-                options:[],
-            },
+            open_problem_spj:{},
             mode:"create",
             ProblemModal: null,
             DeleteModal: null,
             AddPublicProblemModal: null,
             MakePublicProblemModal: null,
             page:1,
-            url:"/api/admin/problem"
+            url:"/api/admin/problem",
+            keyword:"",
+            tags:null,
+            add_from_public_list:{
+                page:1,
+                total:0,
+                keyword:""
+            }
         }
     },
     props:{
         contest_rule: String
     },
     components:{
-        codemirror
+        codemirror,
+        Pagination
     },
     created(){
         if(this.$route.params.manage_contest_id != undefined){
             this.url = '/api/admin/contest/problem'
         }
+        this.$http.get(window.location.origin + '/api/problem/tags').then(response => {
+            this.tags = response.data
+        });
         this.init()
     },
     mounted(){
@@ -488,23 +531,56 @@ export default {
         this.DeleteModal = new Modal(this.$refs.delete_modal)
         this.AddPublicProblemModal = new Modal(this.$refs.add_public_modal)
         this.MakePublicProblemModal = new Modal(this.$refs.make_public_modal)
+        this.$http.get(window.location.origin + '/api/languages').then(response => {
+            this.languages = response.data
+            for(let i in this.languages.data.spj_languages){
+                this.open_problem_spj[this.languages.data.spj_languages[i].name] = {
+                    opt:{
+                        theme: "solarized",
+                        lineNumbers: true,
+                        mode: this.languages.data.spj_languages[i].content_type,
+                        tabSize: 4
+                    },
+                    name:this.languages.data.spj_languages[i].name
+                }
+            }
+        });
+        if(this.$route.query.problem_id != undefined){
+            this.$http.get(window.location.origin + this.url + '?id=' + this.$route.query.problem_id).then(response => {
+                if(response.data.error){
+                    this.$error(response.data.data)
+                }else{
+                    this.edit(response.data.data)
+                    this.ProblemModal.toggle()
+                }
+            })
+        }
     },
     methods:{
         init(){
-            let tmp = "?offset=" + this.offset + "&limit=10"
+            let offset = (this.page-1) * 10
+            let tmp = "?keyword=" + this.keyword + "&offset=" + offset + "&limit=10"
             if(this.$route.params.manage_contest_id != undefined){
                 tmp += '&contest_id=' + this.$route.params.manage_contest_id
-                this.$http.get(window.location.origin + '/api/admin/problem?rule_type=' + this.contest_rule).then(response => {
-                    this.contest.public_problems = response.data
-                });
+                this.make_public_list_init()
             }
             this.$http.get(window.location.origin + this.url + tmp).then(response => {
                 this.problems = response.data
                 this.total = response.data.data.total
+            }).then(()=>{
+                Array.from(document.querySelectorAll('button[data-bs-toggle="tooltip"]')).forEach(tooltipNode => new Tooltip(tooltipNode))
             });
-            this.$http.get(window.location.origin + '/api/languages').then(response => {
-                this.languages = response.data
+        },
+        make_public_list_init(){
+            let offset = (this.add_from_public_list.page-1) * 10
+            this.$http.get(window.location.origin + '/api/admin/problem?rule_type=' + this.contest_rule + '&limit=10&offset=' + offset + '&keyword=' + this.add_from_public_list.keyword).then(response => {
+                this.contest.public_problems = response.data
+                this.add_from_public_list.total = response.data.data.total
             });
+        },
+        make_public_topage(page){
+            this.add_from_public_list.page = page
+            this.make_public_list_init()
         },
         reset_problem(){
             this.open_problem = {
@@ -526,6 +602,7 @@ export default {
                 spj:false,
                 spj_language:"",
                 spj_code:"",
+                spj_compile_ok: false,
                 rule_type:"ACM",
                 io_mode:{
                     io_mode: 'Standard IO',
@@ -541,12 +618,28 @@ export default {
         },
         edit(problem){
             this.open_problem = JSON.parse(JSON.stringify(problem))
+            if(this.$route.params.manage_contest_id != undefined){
+                this.open_problem.rule_type = this.contest_rule
+            }
+            if(this.open_problem.spj_language == null){
+                this.open_problem.spj_language = this.languages.data.spj_languages[0].name
+            }
             this.problem_language()
+            this.change_problem_language()
+            this.open_problem_variables.testCaseUploaded = true
             this.mode = "edit"
         },
         create_new(){
             this.reset_problem()
+            if(this.$route.params.manage_contest_id != undefined){
+                this.open_problem.rule_type = this.contest_rule
+            }
+            for (let item in this.languages.data.languages) {
+                this.open_problem.languages.push(this.languages.data.languages[item].name)
+            }
             this.problem_language()
+            this.change_problem_language()
+            this.open_problem.spj_language = this.languages.data.spj_languages[0].name
             this.mode = "create"
         },
         save(){
@@ -566,36 +659,20 @@ export default {
                         if(this.mode == "edit"){
                             this.ProblemModal.toggle();
                         }
-                        this.$message.success({
-                            message: "Succeed",
-                            duration : 1500,
-                            zIndex: 1000000
-                        })
+                        this.$success("Succeed")
                         this.init();
                     }else{
-                        this.$message.error({
-                            message: response.data.data,
-                            duration : 1500,
-                            zIndex: 1000000
-                        })
+                        this.$error(response.data.data)
                     }
                 });
             }else{
                 this.$http.post(window.location.origin + this.url, this.open_problem).then(response => {
                     if(!response.data.error){
                         this.ProblemModal.toggle();
-                        this.$message.success({
-                            message: "Succeed",
-                            duration : 1500,
-                            zIndex: 1000000
-                        })
+                        this.$success("Succeed")
                         this.init();
                     }else{
-                        this.$message.error({
-                            message: response.data.data,
-                            duration : 1500,
-                            zIndex: 1000000
-                        })
+                        this.$error(response.data.data)
                     }
                 });
             }
@@ -609,43 +686,24 @@ export default {
             this.$http.delete(window.location.origin + this.url + '?id=' + this.open_problem.id).then(response => {
                 if(!response.data.error){
                     this.DeleteModal.toggle()
-                    this.$message.success({
-                        message: "Succeed",
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$success("Succeed")
                     this.init();
                 }else{
-                    this.$message.error({
-                        message: response.data.data,
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$error(response.data.data)
                 }
             });
         },
         to_page(page){
-            if(page < 1 || page > parseInt(this.total/10) + 1){
-                return
-            }
             this.page = page
             this.init()
         },
         create_tag(){
             if(this.open_problem_variables.tmp_tag == ""){
-                this.$message.error({
-                    message: "Please give tag name.",
-                    duration : 1500,
-                    zIndex: 1000000
-                })
+                this.$error("Please give tag name.")
                 return
             }
             if(this.open_problem.tags.indexOf(this.open_problem_variables.tmp_tag) != -1){
-                this.$message.error({
-                    message: "Duplicated tag",
-                    duration : 1500,
-                    zIndex: 1000000
-                })
+                this.$.error("Duplicated tag")
                 return
             }
             this.$http.get(window.location.origin + '/api/problem/tags?keyword=' + this.open_problem_variables.tmp_tag).then(() => {
@@ -659,11 +717,7 @@ export default {
             formData.append("spj", this.open_problem.spj)
             this.$http.post(window.location.origin + '/api/admin/test_case',formData).then(response => {
                 if (response.data.error) {
-                    this.$message.error({
-                        message: response.data.data,
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$error(response.data.data)
                     return
                 }
                 this.open_problem.test_case_id = response.data.data.id
@@ -676,14 +730,19 @@ export default {
                 }
                 this.open_problem.test_case_score = fileList
                 this.open_problem_variables.testCaseUploaded = true
+                e.target.value = ''
             })
         },
         problem_language(){
-            let data = new Object
+            let data = {}
             // use deep copy to avoid infinite loop
             for (let i in this.languages.data.languages) {
+                //let langConfig = this.languages.data.languages.find(lang => {
+                //    return lang.name === this.open_problem.languages[i]
+                //})
                 let item = this.languages.data.languages[i].name
                 let langConfig = this.languages.data.languages[i]
+                //let item = langConfig.name
                 let opt = {
                     theme: "solarized",
                     lineNumbers: true,
@@ -691,12 +750,25 @@ export default {
                     tabSize: 4
                 }
                 if (this.open_problem.template[item] === undefined) {
-                    data[item] = {checked: false, code: langConfig.config.template, option: opt}
+                    data[item] = {checked: false, vis:true, code: langConfig.config.template, option: opt, name: item}
                 } else {
-                    data[item] = {checked: true, code: this.open_problem.template[item], option: opt}
+                    data[item] = {checked: true, vis:true, code: this.open_problem.template[item], option: opt, name: item}
                 }
             }
-            this.open_problem.template = data
+            this.open_problem.template = JSON.parse(JSON.stringify(data))
+        },
+        change_problem_language(){
+            for(let i in this.open_problem.template){
+                let exist = this.open_problem.languages.find(lang => {
+                    return lang === this.open_problem.template[i].name
+                })
+                if(exist){
+                    this.open_problem.template[i].vis = true
+                }else{
+                    this.open_problem.template[i].vis = false
+                    this.open_problem.template[i].checked = false
+                }
+            }
         },
         handleUploadImage(event, insertImage, files) {
             // Get the files and upload them to the file server, then insert the corresponding content into the editor
@@ -725,32 +797,16 @@ export default {
                     if (headers['content-type'].indexOf('json') !== -1) {
                         let fr = new window.FileReader()
                         if (resp.data.error) {
-                            this.$message.error({
-                                message: resp.data.error,
-                                duration : 1500,
-                                zIndex: 1000000
-                            })
+                            this.$error(resp.data.error)
                         } else {
-                            this.$message.error({
-                                message: 'Invalid file format',
-                                duration : 1500,
-                                zIndex: 1000000
-                            })
+                            this.$error('Invalid file format')
                         }
                         fr.onload = (event) => {
                             let data = JSON.parse(event.target.result)
                             if (data.error) {
-                                this.$message.error({
-                                    message: data.data,
-                                    duration : 1500,
-                                    zIndex: 1000000
-                                })
+                                this.$error(data.data)
                             } else {
-                                this.$message.error({
-                                    message: 'Invalid file format',
-                                    duration : 1500,
-                                    zIndex: 1000000
-                                })
+                                this.$error('Invalid file format')
                             }
                         }
                         let b = new window.Blob([resp.data], {type: 'application/json'})
@@ -778,18 +834,10 @@ export default {
                     this.AddPublicProblemModal.toggle();
                     this.contest.select_import = null
                     this.contest.display_id = ""
-                    this.$message.success({
-                        message: "Succeed",
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$success("Succeed")
                     this.init();
                 }else{
-                    this.$message.error({
-                        message: response.data.data,
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$error(response.data.data)
                 }
             });
         },
@@ -798,35 +846,71 @@ export default {
                 id: this.make_public_problem.problem.id,
                 display_id: this.make_public_problem.display_id,
             }
-            console.log(param)
             this.$http.post(window.location.origin + '/api/admin/contest_problem/make_public', param).then(response => {
                 if(!response.data.error){
-                    this.$message.success({
-                        message: "Succeed",
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$success("Succeed")
                     this.init();
                 }else{
-                    this.$message.error({
-                        message: response.data.data,
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$error(response.data.data)
                 }
                 this.MakePublicProblemModal.toggle();
                 this.make_public_problem.display_id = ""
             });
+        },
+        compile_spj(){
+            this.open_problem_variables.spj_response = null
+            this.$http.post(window.location.origin + '/api/admin/compile_spj', {id: this.open_problem.id, spj_code: this.open_problem.spj_code, spj_language: this.open_problem.spj_language}).then(response => {
+                this.open_problem_variables.spj_response = response.data
+                if(!response.data.error){
+                    this.$success("Compile Succeed")
+                    this.open_problem.spj_compile_ok = true
+                }
+            })
+        },
+        reset_testcase(){
+            this.open_problem_variables.testCaseUploaded = false
+            this.open_problem.test_case_id = "",
+            this.open_problem.test_case_score = []
+        },
+        switch_spj(){
+            if (this.open_problem_variables.testCaseUploaded) {
+                this.$message.warning({
+                    message: "You need to re-upload testcases",
+                    duration : 2500,
+                    zIndex: 1000000
+                })
+                this.reset_testcase()
+                this.open_problem.spj = !this.open_problem.spj
+            } else {
+                this.open_problem.spj = !this.open_problem.spj
+            }
+        }
+    },
+    watch:{
+        keyword(){
+            this.page = 1
+            this.init()
+        },
+        'add_from_public_list.keyword'(){
+            this.add_from_public_list.page = 1
+            this.make_public_list_init()
+        },
+        'open_problem.spj_code'(){
+            this.open_problem.spj_compile_ok = false
         }
     },
     beforeRouteLeave(to, from, next) {
         this.ProblemModal.hide()
         this.DeleteModal.hide()
+        this.AddPublicProblemModal.hide()
+        this.MakePublicProblemModal.hide()
         next()
+    },
+    beforeDestroy(){
+        this.ProblemModal.hide()
+        this.DeleteModal.hide()
+        this.AddPublicProblemModal.hide()
+        this.MakePublicProblemModal.hide()
     }
 }
 </script>
-
-<style>
-
-</style>

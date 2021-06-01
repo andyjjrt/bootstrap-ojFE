@@ -123,12 +123,13 @@
                 </div>
             </div>
         </div>
-        <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
-            <div class="container-fluid">
-                <router-link to="/" class="navbar-brand" @click.native="toggle_collapse">{{ nav_brand }}</router-link>
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-light">
+            <div class="container-fluid position-relative">
+                <router-link to="/" class="navbar-brand d-none d-lg-block" @click.native="toggle_collapse">{{ nav_brand }}</router-link>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                <router-link to="/" class="navbar-brand d-block d-lg-none position-absolute top-0 start-50 translate-middle-x" @click.native="toggle_collapse">{{ nav_brand }}</router-link>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent" ref="nav_collapse">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
@@ -143,51 +144,51 @@
                         <li class="nav-item">
                             <router-link to="/status" class="nav-link text-nowrap" @click.native="toggle_collapse" :class="{'active':check_active('Status')}"><i class="bi bi-graph-up" style="padding: 0px 6px;"></i>Status</router-link>
                         </li>
-                        <li class="nav-item">
-                            <router-link to="/judger" class="nav-link text-nowrap" @click.native="toggle_collapse" :class="{'active':check_active('Judger')}"><i class="bi bi-info-circle" style="padding: 0px 6px;"></i>Judger</router-link>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-bar-chart-line" style="padding: 0px 6px;"></i>Rank
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><router-link to="/acm-rank" class="dropdown-item" @click.native="toggle_collapse">ACM Rank</router-link></li>
+                                <li><router-link to="/oi-rank" class="dropdown-item" @click.native="toggle_collapse">OI Rank</router-link></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-info-circle" style="padding: 0px 6px;"></i>About
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><router-link to="/judger" class="dropdown-item" @click.native="toggle_collapse">Judger</router-link></li>
+                                <li><router-link to="/faq" class="dropdown-item" @click.native="toggle_collapse">FAQ</router-link></li>
+                            </ul>
                         </li>
                     </ul>
-                    <form class="d-flex">
-                        <div v-if="profile != null">
-                            <div v-if="profile.data == null">
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="current_action = 'login'">
-                                    Login
-                                </button>
-                            </div>
-                            <div v-else>
-                                <div class="dropdown d-none d-md-block">
-                                    <a role="button" class="navbar-brand" id="dropdownMenuLink" ref="drop_profile" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img :src="custom_avatar(profile.data.avatar)" width="40" class="rounded-circle" v-if="profile.data.avatar">
-                                        <img :src="default_avatar" width="40" class="rounded-circle" v-else>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><h6 class="dropdown-header">{{profile.data.user.username}}</h6></li>
-                                        <li><a class="dropdown-item" role="button" @click="to_user">Home</a></li>
-                                        <li><a class="dropdown-item" role="button" @click="to_submission">Submissions</a></li>
-                                        <li><a class="dropdown-item" role="button" @click="to_setting">Setting</a></li>
-                                        <li><a class="dropdown-item" role="button" @click="$router.push({ path: '/admin'})" v-if="profile.data.user.admin_type == 'Admin' || profile.data.user.admin_type == 'Super Admin'">Management</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" role="button" @click="logout">Logout</a></li>
-                                    </ul>
-                                </div>
-                                <div class="dropdown d-block d-md-none">
-                                    <a role="button" class="navbar-brand" id="dropdownMenuLink" ref="drop_profile" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img :src="custom_avatar(profile.data.avatar)" width="40" class="rounded-circle" v-if="profile.data.avatar">
-                                        <img :src="default_avatar" width="40" class="rounded-circle" v-else>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu">
-                                        <li><h6 class="dropdown-header">{{profile.data.user.username}}</h6></li>
-                                        <li><a class="dropdown-item" role="button" @click="to_user">Home</a></li>
-                                        <li><a class="dropdown-item" role="button" @click="to_submission">Submissions</a></li>
-                                        <li><a class="dropdown-item" role="button" @click="to_setting">Setting</a></li>
-                                        <li><a class="dropdown-item" role="button" @click="$router.push({ path: '/admin'})" v-if="profile.data.user.admin_type == 'Admin' || profile.data.user.admin_type == 'Super Admin'">Management</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" role="button" @click="logout">Logout</a></li>
-                                    </ul>
-                                </div>
+                </div>
+                <div class="position-absolute top-0 end-0 d-flex">
+                    <div v-if="profile != null" class="px-2">
+                        <div v-if="profile.data == null">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="current_action = 'login'">
+                                Login
+                            </button>
+                        </div>
+                        <div v-else>
+                            <div class="dropdown">
+                                <a role="button" class="navbar-brand" id="dropdownMenuLink" ref="drop_profile" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img :src="custom_avatar(profile.data.avatar)" width="40" class="rounded-circle" v-if="profile.data.avatar">
+                                    <img :src="default_avatar" width="40" class="rounded-circle" v-else>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><h6 class="dropdown-header">{{profile.data.user.username}}</h6></li>
+                                    <li><a class="dropdown-item" role="button" @click="to_user">Home</a></li>
+                                    <li><a class="dropdown-item" role="button" @click="to_submission">Submissions</a></li>
+                                    <li><a class="dropdown-item" role="button" @click="to_setting">Setting</a></li>
+                                    <li><a class="dropdown-item" role="button" @click="$router.push({ path: '/admin'})" v-if="profile.data.user.admin_type == 'Admin' || profile.data.user.admin_type == 'Super Admin'">Management</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" role="button" @click="logout">Logout</a></li>
+                                </ul>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -275,15 +276,11 @@ export default {
                     });
                     this.LoginModal.toggle()
                     this.toggle_collapse()
-                    this.$message.success({
-                        message: "Welcome back to OJ",
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$success("Welcome back to OJ")
                 }
             })
             .catch((error) => {
-                console.error(error)
+                this.$error(error)
                 this.LoginModal.toggle()
             })
         },
@@ -306,14 +303,10 @@ export default {
                     return
                 }
                 this.current_action = "login"
-                this.$message.success({
-                    message: "Register Succeed!",
-                    duration : 1500,
-                    zIndex: 1000000
-                })
+                this.$success("Register Succeed!")
             })
             .catch((error) => {
-                console.error(error)
+                this.$error(error)
                 this.LoginModal.toggle()
             })
         },
@@ -337,14 +330,10 @@ export default {
                 }
                 this.LoginModal.toggle()
                 this.toggle_collapse()
-                this.$message.success({
-                    message: "Email sent! Please check mailbox",
-                    duration : 1500,
-                    zIndex: 1000000
-                })
+                this.$success("Email sent! Please check mailbox")
             })
             .catch((error) => {
-                console.error(error)
+                this.$error(error)
                 this.LoginModal.toggle()
             })
         },
@@ -371,7 +360,7 @@ export default {
         },
         to_submission(){
             this.toggle_collapse()
-            this.$router.push({ name: 'Status', query:{myself: 1}})
+            this.$router.push({ name: 'Status', query:{page: 1, myself: 1}})
         },
         to_setting(){
             this.toggle_collapse()

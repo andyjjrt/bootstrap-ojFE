@@ -1,6 +1,7 @@
 <template>
     <div v-if="contest">
         <div class="card card-body">
+            <h4 class="mb-3">Edit Contest</h4>
             <div class="row g-3" v-if="contest">
                 <div class="col-sm-12">
                     <label class="form-label">Title</label>
@@ -142,19 +143,11 @@ export default {
         },
         addip(){
             if(this.add_ip == ""){
-                this.$message.error({
-                    message: "Please enter IP",
-                    duration : 1500,
-                    zIndex: 1000000
-                })
+                this.$error("Please enter IP")
                 return
             }
             if(this.contest.data.allowed_ip_ranges.indexOf(this.add_ip) != -1){
-                this.$message.error({
-                    message: "Duplicated IP",
-                    duration : 1500,
-                    zIndex: 1000000
-                })
+                this.$error("Duplicated IP")
                 return
             }
             this.contest.data.allowed_ip_ranges.push(this.add_ip)
@@ -188,18 +181,10 @@ export default {
             this.contest.data.end_time = new Date(this.contest.data.end_time).toISOString()
             this.$http.put(window.location.origin + '/api/admin/contest', this.contest.data).then(response => {
                 if(!response.data.error){
-                    this.$message.success({
-                        message: "Succeed",
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$success("Succeed")
                     this.init();
                 }else{
-                    this.$message.error({
-                        message: response.data.data,
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$error(response.data.data)
                 }
             });
         },

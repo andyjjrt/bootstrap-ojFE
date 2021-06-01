@@ -109,18 +109,10 @@ export default {
         save_smtp(){
             this.$http.post(window.location.origin + '/api/admin/smtp', this.smtp.data).then(response => {
                 if(!response.data.error){
-                    this.$message.success({
-                        message: "Succeed",
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$success("Succeed")
                     this.init_smtp();
                 }else{
-                    this.$message.error({
-                        message: response.data.data,
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$error(response.data.data)
                 }
             });
         },
@@ -131,18 +123,10 @@ export default {
                         this.$store.commit('get_site', response.data)
                         window.document.title = this.$store.state.site.data.website_name_shortcut + ' | ' + this.$route.name
                     })
-                    this.$message.success({
-                        message: "Succeed",
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$success("Succeed")
                     this.init_website();
                 }else{
-                    this.$message.error({
-                        message: response.data.data,
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$error(response.data.data)
                 }
             });
         },
@@ -150,18 +134,10 @@ export default {
             this.test_smtp.disabled = true
             this.$http.post(window.location.origin + '/api/admin/smtp_test', {email: this.test_smtp.email}).then(response => {
                 if(!response.data.error){
-                    this.$message.success({
-                        message: "Succeed",
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$success("Succeed")
                     this.init_smtp();
                 }else{
-                    this.$message.error({
-                        message: response.data.data,
-                        duration : 3000,
-                        zIndex: 1000000
-                    })
+                    this.$error(response.data.data)
                 }
                 this.test_smtp.disabled = false
             });

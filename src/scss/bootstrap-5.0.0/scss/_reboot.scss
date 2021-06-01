@@ -284,6 +284,7 @@ samp {
 // 3. Don't allow content to break outside
 
 pre {
+  word-wrap: normal;
   display: block;
   margin-top: 0; // 1
   margin-bottom: 1rem; // 2
@@ -295,7 +296,8 @@ pre {
   code {
     @include font-size(inherit);
     color: inherit;
-    word-break: normal;
+    word-wrap: normal;
+    width: -webkit-max-content;
   }
 }
 
