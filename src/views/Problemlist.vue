@@ -1,56 +1,10 @@
 <template>
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Problems</h4>
-                        <div class="table-responsive" v-if="problems && $store.state.profile_ready">
-                            <table class="table text-nowrap">
-                                <thead>
-                                    <tr class="d-flex">
-                                        <th scope="col" class="col-2 d-none d-md-block" style="border-left: 5px #ffffff solid">#</th>
-                                        <th scope="col" class="col-6 d-none d-md-block">Problem</th>
-                                        <th scope="col" class="col-2 d-none d-md-block">Level</th>
-                                        <th scope="col" class="col-2 d-none d-md-block">AC rate</th>
-                                        <th scope="col" class="col d-block d-md-none" style="border-left: 5px #ffffff solid">
-                                            <span>Problem</span>
-                                            <span class="float-end d-none d-sm-block">Level</span>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="d-flex" role="button"  v-for="problem in problems.data.results" :key="problem.id" @click="go_problem(problem._id)">
-                                        <td class="text-truncate col-2 d-none d-md-block" :style="solved(problem.id)">{{ problem._id }}</td>
-                                        <td class="text-truncate col-6 d-none d-md-block">{{ problem.title }}</td>
-                                        <td class="col-2 d-none d-md-block" v-html="difficulty_tag(problem.difficulty)"></td>
-                                        <td class="col-2 d-none d-md-block" >{{ ac_rate(problem.accepted_number, problem.submission_number) }}</td>
-                                        <td class="col d-block d-md-none"  :style="solved(problem.id)">
-                                            <span class="text-truncate">{{ problem.title }}</span>
-                                            <span class="float-end d-none d-sm-block" v-html="difficulty_tag(problem.difficulty)"></span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div  class="d-flex justify-content-center" v-else>
-                            <div class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-end">
-                        <li class="page-item"><a class="page-link" role="button" @click="to_page(1)"><i class="bi bi-chevron-double-left"></i></a></li>
-                        <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(page)-1)"><i class="bi bi-chevron-left"></i></a></li>
-                        <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(page)+1)"><i class="bi bi-chevron-right"></i></a></li>
-                        <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(total/20) + 1)"><i class="bi bi-chevron-double-right"></i></a></li>
-                    </ul>
-                </nav>
+                <ProblemList :select_tag="select_tag" />
             </div>
-            <div class="col-3 d-none d-sm-none d-md-none d-lg-block">
+            <div class="col-3 d-none d-sm-none d-md-block">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Tags</h4>
@@ -66,6 +20,11 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card-footer">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-light text-black" type="button" @click="pick_one"><i class="bi bi-shuffle"></i>&nbsp;Pick one</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -73,57 +32,35 @@
 </template>
 
 <script>
+import ProblemList from '@/components/Problemlist.vue'
 export default {
-    name:"ProblemList",
+    name:"PublicProblemList",
     data(){
         return{
             problems: null,
             tags: null,
-            total: -1,
+            total: 0,
             select_tag: "",
-            page: undefined
+            page: 1,
         }
     },
+    components:{
+        ProblemList
+    },
     created() {
-        this.get_problem()
+        this.init()
         this.$http.get(window.location.origin + '/api/problem/tags').then(response => {
             this.tags = response.data
         });
     },
     methods:{
-        get_problem(){
-            this.problems = null
-            window.scrollTo(0,0)
-            this.page = this.$route.query.page
-            if(this.page == undefined){
-                this.page = 1
+        init(){
+            this.select_tag = this.$route.query.tag
+            if(this.select_tag == undefined){
+                this.select_tag = ""
+            }else{
+                this.select_tag = this.$route.query.tag
             }
-            let offset = (this.page-1) * 20
-            this.$http.get(window.location.origin + '/api/problem?paging=true&tag=' + this.select_tag + '&offset=' + offset + '&limit=20&page=' + this.page).then(response => {
-                this.problems = response.data
-                this.total = response.data.data.total
-            });
-        },
-        to_page(page){
-            if(page < 1 || page > parseInt(this.total/20) + 1 || page == this.$route.query.page){
-                return
-            }
-            this.$router.push({ path: 'problem', query: { page: page }})
-            this.get_problem()
-        },
-        difficulty_tag(difficulty){
-            if(difficulty == "High"){
-                return '<span class="badge bg-warning text-dark">High</span>'
-            }else if(difficulty == "Mid"){
-                return '<span class="badge bg-primary">Mid</span>'
-            }
-            return '<span class="badge bg-success">Low</span>'
-        },
-        ac_rate(ac,total){
-            if(total == 0){
-                return '0.00%'
-            }
-            return (parseInt(ac)*100/parseInt(total)).toFixed(2) + "%"
         },
         select_tag_func(name){
             if(this.select_tag == name){
@@ -131,40 +68,21 @@ export default {
             }else{
                 this.select_tag = name
             }
-            this.$router.replace({ path: 'problem', query: { page: 1 }})
-            this.get_problem()
+            let que = {}
+            que.page = 1
+            que.tag = this.select_tag != "" ? this.select_tag : undefined
+            this.$router.push({ path: 'problem', query: que})
         },
-        go_problem(id){
-            this.$router.push({ name: 'Problem', params: { id:id }})
-        },
-        solved(id){
-            if(this.$store.state.profile.data){
-                if(this.$store.state.profile.data.acm_problems_status.problems){
-                    if(this.$store.state.profile.data.acm_problems_status.problems[id]){
-                        if(this.$store.state.profile.data.acm_problems_status.problems[id].status == 0){
-                            return "border-left: 5px #198754 solid"
-                        }else{
-                            return "border-left: 5px #dc3545 solid"
-                        }
-                    }
-                }
-                if(this.$store.state.profile.data.oi_problems_status.problems){
-                    if(this.$store.state.profile.data.oi_problems_status.problems[id]){
-                        if(this.$store.state.profile.data.oi_problems_status.problems[id].status == 0){
-                            return "border-left: 5px #198754 solid"
-                        }else{
-                            return "border-left: 5px #dc3545 solid"
-                        }
-                    }
-                }
-            }
-            return "border-left: 5px #ffffff solid"
+        pick_one(){
+            this.$http.get(window.location.origin + '/api/pickone').then(response => {
+                this.$router.push({ name: 'Problem', params: { pid:response.data.data }})
+                this.$success('Good luck')
+            });
         }
     },
-    watch: {
-        $route(to) {
-            this.page = to.query.page
-            this.get_problem()
+    watch:{
+        '$route.query.tag'(){
+            this.init()
         }
     }
 }

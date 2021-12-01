@@ -1,7 +1,9 @@
 <template>
   <div id="app" v-if="$store.state.profile_ready == true">
     <Navbar v-if="$store.state.site" />
-    <br><br><br>
+    <div>
+      <br><br><br><br>
+    </div>
     <transition name="component-fade" mode="out-in">
       <router-view />
     </transition>
@@ -41,5 +43,8 @@ export default{
 .component-fade-enter, .component-fade-leave-to
 /* .component-fade-leave-active for below version 2.1.8 */ {
   opacity: 0;
+}
+pre {
+  word-wrap:normal;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container-fluid">
         <StatusList :status_url="status_url" />
     </div>
 </template>

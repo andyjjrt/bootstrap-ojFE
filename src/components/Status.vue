@@ -52,6 +52,11 @@
                     <code :class="response.data.language" />
                 </pre>
             </div>
+            <div class="py-3 d-flex flex-row-reverse" v-if="response.data.can_unshare">
+                <button class="btn" @click="share" :class="{'btn-warning' : response.data.shared, 'btn-primary' : !response.data.shared, 'disabled':share_btn_disabled}">
+                    {{response.data.shared == true ? 'Unshare' : 'Share'}}
+                </button>
+            </div>
         </div>
         <div class="d-flex justify-content-center" v-else>
             <div class="spinner-border" role="status">
@@ -69,13 +74,27 @@ export default {
     },
     data(){
         return{
-            response: null
+            response: null,
+            share_btn_disabled: false
         }
     },
     created(){
-        this.$http.get(window.location.origin + "/api/submission?id=" + this.id).then((response) => {
-            this.response = response.data
-        });
+        this.init()
+    },
+    methods:{
+        init(){
+            this.$http.get(window.location.origin + "/api/submission?id=" + this.id).then((response) => {
+                this.response = response.data
+                this.share_btn_disabled = false
+            });
+        },
+        share(){
+            this.share_btn_disabled = true;
+            this.$http.put(window.location.origin + "/api/submission", {id: this.response.data.id, shared: !this.response.data.shared}).then((response) => {
+                this.init()
+                response.data.error ? this.$error(response.data.data) :this.$success('Succeed')
+            });
+        }
     }
 }
 </script>

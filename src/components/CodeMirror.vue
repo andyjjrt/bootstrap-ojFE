@@ -1,10 +1,11 @@
 <template>
   <div>
     <div class="row">
-      <div class="col-5 mb-3">
-        <select class="form-select" aria-label="Default select example" v-model="code_language">
+      <div class="d-flex justify-content-between mb-3">
+        <select class="form-select w-50" v-model="code_language">
           <option :value="language" v-for="language in problem.data.languages" :key="language">{{language}}</option>
         </select>
+        <button type="button" class="btn btn-light border text-black" @click="reset"><i class="bi bi-arrow-repeat"></i> Reset</button>
       </div>
     </div>
     <codemirror v-model="code" :options="cm_options" />
@@ -27,7 +28,7 @@ import 'codemirror/mode/clike/clike.js'
 import 'codemirror/mode/python/python.js'
 import 'codemirror/mode/go/go.js'
 import 'codemirror/theme/solarized.css'
-
+import storage from '@/util/storage.js'
 
   export default {
     name: 'code_space',
@@ -51,23 +52,40 @@ import 'codemirror/theme/solarized.css'
           lineNumbers: true,
           mode: '',
           tabSize: 4,
-        }
+        },
+        current_route: null
       }
     },
     created(){
+      this.current_route = this.$route
+      let problemCode = storage.get(this.buildProblemCodeKey(this.$route.params.pid, this.$route.params.id))
+      if (problemCode) {
+        this.code = problemCode.code
+        this.code_language = problemCode.language
+      }
+      if(this.problem.data.my_status == 0){
+        this.status_indicater = '<span class="badge bg-success">Solved</span>'
+      }
+
+      if(this.code != ''){
+        return
+      }
+
       this.code_language = this.problem.data.languages[0]
       if(this.problem.data.template[this.code_language]){
         this.code = this.problem.data.template[this.code_language]
       }
-        
-      if(this.problem.data.my_status == 0){
-        this.status_indicater = '<span class="badge bg-success fw-light">Solved</span>'
-      }
+    },
+    beforeDestroy(){
+      storage.set(this.buildProblemCodeKey(this.current_route.params.pid, this.current_route.params.id), {
+        code: this.code,
+        language: this.code_language,
+      })
     },
     methods:{
       submit(){
         if(this.code == "" || this.code == undefined){
-          this.$message.error({message: 'Code can not be empty',duration : 1500,zIndex: 1000000})
+          this.$error('Code can not be empty')
           return
         }
         this.on_submit = true
@@ -79,12 +97,12 @@ import 'codemirror/theme/solarized.css'
         this.$http.post(window.location.origin + '/api/submission', param)
         .then((res) => {
           if(res.data.error){
-            this.status_indicater = '<span class="badge bg-danger fw-light">' + res.data.data + '</span>'
+            this.status_indicater = '<span class="badge bg-danger">' + res.data.data + '</span>'
             this.on_submit = false
           }else{
             let vm = this
             this.submission_id_pass = res.data.data.submission_id
-            this.status_indicater = '<span class="fw-light badge bg-' + this.$store.state.status_list[9].type + '">' + this.$store.state.status_list[9].name + '</span>'
+            this.status_indicater = '<span class="badge bg-' + this.$store.state.status_list[9].type + '">' + this.$store.state.status_list[9].name + '</span>'
             this.ticker = window.setInterval(function(){vm.get_submit_status(res.data.data.submission_id)}, 1000)
           }
         })
@@ -94,7 +112,7 @@ import 'codemirror/theme/solarized.css'
       },
       get_submit_status(id){
         this.$http.get(window.location.origin + '/api/submission?id=' + id).then(response => {
-          this.status_indicater = '<span class="fw-light badge bg-' + this.$store.state.status_list[response.data.data.result].type + '">' + this.$store.state.status_list[response.data.data.result].name + '</span>'
+          this.status_indicater = '<span class="badge bg-' + this.$store.state.status_list[response.data.data.result].type + '">' + this.$store.state.status_list[response.data.data.result].name + '</span>'
           if(response.data.data.result != 7 && response.data.data.result != 9){
             window.clearInterval(this.ticker)
             this.$http.get(window.location.origin + "/api/profile").then((response) => {
@@ -118,12 +136,28 @@ import 'codemirror/theme/solarized.css'
         }else if(language == "Golang"){
           this.cm_options.mode = "text/x-go"
         }
+      },
+      buildProblemCodeKey (problemID, contestID = null) {
+        if (contestID) {
+          return `problemCode_${contestID}_${problemID}`
+        }
+        return `problemCode_NaN_${problemID}`
+      },
+      reset(){
+        this.code_language = this.problem.data.languages[0]
+        this.code = ''
+        if(this.problem.data.template[this.code_language]){
+          this.code = this.problem.data.template[this.code_language]
+        }
+      },
+      change_language(lan){
+        this.code_language = lan
       }
     },
     watch:{
       code_language(val){
         this.get_mime(val)
-      }
+      },
     }
   }
 </script>

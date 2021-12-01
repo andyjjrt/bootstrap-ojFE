@@ -3,28 +3,30 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-sm-3">
-                        <h4 class="card-title">Status</h4>
-                    </div>
-                    <div class="col-sm-9">
-                        <div class="d-flex flex-row-reverse">
-                            <div class="dropdown">
-                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                    {{stats_string}}
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item" @click="query_status(undefined, 'All')" role="button">All</a></li>
-                                    <li v-for="stats in Object.keys($store.state.status_list)" :key="stats"><a class="dropdown-item" @click="query_status(stats, $store.state.status_list[stats].name)" role="button">{{$store.state.status_list[stats].name}}</a></li>
-                                </ul>
-                            </div>
-                            <form style="padding-right: 10px" action="#" @submit.prevent="search_user">
-                                <input class="form-control form-control-sm" type="text" placeholder="Search..." aria-label="search user" v-model="searching_user">
-                            </form>
-                            <div class="form-check form-switch" style="padding-top: 5px;padding-right:15px;">
-                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" v-model="check_myself">
-                                <label class="form-check-label" for="flexSwitchCheckDefault">myself </label>
+                    <div class="col-sm-8 mb-3">
+                        <div class="d-flex justify-content-between">
+                            <h4 class="card-title">Status</h4>
+                            <div class="d-flex px-1">
+                                <div class="form-check form-switch" style="padding-top: 5px;padding-right:15px;">
+                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" v-model="check_myself">
+                                    <label class="form-check-label" for="flexSwitchCheckDefault">myself </label>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {{stats_string}}
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item" @click="query_status(undefined, 'All')" role="button">All</a></li>
+                                        <li v-for="stats in Object.keys($store.state.status_list)" :key="stats"><a class="dropdown-item" @click="query_status(stats, $store.state.status_list[stats].name)" role="button">{{$store.state.status_list[stats].name}}</a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-sm-4 mb-3">
+                        <form action="#" @submit.prevent="search_user">
+                            <input class="form-control form-control-sm" type="text" placeholder="Search..." aria-label="search user" v-model="searching_user">
+                        </form>
                     </div>
                 </div>
                 <div v-if="status">
@@ -41,51 +43,65 @@
                                     <th class="col-1 d-none d-lg-block">Lang</th>
                                     <th class="col-2 d-none d-md-block">Author</th>
 
-                                    <th class="col-4 d-block d-md-none">Time</th>
-                                    <th class="col-3 d-block d-md-none">Status</th>
-                                    <th class="col-5 d-block d-md-none">Problem</th>
+                                    <th class="col d-block d-md-none">Time</th>
+                                    <th class="col d-block d-md-none">Status</th>
+                                    <th class="col d-block d-md-none">Problem</th>
+                                    <th class="col d-block d-md-none">Author</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="stat in status.data.results" :key="stat.id" class="d-flex" :class="{can_see: stat.show_link}">
+                                <tr v-for="stat in status.data.results" :key="stat.id" class="d-flex position-relative" :class="{can_see: stat.show_link}">
                                     <td class="col-3 d-none d-md-block">{{date_format(new Date(stat.create_time))}}</td>
                                     <td class="col-2 d-none d-md-block">
                                         <span v-if="stat.show_link" role="button" @click="$router.push({ name: 'Submission', params: { submission_id:stat.id }})">
-                                            <span class="d-none d-lg-block" :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].name}}</span>
-                                            <span class="d-block d-lg-none" :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span>
+                                            <span class="d-none d-lg-block"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].name}}</span></span>
+                                            <span class="d-block d-lg-none"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span></span>
                                         </span>
                                         <span v-else>
-                                            <span class="d-none d-lg-block" :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].name}}</span>
-                                            <span class="d-block d-lg-none" :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span>
+                                            <span class="d-none d-lg-block"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].name}}</span></span>
+                                            <span class="d-block d-lg-none"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span></span>
                                         </span>
                                     </td>
                                     <td class="col-2 d-none d-lg-block">
                                         <a role="button" class="link-primary text-decoration-none" @click="$router.push({ path:'/contest/' + $store.state.contest.data.id + '/problem/' + stat.problem})" v-if="mode == 'contest'">{{stat.problem}}</a>
-                                        <a role="button" class="link-primary text-decoration-none" @click="$router.push({ name: 'Problem', params: { id:stat.problem }})" v-else>{{stat.problem}}</a>
+                                        <a role="button" class="link-primary text-decoration-none" @click="$router.push({ name: 'Problem', params: { pid:stat.problem }})" v-else>{{stat.problem}}</a>
                                     </td>
                                     <td class="col-5 d-none d-md-block d-lg-none">
                                         <a role="button" class="link-primary text-decoration-none" @click="$router.push({ path:'/contest/' + $store.state.contest.data.id + '/problem/' + stat.problem})" v-if="mode == 'contest'">{{stat.problem}}</a>
-                                        <a role="button" class="link-primary text-decoration-none" @click="$router.push({ name: 'Problem', params: { id:stat.problem }})" v-else>{{stat.problem}}</a>
+                                        <a role="button" class="link-primary text-decoration-none" @click="$router.push({ name: 'Problem', params: { pid:stat.problem }})" v-else>{{stat.problem}}</a>
                                     </td>
                                     <td class="col-1 d-none d-lg-block"><span v-if="stat.statistic_info.err_info">----</span><span v-else>{{stat.statistic_info.time_cost}}ms</span></td>
                                     <td class="col-1 d-none d-lg-block"><span v-if="stat.statistic_info.err_info">----</span><span v-else>{{ parseInt(stat.statistic_info.memory_cost/1048576)+1 }}MB</span></td>
                                     <td class="col-1 d-none d-lg-block">{{stat.language}}</td>
                                     <td class="col-2 d-none d-md-block"><a role="button" class="link-primary text-decoration-none" @click="$router.push({ name: 'User', query: { username:stat.username }})">{{stat.username}}</a></td>
 
-                                    <td class="col-4 d-block d-md-none"><span>{{date_format2(new Date(stat.create_time))}}</span></td>
-                                    <td class="col-3 d-block d-md-none">
+                                    <td class="col d-block d-md-none"><span>{{date_format2(new Date(stat.create_time))}}</span></td>
+                                    <td class="col d-block d-md-none">
                                         <span v-if="stat.show_link" role="button" @click="$router.push({ name: 'Submission', params: { submission_id:stat.id }})">
-                                            <span class="d-block" :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span>
+                                            <span class="d-block"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span></span>
                                         </span>
                                         <span v-else>
-                                            <span class="d-block" :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span>
+                                            <span class="d-block"><span :class="'badge bg-' + status_list[stat.result].type">{{status_list[stat.result].short}}</span></span>
                                         </span>
                                     </td>
-                                    <td class="col-5 d-block d-md-none">
+                                    <td class="col d-block d-md-none">
                                         <a role="button" class="link-primary text-decoration-none" @click="$router.push({ path:'/contest/' + $store.state.contest.data.id + '/problem/' + stat.problem})" v-if="mode == 'contest'">{{stat.problem}}</a>
                                         <a role="button" class="link-primary text-decoration-none" @click="$router.push({ name: 'Problem', params: { id:stat.problem }})" v-else>{{stat.problem}}</a>
                                     </td>
+                                    <td class="col d-block d-md-none"><a role="button" class="link-primary text-decoration-none" @click="$router.push({ name: 'User', query: { username:stat.username }})">{{stat.username}}</a></td>
+                                    <template v-if="$store.state.profile">
+                                        <template v-if="$store.state.profile.data">
+                                            <div class="position-absolute top-50 end-0 translate-middle-y" v-if="$store.state.profile.data.user.admin_type == 'Admin' || $store.state.profile.data.user.admin_type == 'Super Admin'">
+                                                <button type="button" class="btn btn-primary btn-sm" @click="rejudge(stat.id)">Rejudge</button>
+                                            </div>
+                                        </template>
+                                    </template>
                                 </tr>
+                                <tr v-if="status.data.results.length == 0">
+                                        <td colspan="4" class="text-center">
+                                            No Data
+                                        </td>
+                                    </tr>
                             </tbody>
                         </table>
                         <!--
@@ -130,20 +146,13 @@
                     </div>
                 </div>
             </div>
+            <Pagination @nav="to_page" :total="total" :page="query.page" :perpage="12" :dress_class="'card-body border-top'" />
         </div>
-        <br>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-end">
-                <li class="page-item"><a class="page-link" role="button" @click="to_page(1)"><i class="bi bi-chevron-double-left"></i></a></li>
-                <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(page)-1)"><i class="bi bi-chevron-left"></i></a></li>
-                <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(page)+1)"><i class="bi bi-chevron-right"></i></a></li>
-                <li class="page-item"><a class="page-link" role="button" @click="to_page(parseInt(total/12) + 1)"><i class="bi bi-chevron-double-right"></i></a></li>
-            </ul>
-        </nav>
     </div>
 </template>
 
 <script>
+import Pagination from '@/components/Pagination.vue'
 export default {
     name:"Status",
     props:{
@@ -153,15 +162,18 @@ export default {
     data(){
         return{
             status: null,
-            total: -1,
-            page: undefined,
+            total: 0,
+            page: 1,
             status_list: this.$store.state.status_list,
             check_myself: false,
             query: {},
             searching_user:"",
             stats_string:"All",
-            select_stat:undefined
+            select_stat:undefined,
         }
+    },
+    components:{
+        Pagination
     },
     created() {
         this.get_Status()
@@ -174,9 +186,8 @@ export default {
             this.query["limit"] = 12
             if(this.query.page == undefined){
                 this.query["page"] = 1
-                this.page = 1
             }else{
-                this.page = this.query.page
+                this.query.page = parseInt(this.query.page)
             }
             this.query["offset"] = (this.query["page"]-1) * 12
             if(this.query.myself == undefined || this.query.myself == 0){
@@ -198,10 +209,7 @@ export default {
             });
         },
         to_page(page){
-            if(page < 1 || page > parseInt(this.total/12) + 1 || page == this.$route.query.page){
-                return
-            }
-            this.query.page = page
+             this.query["page"] = page
             this.pusher()
         },
         ac_rate(ac,total){
@@ -211,7 +219,7 @@ export default {
             return date.getFullYear() + '/' +  (date.getMonth()+1) + '/' + date.getDate() + ' ' + (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes() + ':' + (date.getSeconds()<10?'0':'') + date.getSeconds()
         },
         date_format2(date){
-            return (date.getMonth()+1) + '/' + date.getDate() + ' ' + (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes()
+            return (date.getMonth()+1) + '/' + (date.getDate()<10?'0':'') + date.getDate() + ' ' + (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes()
         },
         pusher(){
             let aaa = {}
@@ -230,6 +238,11 @@ export default {
             this.query.result = code
             this.stats_string = str
             this.pusher()
+        },
+        rejudge(id){
+            this.$http.get(window.location.origin + '/api/admin/submission/rejudge?id=' + id).then(()=>{
+                this.get_Status()
+            });
         }
     },
     watch: {
@@ -243,7 +256,8 @@ export default {
                 this.query.myself = 0
             }
             this.query.page = 1
-            this.pusher()
+            if(this.status)
+                this.pusher()
         }
     }
 }

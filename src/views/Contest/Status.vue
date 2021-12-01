@@ -1,7 +1,5 @@
 <template>
-    <div class="container">
-        <StatusList :status_url="status_url" mode="contest"/>
-    </div>
+    <StatusList :status_url="status_url" mode="contest"/>
 </template>
 
 <script>

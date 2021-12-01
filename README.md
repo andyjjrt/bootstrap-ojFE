@@ -1,4 +1,4 @@
-# bootstrap-ojFE
+# bootstrap-ojFE AlphaField
 
 More responsive web page for Online Judge using Bootstrap5 and Vuejs
 [https://github.com/QingdaoU/OnlineJudge](https://github.com/QingdaoU/OnlineJudge "https://github.com/QingdaoU/OnlineJudge")
@@ -16,9 +16,8 @@ Modify nginx config to fit port number.
 npm run build
 ```
 
-### TODO
-- Better loading performance
-- i18in support
-- Code memory when switching pages
-- Avatar Loading
-- And more...
+### V1.1.0-alpha1
+- Use material design colors
+- Code memorization when leaving page, code will be clear when user logout
+- Admin page now building
+- Forget Password now available

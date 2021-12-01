@@ -2,10 +2,11 @@
     <div>
         <div class="card card-body">
             <small class="text-muted">{{ get_time(contest.data.start_time) }}~{{ get_time(contest.data.end_time) }}</small>
-            <div v-html="contest.data.description" />
+            <hr>
+            <v-md-editor :value="contest.data.description" mode="preview"></v-md-editor>
         </div>
         <br>
-        <Announce :announce_url="announce_url"/>
+        <Announce />
     </div>
 </template>
 
@@ -23,11 +24,6 @@ export default {
     },
     created(){
         this.contest = this.$store.state.contest
-    },
-    computed:{
-        announce_url(){
-            return '/api/contest/announcement?contest_id=' + this.$store.state.contest.data.id
-        },
     },
     methods:{
         get_time(isoString){

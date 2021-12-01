@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container-fluid">
         <div data-v-bdf21a32="" class="card card-body">
             <ul data-v-bdf21a32="">
                 <li data-v-bdf21a32="">C ( GCC 5.4 )
@@ -30,11 +30,6 @@
             :	The CPU time your program used has exceeded limit.
             </li> <li data-v-bdf21a32=""><b data-v-bdf21a32="">Memory Limit Exceeded</b> :	The memory your program actually used has exceeded limit.</li> <li data-v-bdf21a32=""><b data-v-bdf21a32="">System Error</b> :	Oops, something has gone wrong with the judger. Please report this to administrator.
             </li></ul>
-        </div>
-        <br>
-        <div class="card card-body">
-            <p>Frontend redesign by <a href="https://github.com/andyjjrt">andyjjrt</a>, Backend supported by <a href="https://github.com/QingdaoU/OnlineJudge">OnlineJudge</a>.</p>
-            <p>Frontend bug report please create issue in <a href="https://github.com/andyjjrt/bootstrap-ojFE/issues">https://github.com/andyjjrt/bootstrap-ojFE/issues</a></p>
         </div>
     </div>
 </template>

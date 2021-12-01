@@ -38,19 +38,17 @@
                                         <span v-if="stat.submission_info[problem.id]">{{stat.submission_info[problem.id].is_ac == false?'':get_remain(stat.submission_info[problem.id].ac_time)}}{{stat.submission_info[problem.id].error_number == 0?'':'(-' + stat.submission_info[problem.id].error_number + ')'}}</span>
                                     </td>
                                 </tr>
+                                <tr v-if="rank.data.results.length == 0">
+                                    <td :colspan="problems.data.length + 4" class="text-center">
+                                        No Data
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <br>
                     </div>
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-end">
-                            <li class="page-item"><a class="page-link" role="button" @click="load_page(1)"><i class="bi bi-chevron-double-left"></i></a></li>
-                            <li class="page-item"><a class="page-link" role="button" @click="load_page(parseInt(page)-1)"><i class="bi bi-chevron-left"></i></a></li>
-                            <li class="page-item"><a class="page-link" role="button" @click="load_page(parseInt(page)+1)"><i class="bi bi-chevron-right"></i></a></li>
-                            <li class="page-item"><a class="page-link" role="button" @click="load_page(parseInt(total/30) + 1)"><i class="bi bi-chevron-double-right"></i></a></li>
-                        </ul>
-                    </nav>
                 </div>
+                <Pagination @nav="load_page" :total="total" :page="page" :perpage="30" :dress_class="'card-body border-top'" />
             </div>
             <div v-else>
                 <div class="card card-body">
@@ -70,10 +68,12 @@
 
 <script>
 import Linechart from '@/components/Line.vue'
+import Pagination from '@/components/Pagination.vue'
 export default {
     name:"Contest_Rank",
     components:{
-        Linechart
+        Linechart,
+        Pagination
     },
     data(){
         return{
@@ -148,9 +148,6 @@ export default {
             })
         },
         load_page(page){
-            if(page < 1 || page > parseInt(this.total/30) + 1 || page == this.page){
-                return
-            }
             this.page = page
             let offset = (this.page-1) * 30
             this.$http.get(window.location.origin + '/api/contest_rank?offset=' + offset + '&limit=30&contest_id=' + this.$route.params.id).then(response => {

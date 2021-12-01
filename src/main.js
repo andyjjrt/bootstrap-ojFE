@@ -6,116 +6,42 @@ import Vuex from 'vuex'
 import Message from 'vue-m-message'
 import Katex from 'vue-katex-auto-render'
 import VueClipboard from 'vue-clipboard2'
+import Pagination from 'vue-pagination-2';
+
+import '@/css/bootstrap-icon@1.5.0/bootstrap-icon.css'
+import '@/css/Noto-Sans-Tc.css'
+
+import VueMarkdownEditor from '@kangc/v-md-editor';
+import '@/css/base-editor.css';
+import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
+import createTipPlugin from '@kangc/v-md-editor/lib/plugins/tip/index';
+import '@/css/vuepress.css';
+import '@/css/tip.css';
+import createKatexPlugin from '@kangc/v-md-editor/lib/plugins/katex/cdn';
+import enUS from '@kangc/v-md-editor/lib/lang/en-US';
+
+VueMarkdownEditor.use(createKatexPlugin());
+VueMarkdownEditor.use(createTipPlugin());
+VueMarkdownEditor.lang.use('en-US', enUS);
+VueMarkdownEditor.use(vuepressTheme);
+
+Vue.use(VueMarkdownEditor);
 
 import 'vue-m-message/dist/index.css'
-import "bootstrap/dist/css/bootstrap.min.css";
+import "@/scss/bootstrap-5.0.0/scss/bootstrap.scss";
 
 import 'highlight.js/styles/atom-one-light.css'
 import hljs from 'highlight.js'
 
 Vue.use(Vuex)
+import store from '@/store.js'
+
 Vue.use(VueClipboard)
 Vue.directive('katex', Katex);
 Vue.prototype.$http = axios
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = "csrftoken";
 Vue.use(Message)
-
-const store = new Vuex.Store({
-  state: {
-    profile: null,
-    profile_ready: false,
-    login:null,
-    site:null,
-    contest: null,
-    status_list:{
-      '-2': {
-          name: 'Compile Error',
-          short: 'CE',
-          type: 'warning',
-          color:"#ffc107"
-      },
-      '-1': {
-          name: 'Wrong Answer',
-          short: 'WA',
-          type: 'danger',
-          color:"#dc3545"
-      },
-      '0': {
-          name: 'Accepted',
-          short: 'AC',
-          type: 'success',
-          color:"#198754"
-      },
-      '1': {
-          name: 'Time Limit Exceeded',
-          short: 'TLE',
-          type: 'danger',
-          color:"#dc3545"
-      },
-      '2': {
-          name: 'Time Limit Exceeded',
-          short: 'TLE',
-          type: 'danger',
-          color:"#dc3545"
-      },
-      '3': {
-          name: 'Memory Limit Exceeded',
-          short: 'MLE',
-          type: 'danger',
-          color:"#dc3545"
-      },
-      '4': {
-          name: 'Runtime Error',
-          short: 'RE',
-          type: 'danger',
-          color:"#dc3545"
-      },
-      '5': {
-          name: 'System Error',
-          short: 'SE',
-          type: 'danger',
-          color:"#dc3545"
-      },
-      '6': {
-          name: 'Pending',
-          short: '...',
-          type: 'warning',
-          color:"#ffc107"
-      },
-      '7': {
-          name: 'Judging',
-          short: 'JG',
-          type: 'info',
-          color:"#0dcaf0"
-      },
-      '8': {
-          name: 'Partial Accepted',
-          short: 'PAC',
-          type: 'primary',
-          color:"#0d6efd"
-      },
-      '9': {
-          name: 'Submitting',
-          short: '...',
-          type: 'warning',
-          color:"#ffc107"
-      }
-    }
-  },
-  mutations: {
-    get_profile (state, status) {
-      state.profile = status
-      state.profile_ready = true
-    },
-    get_site (state, data) {
-      state.site = data
-    },
-    get_contest (state, data) {
-      state.contest = data
-    }
-  }
-})
 
 Vue.directive('highlightjs', {
   deep: true,
@@ -142,6 +68,22 @@ Vue.directive('highlightjs', {
     })
   }
 })
+Vue.component('pagination', Pagination);
+
+Vue.prototype.$success = (s) => {
+  Vue.prototype.$message.success({
+    message: s,
+    duration : 1500,
+    zIndex: 1000000
+  })
+}
+Vue.prototype.$error = (s) => {
+  Vue.prototype.$message.error({
+    message: s,
+    duration : 3000,
+    zIndex: 1000000
+  })
+}
 
 new Vue({
   router,

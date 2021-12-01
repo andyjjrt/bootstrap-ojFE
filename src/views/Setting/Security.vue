@@ -78,7 +78,7 @@ export default {
         },
         current(session){
             if(session.current_session){
-                return '#d1e7dd'
+                return '#00c85140'
             }
             return '#ffffff'
         },

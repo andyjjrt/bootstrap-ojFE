@@ -1,11 +1,8 @@
 <template>
     <div class="container text-center">
         <h1>404 Not Found</h1>
-        <h5>
-            親愛的用戶您好<br>目測您做了一些不該做的事情才會看到我
-        </h5>
         <br>
-        <img src="https://www.ebg.tw/img/err/coni.jpg">
+        <img :src="url">
         <br>
         <br>
         <div class="d-grid gap-2 col-6 mx-auto">
@@ -15,8 +12,14 @@
 </template>
 
 <script>
+import PIC from '@/assets/404.jpg'
 export default {
-    name:"NullPage"
+    name:"NullPage",
+    data(){
+        return{
+            url: PIC
+        }
+    }
 }
 </script>
 

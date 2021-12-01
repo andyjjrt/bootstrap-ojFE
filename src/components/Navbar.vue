@@ -11,35 +11,11 @@
                     </div>
                     <div class="modal-body">
                         <ul class="nav nav-pills">
-                            <a class="flex-sm-fill text-sm-center nav-link" role="button" :class="{'active' : (current_action == 'login')}" @click="current_action = 'login'">Login</a>
+                            <a class="flex-sm-fill text-sm-center nav-link" role="button" :class="{'active' : (current_action == 'login' || current_action == 'forget')}" @click="current_action = 'login'">Login</a>
                             <a class="flex-sm-fill text-sm-center nav-link" role="button" :class="{'active' : (current_action == 'register')}"  @click="current_action = 'register'">Register</a>
                         </ul>
                         <br>
-                        <div v-if="current_action == 'login'">
-                            <form @submit.prevent="login" action="#">
-                                <div class="mb-3">
-                                    <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" id="floatingInput" placeholder="username" v-model="username">
-                                        <label for="floatingInput">Username</label>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="form-floating">
-                                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password">
-                                        <label for="floatingPassword">Password</label>
-                                    </div>
-                                </div>
-                                <div class="p-3"  v-if="login_error">
-                                    <div class="alert alert-danger" role="alert">
-                                        {{ login_error }}
-                                    </div>
-                                </div>
-                                <div class="d-flex flex-row-reverse bd-highlight">
-                                    <button type="submit" class="btn btn-primary" :class="{'disabled': login_btn}">Login</button>
-                                </div>
-                            </form>
-                        </div>
-                        <div v-else>
+                        <div v-if="current_action == 'register'">
                             <form @submit.prevent="register" action="#">
                                 <div class="mb-3">
                                     <div class="form-floating mb-3">
@@ -86,75 +62,133 @@
                                 </div>
                             </form>
                         </div>
+                        <div v-else>
+                            <div v-if="current_action == 'login'">
+                                <form @submit.prevent="login" action="#">
+                                    <div class="mb-3">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="floatingInput" placeholder="username" v-model="username">
+                                            <label for="floatingInput">Username</label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-floating">
+                                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password">
+                                            <label for="floatingPassword">Password</label>
+                                        </div>
+                                    </div>
+                                    <div class="p-3"  v-if="login_error">
+                                        <div class="alert alert-danger" role="alert">
+                                            {{ login_error }}
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <a role="button" class="text-decoration-none" @click="current_action = 'forget'">Forget Password?</a>
+                                        <button type="submit" class="btn btn-primary" :class="{'disabled': login_btn}">Login</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div v-else>
+                                <form @submit.prevent="forgetPass" action="#">
+                                    <div class="mb-3">
+                                        <div class="form-floating mb-3">
+                                            <input type="email" class="form-control" id="floatingInput" placeholder="username" v-model="forget.email">
+                                            <label for="floatingInput">Email</label>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-8">
+                                            <div class="form-floating">
+                                                <input type="text" class="form-control" id="fcaptcha" placeholder="Captcha" v-model="forget.captcha">
+                                                <label for="fcaptcha">Captcha</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-4 position-relative">
+                                            <img :src="forget.captcha_url" class="position-absolute top-50 start-50 translate-middle">
+                                        </div>
+                                    </div>
+                                    <div class="p-3"  v-if="forget.error">
+                                        <div class="alert alert-danger" role="alert">
+                                            {{ forget.error }}
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <a role="button" class="text-decoration-none" @click="current_action = 'login'">Got Password?</a>
+                                        <button type="submit" class="btn btn-primary" :class="{'disabled': forget.btn}">Send Reset Email</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <nav class="navbar navbar-expand-md navbar-light fixed-top" style="background-color: #f4f4f4;">
-            <div class="container-fluid">
-                <router-link to="/" class="navbar-brand" @click.native="toggle_collapse">{{ nav_brand }}</router-link>
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-light">
+            <div class="container-fluid position-relative">
+                <router-link to="/" class="navbar-brand d-none d-lg-block" @click.native="toggle_collapse">{{ nav_brand }}</router-link>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                <router-link to="/" class="navbar-brand d-block d-lg-none position-absolute top-0 start-50 translate-middle-x" @click.native="toggle_collapse">{{ nav_brand }}</router-link>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent" ref="nav_collapse">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <router-link to="/" class="nav-link" @click.native="toggle_collapse" :class="{'active':check_active('Home')}"><i class="bi bi-house" style="padding: 0px 6px;"></i>Home</router-link>
+                            <router-link to="/" class="nav-link text-nowrap" @click.native="toggle_collapse" :class="{'active':check_active('Home')}"><i class="bi bi-house" style="padding: 0px 6px;"></i>Home</router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link to="/problem" class="nav-link" @click.native="toggle_collapse" :class="{'active':check_active('Problem')}"><i class="bi bi-grid-3x3-gap" style="padding: 0px 6px;"></i>Problem</router-link>
+                            <router-link to="/problem" class="nav-link text-nowrap" @click.native="toggle_collapse" :class="{'active':check_active('Problem')}"><i class="bi bi-grid-3x3-gap" style="padding: 0px 6px;"></i>Problem</router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link to="/contest" class="nav-link" @click.native="toggle_collapse" :class="{'active':check_active('Contest')}"><i class="bi bi-trophy" style="padding: 0px 6px;"></i>Contest</router-link>
+                            <router-link to="/contest" class="nav-link text-nowrap" @click.native="toggle_collapse" :class="{'active':check_active('Contest')}"><i class="bi bi-trophy" style="padding: 0px 6px;"></i>Contest</router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link to="/status" class="nav-link" @click.native="toggle_collapse" :class="{'active':check_active('Status')}"><i class="bi bi-graph-up" style="padding: 0px 6px;"></i>Status</router-link>
+                            <router-link to="/status" class="nav-link text-nowrap" @click.native="toggle_collapse" :class="{'active':check_active('Status')}"><i class="bi bi-graph-up" style="padding: 0px 6px;"></i>Status</router-link>
                         </li>
-                        <li class="nav-item">
-                            <router-link to="/judger" class="nav-link" @click.native="toggle_collapse" :class="{'active':check_active('Judger')}"><i class="bi bi-info-circle" style="padding: 0px 6px;"></i>Judger</router-link>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-bar-chart-line" style="padding: 0px 6px;"></i>Rank
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><router-link to="/acm-rank" class="dropdown-item" @click.native="toggle_collapse">ACM Rank</router-link></li>
+                                <li><router-link to="/oi-rank" class="dropdown-item" @click.native="toggle_collapse">OI Rank</router-link></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-info-circle" style="padding: 0px 6px;"></i>About
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><router-link to="/judger" class="dropdown-item" @click.native="toggle_collapse">Judger</router-link></li>
+                                <li><router-link to="/faq" class="dropdown-item" @click.native="toggle_collapse">FAQ</router-link></li>
+                            </ul>
                         </li>
                     </ul>
-                    <form class="d-flex">
-                        <div v-if="profile != null">
-                            <div v-if="profile.data == null">
-                                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                    Login
-                                </button>
-                            </div>
-                            <div v-else>
-                                <div class="dropdown d-none d-md-block">
-                                    <a role="button" class="navbar-brand" id="dropdownMenuLink" ref="drop_profile" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img :src="custom_avatar(profile.data.avatar)" width="40" class="rounded-circle" v-if="profile.data.avatar">
-                                        <img :src="default_avatar" width="40" class="rounded-circle" v-else>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><h6 class="dropdown-header">{{profile.data.user.username}}</h6></li>
-                                        <li><a class="dropdown-item" role="button" @click="to_user">Home</a></li>
-                                        <li><a class="dropdown-item" role="button" @click="to_submission">Submissions</a></li>
-                                        <li><a class="dropdown-item" role="button" @click="to_setting">Setting</a></li>
-                                        <li><a class="dropdown-item" role="button" href="/admin" v-if="profile.data.user.admin_type == 'Admin' || profile.data.user.admin_type == 'Super Admin'">Management</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" role="button" @click="logout">Logout</a></li>
-                                    </ul>
-                                </div>
-                                <div class="dropdown d-block d-md-none">
-                                    <a role="button" class="navbar-brand" id="dropdownMenuLink" ref="drop_profile" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img :src="custom_avatar(profile.data.avatar)" width="40" class="rounded-circle" v-if="profile.data.avatar">
-                                        <img :src="default_avatar" width="40" class="rounded-circle" v-else>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu">
-                                        <li><h6 class="dropdown-header">{{profile.data.user.username}}</h6></li>
-                                        <li><a class="dropdown-item" role="button" @click="to_user">Home</a></li>
-                                        <li><a class="dropdown-item" role="button" @click="to_submission">Submissions</a></li>
-                                        <li><a class="dropdown-item" role="button" @click="to_setting">Setting</a></li>
-                                        <li><a class="dropdown-item" role="button" href="/admin" v-if="profile.data.user.admin_type == 'Admin' || profile.data.user.admin_type == 'Super Admin'">Management</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" role="button" @click="logout">Logout</a></li>
-                                    </ul>
-                                </div>
+                </div>
+                <div class="position-absolute top-0 end-0 d-flex">
+                    <div v-if="profile != null" class="px-2">
+                        <div v-if="profile.data == null">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="current_action = 'login'">
+                                Login
+                            </button>
+                        </div>
+                        <div v-else>
+                            <div class="dropdown">
+                                <a role="button" class="navbar-brand" id="dropdownMenuLink" ref="drop_profile" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img :src="custom_avatar(profile.data.avatar)" width="40" class="rounded-circle" v-if="profile.data.avatar">
+                                    <img :src="default_avatar" width="40" class="rounded-circle" v-else>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><h6 class="dropdown-header">{{profile.data.user.username}}</h6></li>
+                                    <li><a class="dropdown-item" role="button" @click="to_user">Home</a></li>
+                                    <li><a class="dropdown-item" role="button" @click="to_submission">Submissions</a></li>
+                                    <li><a class="dropdown-item" role="button" @click="to_setting">Setting</a></li>
+                                    <li><a class="dropdown-item" role="button" @click="$router.push({ path: '/admin'})" v-if="profile.data.user.admin_type == 'Admin' || profile.data.user.admin_type == 'Super Admin'">Management</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" role="button" @click="logout">Logout</a></li>
+                                </ul>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -165,6 +199,7 @@
 import Modal from 'bootstrap/js/dist/modal.js'
 import Collapse from 'bootstrap/js/dist/collapse.js'
 import Dropdown from 'bootstrap/js/dist/dropdown.js'
+import storage from '@/util/storage.js'
 
 export default {
     data(){
@@ -189,6 +224,14 @@ export default {
                 password_con: "",
                 captcha: "",
                 captcha_url: ""
+            },
+
+            forget:{
+                email:"",
+                captcha:"",
+                captcha_url: "",
+                error:null,
+                btn: false
             }
         }
     },
@@ -233,15 +276,11 @@ export default {
                     });
                     this.LoginModal.toggle()
                     this.toggle_collapse()
-                    this.$message.success({
-                        message: "Welcome back to OJ",
-                        duration : 1500,
-                        zIndex: 1000000
-                    })
+                    this.$success("Welcome back to OJ")
                 }
             })
             .catch((error) => {
-                console.error(error)
+                this.$error(error)
                 this.LoginModal.toggle()
             })
         },
@@ -264,14 +303,37 @@ export default {
                     return
                 }
                 this.current_action = "login"
-                this.$message.success({
-                    message: "Register Succeed!",
-                    duration : 1500,
-                    zIndex: 1000000
-                })
+                this.$success("Register Succeed!")
             })
             .catch((error) => {
-                console.error(error)
+                this.$error(error)
+                this.LoginModal.toggle()
+            })
+        },
+        forgetPass(){
+            if(this.forget.email == "" || this.forget.captcha == ""){
+                this.forget.error = "Please fill blanks"
+                this.forget_captcha();
+                this.forget.captcha = ""
+                return
+            }
+            this.forget.btn = true
+            this.forget.error = null
+            this.$http.post(window.location.origin + '/api/apply_reset_password', {captcha: this.forget.captcha, email: this.forget.email})
+            .then((res) => {
+                this.forget.btn = false
+                if(res.data.error){
+                    this.forget.error = res.data.data
+                    this.forget_captcha();
+                    this.forget.captcha = ""
+                    return
+                }
+                this.LoginModal.toggle()
+                this.toggle_collapse()
+                this.$success("Email sent! Please check mailbox")
+            })
+            .catch((error) => {
+                this.$error(error)
                 this.LoginModal.toggle()
             })
         },
@@ -279,6 +341,7 @@ export default {
             this.toggle_collapse()
             this.$http.get(window.location.origin + '/api/logout').then((response) => {
                 this.$store.commit('get_profile', response.data)
+                storage.clear()
                 this.$router.push({ name: 'Home'})
             });
         },
@@ -297,7 +360,7 @@ export default {
         },
         to_submission(){
             this.toggle_collapse()
-            this.$router.push({ name: 'Status', query:{myself: 1}})
+            this.$router.push({ name: 'Status', query:{page: 1, myself: 1}})
         },
         to_setting(){
             this.toggle_collapse()
@@ -313,6 +376,12 @@ export default {
             this.reg.captcha_url = ""
             this.$http.get(window.location.origin + '/api/captcha').then((response) => {
                 this.reg.captcha_url = response.data.data
+            });
+        },
+        forget_captcha(){
+            this.forget.captcha_url = ""
+            this.$http.get(window.location.origin + '/api/captcha').then((response) => {
+                this.forget.captcha_url = response.data.data
             });
         }
     },
@@ -336,6 +405,15 @@ export default {
                 this.$http.get(window.location.origin + '/api/captcha').then((response) => {
                     this.reg.captcha_url = response.data.data
                 });
+            }else if(a == 'forget'){
+                this.forget={
+                    email:"",
+                    captcha: "",
+                    captcha_url: ""
+                }
+                this.$http.get(window.location.origin + '/api/captcha').then((response) => {
+                    this.forget.captcha_url = response.data.data
+                });
             }else{
                 this.reg.captcha_url = ""
             }
@@ -343,20 +421,3 @@ export default {
     }
 }
 </script>
-
-<style>
-  .sm-no-display{
-    display: none;
-  }
-  .sm-display{
-    display: block;
-  }
-  @media (min-width: 576px) {
-    .sm-no-display{
-      display: block;
-    }
-    .sm-display{
-      display: none;
-    }
-  }
-</style>

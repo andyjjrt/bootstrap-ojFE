@@ -3,43 +3,66 @@
         <div v-if="problem">
             <div class="row" v-if="!problem.error">
                 <div class="col-md-9">
-                    <div class="card card-body">
+                    <div class="card card-body" v-katex>
                         <div>
-                            <h3>{{problem.data.title}}</h3>
+                            <div class="d-flex justify-content-between">
+                                <h3>{{problem.data.title}}</h3>
+                                <template v-if="$store.state.profile">
+                                    <template v-if="$store.state.profile.data">
+                                        <span>
+                                            <button class="btn btn-primary btn-sm" @click="edit(problem.data.id)" v-if="$store.state.profile.data.user.admin_type == 'Admin' || $store.state.profile.data.user.admin_type == 'Super Admin'"><i class="bi bi-pencil-square"></i></button>
+                                        </span>
+                                    </template>
+                                </template>
+                            </div>
                             <span class="float-end" v-if="problem.data.source">{{problem.data.source}}</span>
                         </div>
                         <hr>
                         <h4>Description</h4>
-                        <p v-html="problem.data.description" class="p-4 text-wrap codeder" v-katex style="background-color: #f3f3f3;"></p>
+                        <v-md-editor :value="problem.data.description" mode="preview"></v-md-editor>
                         <h4>Input</h4>
-                        <p v-html="problem.data.input_description" class="p-4 text-wrap codeder" v-katex style="background-color: #f3f3f3;"></p>
+                        <v-md-editor :value="problem.data.input_description" mode="preview"></v-md-editor>
                         <h4>Output</h4>
-                        <p v-html="problem.data.output_description" class="p-4 text-wrap codeder" v-katex style="background-color: #f3f3f3;"></p>
-                        <div class="row" v-for="tests in problem.data.samples" :key="tests.input">
-                            <div class="col-6">
-                                <h4>
-                                    Input&nbsp;
-                                    <a role="button" @click="doCopy(tests.input)"><i class="bi bi-clipboard"></i></a>
-                                </h4>
-                                <pre class="p-4 text-wrap" style="border: black solid 2px;"><code v-html="replace_n(tests.input)"/></pre>
-                            </div>
-                            <div class="col-6">
-                                <h4>Output</h4>
-                                <pre class="p-4 text-wrap" style="border: black solid 2px;"><code v-html="replace_n(tests.output)"/></pre>
-                            </div>
+                        <v-md-editor :value="problem.data.output_description" mode="preview"></v-md-editor>
+                        <div class="row g-2 mb-3">
+                            <template v-for="(tests, i) in problem.data.samples">
+                                <div class="col-sm-6" :key="'input' + i">
+                                    <h4>
+                                        Input {{i+1}}&nbsp;
+                                        <a role="button" @click="doCopy(tests.input)"><i class="bi bi-clipboard"></i></a>
+                                    </h4>
+                                </div>
+                                <div class="col-sm-6 d-none d-sm-block" :key="'output1' + i">
+                                    <h4>Output {{i+1}}</h4>
+                                </div>
+                                <div class="col-sm-6" :key="tests.input">
+                                    <div class="p-1 border bg-light" style="height: 100%">
+                                        <pre class="p-4"><code v-html="replace_n(tests.input)"/></pre>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 d-block d-sm-none" :key="'output2' + i">
+                                    <h4>Output {{i+1}}</h4>
+                                </div>
+                                <div class="col-sm-6" :key="tests.output">
+                                    <div class="p-1 border bg-light" style="height: 100%">
+                                        <pre class="p-4"><code v-html="replace_n(tests.output)"/></pre>
+                                    </div>
+                                </div>
+                            </template>
+                            <br>
                         </div>
                         <h4 v-if="problem.data.hint != ''">Hint</h4>
-                        <p  v-if="problem.data.hint != ''" v-html="problem.data.hint" class="p-4 text-wrap codeder" v-katex style="background-color: #f3f3f3;"></p>
+                        <v-md-editor v-if="problem.data.hint != ''" :value="problem.data.hint" mode="preview"></v-md-editor>
                         <CodeMirror :problem="problem" :type="type" class="p-2"/>
                     </div>
                 </div>
                 <div class="col-3 md-no-display">
                     <div class="list-group">
                         <button type="button" class="list-group-item list-group-item-action" @click="$router.push({ path: '/contest/' + $route.params.id +  '/status', query: { problem_id: problem.data._id}})" v-if="type == 'contest'">
-                            <div class="p-1"><i class="bi bi-list-task"></i> Submissions</div>
+                            <div class="p-1 text-nowrap"><i class="bi bi-list-task"></i> Submissions</div>
                         </button>
                         <button type="button" class="list-group-item list-group-item-action" @click="$router.push({ path: '/status', query: { problem_id: problem.data._id}})" v-else>
-                            <div class="p-1"><i class="bi bi-list-task"></i> Submissions</div>
+                            <div class="p-1 text-nowrap"><i class="bi bi-list-task"></i> Submissions</div>
                         </button>
                     </div>
                     <br>
@@ -48,30 +71,38 @@
                             <i class="bi bi-info-circle"></i> Information
                         </div>
                         <div class="card-body">
-                            <ul class="list-group list-group-flush" style="font-size: smaller;">
+                            <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span>ID</span>
-                                    <span>{{problem.data._id}}</span>
+                                    <span style="font-size: smaller;">{{problem.data._id}}</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span><i class="bi bi-clock"></i></span>
-                                    <span>{{problem.data.time_limit}}ms</span>
+                                    <span style="font-size: smaller;">{{problem.data.time_limit}}ms</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span><i class="bi bi-hdd"></i></span>
-                                    <span>{{problem.data.memory_limit}}MB</span>
+                                    <span style="font-size: smaller;">{{problem.data.memory_limit}}MB</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span><i class="bi bi-code-slash"></i></span>
-                                    <span>{{problem.data.io_mode.io_mode}}</span>
+                                    <span style="font-size: smaller;">{{problem.data.io_mode.io_mode}}</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span><i class="bi bi-person-circle"></i></span>
-                                    <span>{{problem.data.created_by.username}}</span>
+                                    <span style="font-size: smaller;">{{problem.data.created_by.username}}</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span><i class="bi bi-star"></i></span>
                                     <span v-html="difficulty_tag(problem.data.difficulty)"></span>
+                                </li>
+                                <li class="list-group-item">
+                                    <span>Tags</span>
+                                    <div class="d-flex flex-wrap">
+                                        <div style="padding: 3px" v-for="tag in problem.data.tags" :key="tag">
+                                            <span role="button" class="badge bg-primary">{{ tag }}</span>
+                                        </div>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -130,7 +161,7 @@ export default {
         Pie
     },
     created(){
-        this.thisid = this.$route.params.id
+        this.thisid = this.$route.params.pid
         this.$http.get(window.location.origin + this.problem_url).then(response => {
             this.problem = response.data
             window.document.title = this.$store.state.site.data.website_name_shortcut + ' | ' + this.problem.data.title
@@ -146,7 +177,7 @@ export default {
     methods:{
         difficulty_tag(difficulty){
             if(difficulty == "High"){
-                return '<span class="badge bg-warning text-dark">High</span>'
+                return '<span class="badge bg-warning">High</span>'
             }else if(difficulty == "Mid"){
                 return '<span class="badge bg-primary">Mid</span>'
             }
@@ -155,9 +186,9 @@ export default {
         doCopy: function (text) {
             let vue = this
             this.$copyText(text).then(function () {
-                vue.$message.success({message: 'Code coppied!',duration : 1500,zIndex: 1000000})
+                vue.$success('Code coppied!')
             }, function () {
-                vue.$message.error({message: 'Fail coppying!',duration : 1500,zIndex: 1000000})
+                vue.$error('Fail coppying!')
             })
         },
         replace_n(string){
@@ -180,6 +211,13 @@ export default {
                 data.labels.push(this.$store.state.status_list[keys[i]].short)
             }
             return data
+        },
+        edit(id){
+            if(this.$route.params.id != undefined){
+                this.$router.push({ path: '/admin/contest/' + this.$route.params.id + '?problem_id=' + id})
+            }else{
+                this.$router.push({ path: '/admin/problem?problem_id=' + id})
+            }
         }
     }
 }
