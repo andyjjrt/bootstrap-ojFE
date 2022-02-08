@@ -4,6 +4,7 @@ dist
 *.sh
 server.js
 src/scss
+nohup.out
 
 # local env files
 .env.local
