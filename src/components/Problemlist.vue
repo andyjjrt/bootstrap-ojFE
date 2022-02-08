@@ -9,7 +9,7 @@
                             <button class="btn btn-light text-dark border dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{difficulty == "" ? "Difficulty" : difficulty}}
                             </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
                                 <li><a class="dropdown-item" role="button" @click="query_difficulty('')">All</a></li>
                                 <li><a class="dropdown-item" role="button" @click="query_difficulty('Low')">Low</a></li>
                                 <li><a class="dropdown-item" role="button" @click="query_difficulty('Mid')">Mid</a></li>

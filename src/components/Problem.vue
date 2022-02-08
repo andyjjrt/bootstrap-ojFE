@@ -32,8 +32,11 @@
                                         <a role="button" @click="doCopy(tests.input)"><i class="bi bi-clipboard"></i></a>
                                     </h4>
                                 </div>
-                                <div class="col-sm-6 d-none d-sm-block" :key="'output1' + i">
-                                    <h4>Output {{i+1}}</h4>
+                                <div class="col-sm-6" :key="'output1' + i">
+                                    <h4>
+                                        Output {{i+1}}&nbsp;
+                                        <a role="button" @click="doCopy(tests.output)"><i class="bi bi-clipboard"></i></a>    
+                                    </h4>
                                 </div>
                                 <div class="col-sm-6" :key="tests.input">
                                     <div class="p-1 border bg-light" style="height: 100%">
@@ -134,7 +137,7 @@
 </template>
 
 <script>
-import {parse} from 'node-html-parser'
+//import {parse} from 'node-html-parser'
 import CodeMirror from '@/components/CodeMirror.vue'
 import Pie from '@/components/Pie.vue'
 
@@ -165,6 +168,7 @@ export default {
         this.$http.get(window.location.origin + this.problem_url).then(response => {
             this.problem = response.data
             window.document.title = this.$store.state.site.data.website_name_shortcut + ' | ' + this.problem.data.title
+            /*
             let root = parse(this.problem.data.description)
             for(let i in root.querySelectorAll("img")){
                 root.querySelectorAll("img")[i].removeAttribute("width")
@@ -172,6 +176,7 @@ export default {
                 root.querySelectorAll("img")[i].setAttribute("class", "img-fluid")
             }
             this.problem.data.description = root.toString().replace(/\u00A0/g, " ");
+            */
         })
     },
     methods:{

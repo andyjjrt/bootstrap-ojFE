@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="modal fade" id="confirm_modal" tabindex="-1" aria-labelledby="confirmLabel" aria-hidden="true">
+        <div class="modal fade" ref="modal" id="confirm_modal" tabindex="-1" aria-labelledby="confirmLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -21,7 +21,7 @@
             <div v-if="sessions">
                 <ul class="list-group list-group-flush">
                     <div v-for="session in sessions.data" :key="session.session_key">
-                        <div role="button" class="list-group-item" :style="{'background-color': current(session)}" @click="clear_session(session)">
+                        <div role="button" class="list-group-item" :style="{'background-color': current(session)}" :data-bs-toggle="session.current_session ? '' : 'modal'" data-bs-target="#confirm_modal">
                             <div class="fs-5 d-flex justify-content-between">
                                 <div class="d-flex">
                                     <i class="bi bi-laptop" v-if="get_UA(session.user_agent).device_type == 'desktop'"></i>
@@ -47,16 +47,21 @@
 </template>
 
 <script>
+import Modal from 'bootstrap/js/dist/modal.js'
 let UA = require('user-agent-parse')
 export default {
     name:"Profile",
     data(){
         return{
-            sessions: null
+            sessions: null,
+            modal: null
         }
     },
     created(){
         this.get_session()
+    },
+    mounted(){
+        this.modal = new Modal(this.$refs.modal)
     },
     methods:{
         get_session(){
@@ -84,6 +89,11 @@ export default {
         },
         clear_session(session){
             if(session.current_session){
+                this.$message.success({
+                    message: "Currently using!",
+                    duration : 1500,
+                    zIndex: 1000000
+                })
                 return
             }
             this.$http.delete(window.location.origin + "/api/sessions?session_key=" + session.session_key).then((response) => {

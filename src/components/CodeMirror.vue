@@ -5,7 +5,11 @@
         <select class="form-select w-50" v-model="code_language">
           <option :value="language" v-for="language in problem.data.languages" :key="language">{{language}}</option>
         </select>
-        <button type="button" class="btn btn-light border text-black" @click="reset"><i class="bi bi-arrow-repeat"></i> Reset</button>
+        <div>
+          <button type="button" class="btn btn-light border text-black" @click="onUploadFile"><i class="bi bi-cloud-arrow-up"></i></button>
+          &nbsp;
+          <button type="button" class="btn btn-light border text-black" @click="reset"><i class="bi bi-arrow-repeat"></i></button>
+        </div>
       </div>
     </div>
     <codemirror v-model="code" :options="cm_options" />
@@ -18,6 +22,7 @@
         <button class="btn btn-warning float-end" :class="{'disabled':on_submit}" type="button" @click="submit">Submit</button>
       </div>
     </div>
+    <input type="file" id="file-uploader" style="display: none" @change="onUploadFileDone">
   </div>
 </template>
 
@@ -152,6 +157,20 @@ import storage from '@/util/storage.js'
       },
       change_language(lan){
         this.code_language = lan
+      },
+      onUploadFile () {
+        document.getElementById('file-uploader').click()
+      },
+      onUploadFileDone () {
+        let f = document.getElementById('file-uploader').files[0]
+        let fileReader = new window.FileReader()
+        let self = this
+        fileReader.onload = function (e) {
+          var text = e.target.result
+          self.code = text
+          document.getElementById('file-uploader').value = ''
+        }
+        fileReader.readAsText(f, 'UTF-8')
       }
     },
     watch:{
