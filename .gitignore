@@ -2,9 +2,9 @@
 node_modules
 dist
 *.sh
-server.js
+./server.js
 src/scss
-nohup.out
+./nohup.out
 
 # local env files
 .env.local

@@ -31,6 +31,9 @@ export default{
     this.$http.get(api + "/profile").then((response) => {
       this.$store.commit('get_profile', response.data)
     });
+    this.$http.get(window.location.origin + '/api/languages').then(response => {
+      this.$store.commit('set_languages', response.data)
+    })
   }
 }
 </script>

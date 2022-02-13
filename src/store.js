@@ -8,6 +8,7 @@ const store = new Vuex.Store({
       login:null,
       site:null,
       contest: null,
+      languages: null,
       status_list:{
         '-2': {
             name: 'Compile Error',
@@ -93,6 +94,9 @@ const store = new Vuex.Store({
       },
       get_contest (state, data) {
         state.contest = data
+      },
+      set_languages (state, payload) {
+        state.languages = payload
       }
     }
   })

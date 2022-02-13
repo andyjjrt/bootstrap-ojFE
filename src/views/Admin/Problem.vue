@@ -454,7 +454,6 @@ export default {
                 display_id:"",
                 problem: null
             },
-            languages: null,
             total: 0,
             open_problem:{
                 title:"",
@@ -531,20 +530,17 @@ export default {
         this.DeleteModal = new Modal(this.$refs.delete_modal)
         this.AddPublicProblemModal = new Modal(this.$refs.add_public_modal)
         this.MakePublicProblemModal = new Modal(this.$refs.make_public_modal)
-        this.$http.get(window.location.origin + '/api/languages').then(response => {
-            this.languages = response.data
-            for(let i in this.languages.data.spj_languages){
-                this.open_problem_spj[this.languages.data.spj_languages[i].name] = {
-                    opt:{
-                        theme: "solarized",
-                        lineNumbers: true,
-                        mode: this.languages.data.spj_languages[i].content_type,
-                        tabSize: 4
-                    },
-                    name:this.languages.data.spj_languages[i].name
-                }
+        for(let i in this.languages.data.spj_languages){
+            this.open_problem_spj[this.languages.data.spj_languages[i].name] = {
+                opt:{
+                    theme: "solarized",
+                    lineNumbers: true,
+                    mode: this.languages.data.spj_languages[i].content_type,
+                    tabSize: 4
+                },
+                name:this.languages.data.spj_languages[i].name
             }
-        });
+        }
         if(this.$route.query.problem_id != undefined){
             this.$http.get(window.location.origin + this.url + '?id=' + this.$route.query.problem_id).then(response => {
                 if(response.data.error){
@@ -884,6 +880,11 @@ export default {
             } else {
                 this.open_problem.spj = !this.open_problem.spj
             }
+        }
+    },
+    computed: {
+        languages() {
+            return this.$store.state.languages
         }
     },
     watch:{

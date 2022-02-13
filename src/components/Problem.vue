@@ -32,7 +32,7 @@
                                         <a role="button" @click="doCopy(tests.input)"><i class="bi bi-clipboard"></i></a>
                                     </h4>
                                 </div>
-                                <div class="col-sm-6" :key="'output1' + i">
+                                <div class="col-sm-6 d-none d-sm-block" :key="'output1' + i">
                                     <h4>
                                         Output {{i+1}}&nbsp;
                                         <a role="button" @click="doCopy(tests.output)"><i class="bi bi-clipboard"></i></a>    
@@ -44,7 +44,10 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-6 d-block d-sm-none" :key="'output2' + i">
-                                    <h4>Output {{i+1}}</h4>
+                                    <h4>
+                                        Output {{i+1}}&nbsp;
+                                        <a role="button" @click="doCopy(tests.output)"><i class="bi bi-clipboard"></i></a>    
+                                    </h4>
                                 </div>
                                 <div class="col-sm-6" :key="tests.output">
                                     <div class="p-1 border bg-light" style="height: 100%">

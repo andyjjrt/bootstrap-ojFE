@@ -67,7 +67,7 @@
                                 <form @submit.prevent="login" action="#">
                                     <div class="mb-3">
                                         <div class="form-floating mb-3">
-                                            <input type="text" class="form-control" id="floatingInput" placeholder="username" v-model="username">
+                                            <input type="text" class="form-control" id="floatingInput" placeholder="username" @blur="check_2fa" v-model="username">
                                             <label for="floatingInput">Username</label>
                                         </div>
                                     </div>
@@ -75,6 +75,12 @@
                                         <div class="form-floating">
                                             <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password">
                                             <label for="floatingPassword">Password</label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3" v-if="require_2fa">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="floatingPassword" placeholder="2FA Code" v-model="code_2fa">
+                                            <label for="floatingPassword">2FA Code</label>
                                         </div>
                                     </div>
                                     <div class="p-3"  v-if="login_error">
@@ -167,7 +173,7 @@
                 <div class="position-absolute top-0 end-0 d-flex">
                     <div v-if="profile != null" class="px-2">
                         <div v-if="profile.data == null">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="current_action = 'login'">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="current_action = 'login'; check_2fa();">
                                 Login
                             </button>
                         </div>
@@ -209,6 +215,8 @@ export default {
             DropProfile: null,
             username: "",
             password:"",
+            require_2fa: false,
+            code_2fa: "",
             login_error: null,
             register_error: null,
             top_route: null,
@@ -263,7 +271,11 @@ export default {
         login(){
             this.login_btn = true
             this.login_error = null
-            this.$http.post(window.location.origin + '/api/login', {username: this.username, password: this.password})
+            let payload = {username: this.username, password: this.password}
+            if(this.require_2fa){
+                payload.tfa_code = this.code_2fa
+            }
+            this.$http.post(window.location.origin + '/api/login', payload)
             .then((res) => {
                 this.login_btn = false
                 if(res.data.error){
@@ -383,6 +395,12 @@ export default {
             this.$http.get(window.location.origin + '/api/captcha').then((response) => {
                 this.forget.captcha_url = response.data.data
             });
+        },
+        check_2fa(){
+            this.$http.post(window.location.origin + '/api/tfa_required', {username: this.username}).then((response) => {
+                this.require_2fa = response.data.data.result
+            });
+            
         }
     },
     watch: {
