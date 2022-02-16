@@ -31,7 +31,7 @@ Improvements:
 Performances: 
 - Upgrade `bootstrap@5.0.0` to `bootstrap@latest`, rewrite scss file.
 - remove unused packages in `packages.json`,
-- Move
+- Move `server.js` to `/server` and make its own package.
 
 ### To-dos
 - i18n (Not necessary).
