@@ -28,7 +28,7 @@ VueMarkdownEditor.use(vuepressTheme);
 Vue.use(VueMarkdownEditor);
 
 import 'vue-m-message/dist/index.css'
-import "@/scss/bootstrap-5.0.0/scss/bootstrap.scss";
+import "@/scss/style.scss";
 
 import 'highlight.js/styles/atom-one-light.css'
 import hljs from 'highlight.js'

@@ -1,5 +1,5 @@
 <template>
-  <div id="app" v-if="$store.state.profile_ready == true">
+  <div id="app" v-if="ready">
     <Navbar v-if="$store.state.site" />
     <div>
       <br><br><br><br>
@@ -34,6 +34,14 @@ export default{
     this.$http.get(window.location.origin + '/api/languages').then(response => {
       this.$store.commit('set_languages', response.data)
     })
+  },
+  computed: {
+    ready() {
+      if(this.$store.state.profile && this.$store.state.site && this.$store.state.languages){
+        this.$store.commit('set_ready')
+      }
+      return this.$store.state.profile && this.$store.state.site && this.$store.state.languages
+    }
   }
 }
 </script>

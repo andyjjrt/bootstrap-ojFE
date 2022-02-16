@@ -15,14 +15,25 @@ Modify nginx config to fit port number.
 npm run build
 ```
 
-### V1.1.1
-- The first stable version.
-- Remove most test utilities.
-- Add file upload button in problem page.
-- Add copy button for every output sample.
-- Remove `<img>` adjustment tool (node-html-parser), you need to turn ur problem template from `html` to `md` format.
+### V1.1.2
+
+Highlights: 
+- Add Two Factor Authentication.
+- Complete Session revoke modal, it works fine now.
+- `Admin` and `Super Admin` access error handling.
+
+Improvements: 
+- Add tooltips on upload and reset button.
+- Auto hide `Rejudge` button on mobile screens.
+- Redesign admin's navigation bar.
+- Add link to release notes (click on the version name)
+
+Performances: 
+- Upgrade `bootstrap@5.0.0` to `bootstrap@latest`, rewrite scss file.
+- remove unused packages in `packages.json`,
+- Move
 
 ### To-dos
-- Comfirm dialog for session deleting.
-- i18n (Not necessary)
-- Contest chart auto refresh animation, migrate from `chartjs@2.9.4` to `chartjs@latest`
+- i18n (Not necessary).
+- Contest chart auto refresh animation, migrate from `chartjs@2.9.4` to `chartjs@latest`.
+- Admin's navigation bar active display.

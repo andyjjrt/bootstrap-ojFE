@@ -138,8 +138,12 @@ export default {
     methods:{
         init(){
             this.$http.get(window.location.origin + '/api/admin/contest?id=' + this.$route.params.manage_contest_id).then(response => {
+                if(response.data.error) throw response.data.data
                 this.contest = response.data
-            });
+            }).catch((err) => {
+                this.$error(err)
+                this.$router.back()
+            })
         },
         addip(){
             if(this.add_ip == ""){
@@ -155,7 +159,6 @@ export default {
         },
         handleUploadImage(event, insertImage, files) {
             // Get the files and upload them to the file server, then insert the corresponding content into the editor
-            console.log(files);
             let formData = new FormData();
             formData.append("original_filename", files[0].name);
             formData.append("image", files[0]);

@@ -91,7 +91,7 @@
                                     <td class="col d-block d-md-none"><a role="button" class="link-primary text-decoration-none" @click="$router.push({ name: 'User', query: { username:stat.username }})">{{stat.username}}</a></td>
                                     <template v-if="$store.state.profile">
                                         <template v-if="$store.state.profile.data">
-                                            <div class="position-absolute top-50 end-0 translate-middle-y" v-if="$store.state.profile.data.user.admin_type == 'Admin' || $store.state.profile.data.user.admin_type == 'Super Admin'">
+                                            <div class="position-absolute top-50 end-0 translate-middle-y d-none d-lg-block" v-if="$store.state.profile.data.user.admin_type == 'Admin' || $store.state.profile.data.user.admin_type == 'Super Admin'">
                                                 <button type="button" class="btn btn-primary btn-sm" @click="rejudge(stat.id)">Rejudge</button>
                                             </div>
                                         </template>

@@ -6,9 +6,9 @@
           <option :value="language" v-for="language in problem.data.languages" :key="language">{{language}}</option>
         </select>
         <div>
-          <button type="button" class="btn btn-light border text-black" @click="onUploadFile"><i class="bi bi-cloud-arrow-up"></i></button>
+          <button type="button" class="btn btn-light border text-black" data-bs-toggle="tooltip" data-bs-placement="top" title="Upload file" @click="onUploadFile"><i class="bi bi-cloud-arrow-up"></i></button>
           &nbsp;
-          <button type="button" class="btn btn-light border text-black" @click="reset"><i class="bi bi-arrow-repeat"></i></button>
+          <button type="button" class="btn btn-light border text-black" data-bs-toggle="tooltip" data-bs-placement="top" title="Reset" @click="reset"><i class="bi bi-arrow-repeat"></i></button>
         </div>
       </div>
     </div>
@@ -34,6 +34,8 @@ import 'codemirror/mode/python/python.js'
 import 'codemirror/mode/go/go.js'
 import 'codemirror/theme/solarized.css'
 import storage from '@/util/storage.js'
+
+import Tooltip from 'bootstrap/js/dist/tooltip.js'
 
   export default {
     name: 'code_space',
@@ -80,6 +82,9 @@ import storage from '@/util/storage.js'
       if(this.problem.data.template[this.code_language]){
         this.code = this.problem.data.template[this.code_language]
       }
+    },
+    mounted(){
+      Array.from(document.querySelectorAll('button[data-bs-toggle="tooltip"]')).forEach(tooltipNode => new Tooltip(tooltipNode))
     },
     beforeDestroy(){
       storage.set(this.buildProblemCodeKey(this.current_route.params.pid, this.current_route.params.id), {

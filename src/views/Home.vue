@@ -1,19 +1,5 @@
 <template>
   <div class="container-fluid">
-    <!--
-    <div style=" margin: 0 auto; position: relative; height:300x; width:100%;" class="card card-body">
-      <div class="d-flex justify-content-between">
-        <h4>Rank</h4>
-        <button class="btn btn-primary btn-sm" type="button" @click="change()" :class="{'disabled':chart_btn}">{{next_chart_type}}</button>
-      </div>
-      <Chart :option="chart_option" :data="chart_data" v-if="rank" />
-      <div class="text-center" v-else>
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    </div>
-    -->
     <template v-if="contests">
       <div class="card card-body" v-if="contests.data.total > 0">
         <div id="carouselExampleIndicators" class="carousel carousel-dark slide" data-bs-ride="carousel" ref="contest_carousel" style="max-height: 200px">
@@ -116,7 +102,6 @@ export default {
     }
   },
   mounted(){
-    this.acm_chart()
     this.init()
   },
   methods:{
@@ -129,52 +114,6 @@ export default {
             wrap: true
           })
         }
-      });
-    },
-    acm_chart(){
-      this.chart_data = {
-        datasets: [
-          {
-            data: [],
-            label: 'AC',
-            backgroundColor: '#dc3545'
-          },
-          {
-            data: [],
-            label: 'Total',
-            backgroundColor: '#003480'
-          }
-        ],
-				labels: []
-      },
-      this.$http.get(window.location.origin + '/api/user_rank?offset=0&limit=10&rule=ACM').then(response => {
-        this.rank = response.data
-        for(let i in this.rank.data.results){
-          this.chart_data.datasets[0].data.push(this.rank.data.results[i].accepted_number)
-          this.chart_data.datasets[1].data.push(this.rank.data.results[i].submission_number)
-          this.chart_data.labels.push(this.rank.data.results[i].user.username)
-        }
-        this.chart_btn = false
-      });
-    },
-    oi_chart(){
-      this.chart_data = {
-        datasets: [
-          {
-            data: [],
-            label: 'Score',
-            backgroundColor: '#dc3545'
-          }
-        ],
-				labels: []
-      },
-      this.$http.get(window.location.origin + '/api/user_rank?offset=0&limit=10&rule=OI').then(response => {
-        this.rank = response.data
-        for(let i in this.rank.data.results){
-          this.chart_data.datasets[0].data.push(this.rank.data.results[i].total_score)
-          this.chart_data.labels.push(this.rank.data.results[i].user.username)
-        }
-        this.chart_btn = false
       });
     },
     change(){

@@ -87,7 +87,6 @@ const store = new Vuex.Store({
     mutations: {
       get_profile (state, status) {
         state.profile = status
-        state.profile_ready = true
       },
       get_site (state, data) {
         state.site = data
@@ -97,6 +96,9 @@ const store = new Vuex.Store({
       },
       set_languages (state, payload) {
         state.languages = payload
+      },
+      set_ready(state) {
+        state.profile_ready = true
       }
     }
   })

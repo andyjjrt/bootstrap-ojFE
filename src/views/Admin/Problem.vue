@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="modal fade" id="ProblemModal" tabindex="-1" aria-labelledby="ProblemModalLabel" aria-hidden="true" ref="problem_modal">
-            <div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable">
+            <div class="modal-dialog modal-xl modal-fullscreen modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="ProblemModalLabel">Problem</h5>
@@ -347,7 +347,7 @@
                 <h4>Problem</h4>
                 <input class="form-control w-50" type="text" placeholder="Keyword" v-model="keyword">
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive" v-if="problems">
                 <table class="table text-nowrap">
                     <thead>
                         <tr>
@@ -360,7 +360,7 @@
                             <th scope="col"></th>
                         </tr>
                     </thead>
-                    <tbody v-if="problems && languages">
+                    <tbody>
                         <tr v-for="problem in problems.data.results" :key="problem.id">
                             <td>{{problem.id}}</td>
                             <td>{{problem._id}}</td>
@@ -393,6 +393,11 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="d-flex justify-content-center pt-4" v-else>
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
             <br>
             <div class="row">
@@ -768,7 +773,6 @@ export default {
         },
         handleUploadImage(event, insertImage, files) {
             // Get the files and upload them to the file server, then insert the corresponding content into the editor
-            console.log(files);
             let formData = new FormData();
             formData.append("original_filename", files[0].name);
             formData.append("image", files[0]);

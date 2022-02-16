@@ -5,9 +5,9 @@
             <br>
             <span>
                 FE redesign by 
-                <a href="https://github.com/andyjjrt/bootstrap-ojFE">andyjjrt</a>
+                <a href="https://github.com/andyjjrt/bootstrap-ojFE" class="a-class">andyjjrt</a>
                 <span>
-                    &nbsp;  Version: {{version}}
+                    &nbsp;  Version: <a class="a-class" :href="'https://github.com/andyjjrt/bootstrap-ojFE/releases/tag/V' + version"> {{version}}-{{hash}} </a>
                 </span>
             </span>
         </div>
@@ -26,11 +26,16 @@ export default {
         },
         version(){
             return process.env.VUE_APP_VERSION
+        },
+        hash(){
+            return process.env.VUE_APP_HASH
         }
     }
 }
 </script>
 
 <style>
-
+.a-class {
+    text-decoration: none;
+}
 </style>

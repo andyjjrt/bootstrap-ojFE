@@ -49,7 +49,7 @@
             <div class="mb-3">
                 <div class="fs-4">Announce</div>
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive"  v-if="announcements">
                 <table class="table text-nowrap">
                     <thead>
                         <tr>
@@ -61,7 +61,7 @@
                             <th scope="col"></th>
                         </tr>
                     </thead>
-                    <tbody v-if="announcements">
+                    <tbody>
                         <tr v-for="announce in announcements" :key="announce.id">
                             <td>{{announce.id}}</td>
                             <td>{{announce.title}}</td>
@@ -82,6 +82,11 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="d-flex justify-content-center pt-4" v-else>
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
             <br>
             <div class="row">
@@ -150,12 +155,10 @@ export default {
     mounted(){
         this.AnnounceModal = new Modal(this.$refs.announce_modal)
         this.DeleteModal = new Modal(this.$refs.delete_modal)
-        this.init()
         if(this.$route.query.announce_id != undefined){
             this.$http.get(window.location.origin + this.url + '?id=' + this.$route.query.announce_id).then(response => {
-                if(response.data.error){
-                    this.$error(response.data.data)
-                }else if(this.$route.params.manage_contest_id != undefined){
+                if(response.data.error) throw response.data.data
+                if(this.$route.params.manage_contest_id != undefined){
                     if(response.data.data.contest != this.$route.params.manage_contest_id){
                         this.$error("This announce doesn't belong to this contest.")
                     }else{
@@ -166,7 +169,14 @@ export default {
                     this.edit(response.data.data)
                     this.AnnounceModal.toggle()
                 }
+            }).catch((err) => {
+                this.$error(err)
+                this.$router.back()
+            }).then(() => {
+                this.init()
             })
+        }else{
+            this.init()
         }
     },
     methods:{
@@ -177,6 +187,7 @@ export default {
                 tmp = '?contest_id=' + this.$route.params.manage_contest_id
             }
             this.$http.get(window.location.origin + this.url + tmp).then(response => {
+                if(response.data.error) throw response.data.data
                 this.announcements = response.data.data.results
                 if(this.$route.params.manage_contest_id != undefined){
                     this.announcements = response.data.data
@@ -249,7 +260,6 @@ export default {
         },
         handleUploadImage(event, insertImage, files) {
             // Get the files and upload them to the file server, then insert the corresponding content into the editor
-            console.log(files);
             let formData = new FormData();
             formData.append("original_filename", files[0].name);
             formData.append("image", files[0]);

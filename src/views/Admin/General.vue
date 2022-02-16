@@ -33,6 +33,11 @@
                 </div>
             </div>
         </div>
+        <div class="d-flex justify-content-center" v-else>
+            <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
     </div>
 </template>
 
