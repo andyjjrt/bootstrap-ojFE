@@ -15,25 +15,20 @@ Modify nginx config to fit port number.
 npm run build
 ```
 
-### V1.1.2
+### V1.1.3-pre1
 
 Highlights: 
-- Add Two Factor Authentication.
-- Complete Session revoke modal, it works fine now.
-- `Admin` and `Super Admin` access error handling.
+- Add search area in tagsm you can quickly find specific tag.
+- Redesign problems's statistic area, now it gives the percentage of status. (Feedbacks)
 
 Improvements: 
-- Add tooltips on upload and reset button.
-- Auto hide `Rejudge` button on mobile screens.
-- Redesign admin's navigation bar.
-- Add link to release notes (click on the version name)
+- Little adjustment on user profile.
+- Button's actions now all shows white text.
 
 Performances: 
-- Upgrade `bootstrap@5.0.0` to `bootstrap@latest`, rewrite scss file.
-- remove unused packages in `packages.json`,
-- Move `server.js` to `/server` and make its own package.
+- Migrate `chartjs@2.9.4` to `chartjs@3.7.1`, discard `vue-chartjs` wrapper, and brings more self-defined tools.
+- Remove old scss files.
 
 ### To-dos
 - i18n (Not necessary).
-- Contest chart auto refresh animation, migrate from `chartjs@2.9.4` to `chartjs@latest`.
 - Admin's navigation bar active display.
