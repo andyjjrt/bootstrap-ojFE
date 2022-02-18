@@ -14,7 +14,7 @@ const store = new Vuex.Store({
             name: 'Compile Error',
             short: 'CE',
             type: 'warning',
-            color:"#ffc107"
+            color:"#80848f"
         },
         '-1': {
             name: 'Wrong Answer',
@@ -32,37 +32,37 @@ const store = new Vuex.Store({
             name: 'Time Limit Exceeded',
             short: 'TLE',
             type: 'danger',
-            color:"#dc3545"
+            color:"#ff9300"
         },
         '2': {
             name: 'Time Limit Exceeded',
             short: 'TLE',
             type: 'danger',
-            color:"#dc3545"
+            color:"#ff9300"
         },
         '3': {
             name: 'Memory Limit Exceeded',
             short: 'MLE',
             type: 'danger',
-            color:"#dc3545"
+            color:"#a900ff"
         },
         '4': {
             name: 'Runtime Error',
             short: 'RE',
             type: 'danger',
-            color:"#dc3545"
+            color:"#ff6104"
         },
         '5': {
             name: 'System Error',
             short: 'SE',
             type: 'danger',
-            color:"#dc3545"
+            color:"#80848f"
         },
         '6': {
             name: 'Pending',
             short: '...',
-            type: 'warning',
-            color:"#ffc107"
+            type: 'info',
+            color:"#17a2b8"
         },
         '7': {
             name: 'Judging',

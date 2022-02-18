@@ -9,8 +9,8 @@
                             <label class="form-check-label" for="flexSwitchCheckDefault">Auto Refresh(10s)</label>
                         </div>
                     </div>
-                    <div style=" margin: 0 auto; position: relative; height:300x; width:100%;">
-                        <Linechart :option="chart_option" :data="chart_data"/>
+                    <div style="margin: auto; position: relative; height:300px; width:100%;">
+                        <Chart Type="line" :ChartData="chart_data" :Option="chart_option" />
                     </div>
                 </div>
                 <br>
@@ -67,12 +67,12 @@
 </template>
 
 <script>
-import Linechart from '@/components/Line.vue'
+import Chart from '@/components/MyChart.vue'
 import Pagination from '@/components/Pagination.vue'
 export default {
     name:"Contest_Rank",
     components:{
-        Linechart,
+        Chart,
         Pagination
     },
     data(){
@@ -84,28 +84,8 @@ export default {
             auto_refresh: false,
             refresh_item: null,
             chart_option:{
-                responsive: true,
                 maintainAspectRatio: false,
-                layout: {
-                    padding: {
-                        left: 20,
-                        right: 20,
-                        top: 10,
-                        bottom: 10
-                    }
-                },
-                scales: {
-                    xAxes: [{
-                        type: 'linear',
-                        position: 'bottom'
-                    }],
-                    yAxes: [{ 
-                        ticks: { 
-                            beginAtZero:true,
-                            stepSize: 1
-                        } 
-                    }] 
-                }
+                
             },
             chart_data:{
                 datasets: []

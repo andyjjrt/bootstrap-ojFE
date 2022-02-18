@@ -4,8 +4,8 @@
             <div class="fs-4">
                 ACM Rank
             </div>
-            <div style=" margin: 0 auto; position: relative; height:300x; width:100%; display:block;">
-                <Chart :option="chart_option" :data="chart_data" />
+            <div style=" margin: 0 auto; position: relative; height:400px; width:100%;">
+                <Chart Type="bar" :ChartData="chart_data" :Options="chart_option" />
             </div>
         </div>
         <br>
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import Chart from '@/components/Chart.vue'
+import Chart from '@/components/MyChart.vue'
 import Pagination from '@/components/Pagination.vue'
 export default {
     name:"Contest_Rank",

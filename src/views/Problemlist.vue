@@ -8,10 +8,18 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Tags</h4>
+                        <div class="mb-3">
+                            <input type="text" class="form-control form-control-sm" placeholder="Search..." v-model="qry_tag">
+                        </div>
                         <div class="d-flex flex-wrap" v-if="tags">
-                            <div style="padding: 3px" v-for="tag in tags.data" :key="tag.id">
-                                <button type="button" class="btn btn-primary btn-sm" v-if="select_tag == tag.name" @click="select_tag_func(tag.name)">{{ tag.name }}</button>
-                                <button type="button" class="btn btn-outline-primary btn-sm" v-else @click="select_tag_func(tag.name)">{{ tag.name }}</button>
+                            <template v-if="qry_tags.length">
+                                <div style="padding: 3px" v-for="tag in qry_tags" :key="tag.id">
+                                    <button type="button" class="btn btn-primary btn-sm" v-if="select_tag == tag.name" @click="select_tag_func(tag.name)">{{ tag.name }}</button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" v-else @click="select_tag_func(tag.name)">{{ tag.name }}</button>
+                                </div>
+                            </template>
+                            <div v-else>
+                                No tags
                             </div>
                         </div>
                         <div class="d-flex justify-content-center" v-else>
@@ -41,6 +49,7 @@ export default {
             tags: null,
             total: 0,
             select_tag: "",
+            qry_tag: "",
             page: 1,
         }
     },
@@ -78,6 +87,14 @@ export default {
                 this.$router.push({ name: 'Problem', params: { pid:response.data.data }})
                 this.$success('Good luck')
             });
+        }
+    },
+    computed: {
+        qry_tags() {
+            if(this.qry_tag == "") return this.tags.data
+            return this.tags.data.filter((tag) => {
+                return tag.name.includes(this.qry_tag)
+            })
         }
     },
     watch:{
