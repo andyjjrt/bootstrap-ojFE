@@ -20,7 +20,7 @@ npm run build
 Highlights: 
 - Add search area in tagsm you can quickly find specific tag.
 - Redesign problems's statistic area, now it gives the percentage of status. (Feedbacks)
-
+- Fixed flashing chart render when auto refresh
 Improvements: 
 - Little adjustment on user profile.
 - Button's actions now all shows white text.
@@ -32,3 +32,4 @@ Performances:
 ### To-dos
 - i18n (Not necessary).
 - Admin's navigation bar active display.
+- Check ACM-contest Rank.
