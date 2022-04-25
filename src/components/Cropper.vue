@@ -76,6 +76,7 @@ export default {
             this.$refs.cropper.getCroppedCanvas().toBlob(blob => {
                 let form = new window.FormData()
                 let file = new window.File([blob], 'avatar.png')
+                console.log(file)
                 if (file.size > 1 * 1024 * 1024){
                     this.$error("Upload limit is 1MB")
                     this.uploading = false

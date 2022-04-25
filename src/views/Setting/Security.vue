@@ -41,20 +41,22 @@
                 </div>
             </div>
             <div class="row" v-else>
-                <div class="col-lg-6">
+                <div class="col-xl-6">
                     <h3>Sessions</h3>   
                     <ul class="list-group list-group-flush py-2">
                         <div v-for="session in sessions.data" :key="session.session_key">
                             <div role="button" class="list-group-item" :style="{'background-color': current(session)}" :data-bs-toggle="session.current_session ? '' : 'modal'" data-bs-target="#confirm_modal" @click="selected_session = session">
                                 <div class="d-flex justify-content-between">
-                                    <div class="d-flex">
-                                        <i class="bi bi-laptop" v-if="get_UA(session.user_agent).device_type == 'desktop'"></i>
-                                        <i class="bi bi-phone" v-else></i>
-                                        <span>{{session.ip}}</span>
-                                        <div class="d-none d-lg-block d-xl-block d-xxl-block"> on {{get_UA(session.user_agent).os}},{{get_UA(session.user_agent).name}}</div>
+                                    <div class="d-flex flex-column">
+                                        <div class="d-flex flex-row">
+                                            <i class="bi bi-laptop" v-if="get_UA(session.user_agent).device_type == 'desktop'"></i>
+                                            <i class="bi bi-phone" v-else></i>
+                                            <span class="badge bg-light text-black ms-1">{{session.ip}}</span>
+                                        </div>
+                                        <span class="d-none d-md-block"> on {{get_UA(session.user_agent).os}},{{get_UA(session.user_agent).name}}</span>
                                     </div>
                                     <div class="d-none d-sm-block">
-                                        {{new Date(session.last_activity).toLocaleString()}}
+                                        {{date_format(new Date(session.last_activity))}}
                                     </div>
                                 </div>
                             </div>
@@ -62,7 +64,7 @@
                     </ul>
                     <br>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-xl-6">
                     <h3>Two Factor Authentication</h3>
                     <template v-if="!$store.state.profile.data.user.two_factor_auth">
                         <img v-if="two_fac_auth_img" :src="two_fac_auth_img" class="img-fluid" style="max-height: 300px;">
@@ -142,6 +144,9 @@ export default {
         },
         get_UA(string){
             return UA.parse(string)
+        },
+        date_format(date){
+            return date.getFullYear() + '/' +  (date.getMonth()+1) + '/' + date.getDate() + ' ' + (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes() + ':' + (date.getSeconds()<10?'0':'') + date.getSeconds()
         },
         current(session){
             if(session.current_session){

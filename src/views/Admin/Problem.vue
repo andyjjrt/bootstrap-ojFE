@@ -223,7 +223,7 @@
                             </div>
                             <div class="col-sm-12">
                                 <label class="btn btn-primary">
-                                    <input style="display:none;" type="file" @change="upload_event">
+                                    <input style="display:none;" type="file" @change="upload_event" :disabled="upload_testcase_btn_loading">
                                     Upload Testcase
                                 </label>
                             </div>
@@ -511,7 +511,8 @@ export default {
                 page:1,
                 total:0,
                 keyword:""
-            }
+            },
+            upload_testcase_btn_loading: false
         }
     },
     props:{
@@ -713,12 +714,14 @@ export default {
             })
         },
         upload_event(e){
+            this.upload_testcase_btn_loading = true
             let formData = new FormData();
             formData.append("file", e.target.files[0]);
             formData.append("spj", this.open_problem.spj)
             this.$http.post(window.location.origin + '/api/admin/test_case',formData).then(response => {
                 if (response.data.error) {
                     this.$error(response.data.data)
+                    this.upload_testcase_btn_loading = false
                     return
                 }
                 this.open_problem.test_case_id = response.data.data.id
@@ -732,6 +735,7 @@ export default {
                 this.open_problem.test_case_score = fileList
                 this.open_problem_variables.testCaseUploaded = true
                 e.target.value = ''
+                this.upload_testcase_btn_loading = false
             })
         },
         problem_language(){
