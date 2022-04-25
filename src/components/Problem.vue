@@ -119,8 +119,11 @@
                             <i class="bi bi-pie-chart"></i> Statistic
                         </div>
                         <div class="card-body">
+                            <Chart Type="doughnut" :ChartData="donught_data()" :Options="donught_options" />
+                            <!--
                             <Pie :data="donught_data()" :option="donught_options" class="d-block d-lg-none d-xl-none d-xxl-none"/>
                             <Pie :data="donught_data()" class="d-none d-lg-block d-xl-block d-xxl-block" />
+                            -->
                         </div>
                     </div>
                 </div>
@@ -142,7 +145,7 @@
 <script>
 //import {parse} from 'node-html-parser'
 import CodeMirror from '@/components/CodeMirror.vue'
-import Pie from '@/components/Pie.vue'
+import Chart from '@/components/MyChart.vue'
 
 export default {
     name:"problem_page",
@@ -156,15 +159,32 @@ export default {
             problem:null,
             code:"",
             donught_options:{
-                legend:{
-                    display: false
+                responsive: true,
+                plugins:{
+                    legend: {
+                        position: "bottom",
+                        align: "start"
+                    },
+                    tooltip:{
+                        callbacks: {
+                            label: (tooltipItems) => {
+                                let stats = tooltipItems.dataset.data
+                                let total = 0
+                                for(let i in stats){
+                                    total += stats[i]
+                                }
+                                return " " + tooltipItems.label + ": " + tooltipItems.raw + "(" + (tooltipItems.raw * 100 / total).toFixed(2) + "%)"
+                            }
+                        }
+                    }
                 }
+                
             },
         }
     },
     components:{
         CodeMirror,
-        Pie
+        Chart,
     },
     created(){
         this.thisid = this.$route.params.pid

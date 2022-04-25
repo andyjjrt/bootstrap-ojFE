@@ -23,39 +23,46 @@
                         </form>
                     </div>
                 </div>
-                <div class="table-responsive" v-if="problems && $store.state.profile_ready">
-                    <table class="table text-nowrap">
-                        <thead>
-                            <tr class="d-flex">
-                                <th scope="col" class="col-2 d-none d-sm-block" style="border-left: 5px #ffffff solid">#</th>
-                                <th scope="col" class="col-6 d-none d-sm-block">Problem</th>
-                                <th scope="col" class="col-2 d-none d-sm-block">Level</th>
-                                <th scope="col" class="col-2 d-none d-sm-block">AC rate</th>
-                                <th scope="col" class="col d-block d-sm-none" style="border-left: 5px #ffffff solid">
-                                    <span>Problem</span>
-                                    <span class="float-end">Level</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="d-flex" role="button"  v-for="problem in problems.data" :key="problem.id" @click="go_problem(problem._id)">
-                                <td class="text-truncate col-2 d-none d-sm-block">{{ problem._id }}</td>
-                                <td class="text-truncate col-6 d-none d-sm-block"><span v-html="solved(problem)"></span> {{ problem.title }}</td>
-                                <td class="col-2 d-none d-sm-block" v-html="difficulty_tag(problem.difficulty)"></td>
-                                <td class="col-2 d-none d-sm-block" >{{ ac_rate(problem.accepted_number, problem.submission_number) }}</td>
-                                <td class="col-12 d-block d-sm-none">
-                                    <span class="text-truncate"><span v-html="solved(problem)"></span> {{ problem.title }}</span>
-                                    <span class="float-end" v-html="difficulty_tag(problem.difficulty)"></span>
-                                </td>
-                            </tr>
-                            <tr v-if="problems.data.length == 0">
-                                <td colspan="4" class="text-center">
-                                    No Data
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <template v-if="problems">
+                    <div class="table-responsive" v-if="!problems.error">
+                        <table class="table text-nowrap">
+                            <thead>
+                                <tr class="d-flex">
+                                    <th scope="col" class="col-2 d-none d-sm-block" style="border-left: 5px #ffffff solid">#</th>
+                                    <th scope="col" class="col-6 d-none d-sm-block">Problem</th>
+                                    <th scope="col" class="col-2 d-none d-sm-block">Level</th>
+                                    <th scope="col" class="col-2 d-none d-sm-block">AC rate</th>
+                                    <th scope="col" class="col d-block d-sm-none" style="border-left: 5px #ffffff solid">
+                                        <span>Problem</span>
+                                        <span class="float-end">Level</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="d-flex" role="button"  v-for="problem in problems.data" :key="problem.id" @click="go_problem(problem._id)">
+                                    <td class="text-truncate col-2 d-none d-sm-block">{{ problem._id }}</td>
+                                    <td class="text-truncate col-6 d-none d-sm-block"><span v-html="solved(problem)"></span> {{ problem.title }}</td>
+                                    <td class="col-2 d-none d-sm-block" v-html="difficulty_tag(problem.difficulty)"></td>
+                                    <td class="col-2 d-none d-sm-block" >{{ ac_rate(problem.accepted_number, problem.submission_number) }}</td>
+                                    <td class="col-12 d-block d-sm-none">
+                                        <span class="text-truncate"><span v-html="solved(problem)"></span> {{ problem.title }}</span>
+                                        <span class="float-end" v-html="difficulty_tag(problem.difficulty)"></span>
+                                    </td>
+                                </tr>
+                                <tr v-if="problems.data.length == 0">
+                                    <td colspan="4" class="text-center">
+                                        No Data
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div v-else>
+                        <div class="alert alert-danger" role="alert">
+                            {{problems.data}}
+                        </div>
+                    </div>
+                </template>
                 <div  class="d-flex justify-content-center" v-else>
                     <div class="spinner-border" role="status">
                         <span class="visually-hidden">Loading...</span>

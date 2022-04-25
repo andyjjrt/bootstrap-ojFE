@@ -9,8 +9,8 @@
                             <label class="form-check-label" for="flexSwitchCheckDefault">Auto Refresh(10s)</label>
                         </div>
                     </div>
-                    <div style=" margin: 0 auto; position: relative; height:300x; width:100%; display:block;">
-                        <Chart :option="chart_option" :data="chart_data" v-if="chart_ready" />
+                    <div style=" margin: 0 auto; position: relative; height:400px; width:100%;">
+                        <Chart Type="bar" :ChartData="chart_data" :Options="chart_option" />
                     </div>
                 </div>
                 <br>
@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import Chart from '@/components/Chart.vue'
+import Chart from '@/components/MyChart.vue'
 import Pagination from '@/components/Pagination.vue'
 export default {
     name:"Contest_Rank",
@@ -75,15 +75,6 @@ export default {
     data(){
         return{
             chart_option:{
-                scales: {
-                    yAxes: [{
-                        display: true,
-                        ticks: {
-                            beginAtZero: true,
-                        }
-                    }]
-                },
-                responsive: true,
                 maintainAspectRatio: false,
                 layout: {
                     padding: {
@@ -121,26 +112,18 @@ export default {
     },
     methods:{
         init(){
-            this.chart_data = {
-                datasets: [
-                    {
-                        data: [],
-                        label: 'Score',
-                        backgroundColor: '#dc3545'
-                    }
-                ],
-                labels: []
-            }
             this.$http.get(window.location.origin + '/api/contest_rank?offset=0&limit=30&contest_id=' + this.$route.params.id).then(response => {
                 this.rank = response.data
                 this.chart_ready = false
+                this.chart_data.datasets[0].data = new Array()
+                this.chart_data.labels = new Array()
                 for(let i = 0; i < 10 && this.rank.data.results[i]; i++){
                     this.chart_data.datasets[0].data.push(this.rank.data.results[i].total_score)
                     this.chart_data.labels.push(this.rank.data.results[i].user.username)
                 }
-                let vm = this
-                window.setTimeout(function(){vm.chart_ready = true},10 )
                 this.total = response.data.data.total
+            }).then(() => {
+                this.chart_ready = true
             })
         },
         load_page(page){

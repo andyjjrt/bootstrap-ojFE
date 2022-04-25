@@ -146,7 +146,7 @@
                     </div>
                 </div>
             </div>
-            <Pagination @nav="to_page" :total="total" :page="query.page" :perpage="12" :dress_class="'card-body border-top'" />
+            <Pagination @nav="to_page" :total="total" :page="query.page" :perpage="12" :dress_class="'card-body border-top'" v-if="status" />
         </div>
     </div>
 </template>
@@ -209,7 +209,7 @@ export default {
             });
         },
         to_page(page){
-             this.query["page"] = page
+            this.query["page"] = page
             this.pusher()
         },
         ac_rate(ac,total){
@@ -232,7 +232,7 @@ export default {
         },
         search_user(){
             this.query.username = this.searching_user
-            this.pusher()
+            this.to_page(1)
         },
         query_status(code, str){
             this.query.result = code
