@@ -651,7 +651,7 @@ export default {
                     temp[lan] = this.open_problem.template[lan].code
                 }
             }
-            this.open_problem.template = JSON.parse(JSON.stringify(temp))
+            if(this.mode != "vis") this.open_problem.template = JSON.parse(JSON.stringify(temp))
             if(this.$route.params.manage_contest_id != undefined){
                 this.open_problem.contest_id = this.$route.params.manage_contest_id
             }
