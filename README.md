@@ -15,13 +15,9 @@ Modify nginx config to fit port number.
 npm run build
 ```
 
-### V1.1.4 beta2
-
-Bug:
-- Fix code format can't display.
-
-### V1.1.4 beta1
-
+### V1.1.4
+Fixed:
+- Fix code format can't display (xss issue).
 Highlights: 
 - Visible toggle button will not refresh template now.
 

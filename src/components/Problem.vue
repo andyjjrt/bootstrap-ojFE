@@ -21,9 +21,9 @@
                         <h4>Description</h4>
                         <v-md-editor :value="decodeURI(problem.data.description)" mode="preview"></v-md-editor>
                         <h4>Input</h4>
-                        <v-md-editor :value="problem.data.input_description" mode="preview"></v-md-editor>
+                        <v-md-editor :value="decodeURI(problem.data.input_description)" mode="preview"></v-md-editor>
                         <h4>Output</h4>
-                        <v-md-editor :value="problem.data.output_description" mode="preview"></v-md-editor>
+                        <v-md-editor :value="decodeURI(problem.data.output_description)" mode="preview"></v-md-editor>
                         <div class="row g-2 mb-3">
                             <template v-for="(tests, i) in problem.data.samples">
                                 <div class="col-sm-6" :key="'input' + i">
@@ -58,7 +58,7 @@
                             <br>
                         </div>
                         <h4 v-if="problem.data.hint != ''">Hint</h4>
-                        <v-md-editor v-if="problem.data.hint != ''" :value="problem.data.hint" mode="preview"></v-md-editor>
+                        <v-md-editor v-if="problem.data.hint != ''" :value="decodeURI(problem.data.hint)" mode="preview"></v-md-editor>
                         <CodeMirror :problem="problem" :type="type" class="p-2"/>
                     </div>
                 </div>
