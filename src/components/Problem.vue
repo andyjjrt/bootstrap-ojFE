@@ -19,7 +19,7 @@
                         </div>
                         <hr>
                         <h4>Description</h4>
-                        <v-md-editor :value="problem.data.description" mode="preview"></v-md-editor>
+                        <v-md-editor :value="decodeURI(problem.data.description)" mode="preview"></v-md-editor>
                         <h4>Input</h4>
                         <v-md-editor :value="problem.data.input_description" mode="preview"></v-md-editor>
                         <h4>Output</h4>
