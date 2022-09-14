@@ -629,7 +629,11 @@ export default {
             this.problem_language()
             this.change_problem_language()
             this.open_problem_variables.testCaseUploaded = true
-            this.mode = "edit"
+            this.mode = "edit";
+            this.open_problem.description = decodeURI(this.open_problem?.description);
+            this.open_problem.input_description = decodeURI(this.open_problem?.input_description);
+            this.open_problem.output_description = decodeURI(this.open_problem?.output_description);
+            this.open_problem.hint = decodeURI(this.open_problem?.hint);
         },
         create_new(){
             this.reset_problem()
@@ -651,10 +655,14 @@ export default {
                     temp[lan] = this.open_problem.template[lan].code
                 }
             }
-            this.open_problem.template = JSON.parse(JSON.stringify(temp))
+            if(this.mode != "vis") this.open_problem.template = JSON.parse(JSON.stringify(temp))
             if(this.$route.params.manage_contest_id != undefined){
                 this.open_problem.contest_id = this.$route.params.manage_contest_id
             }
+            this.open_problem.description = encodeURI(this.open_problem?.description);
+            this.open_problem.input_description = encodeURI(this.open_problem?.input_description);
+            this.open_problem.output_description = encodeURI(this.open_problem?.output_description);
+            this.open_problem.hint = encodeURI(this.open_problem?.hint);
             if(this.mode == "edit" || this.mode == "vis"){
                 this.$http.put(window.location.origin + this.url, this.open_problem).then(response => {
                     if(!response.data.error){

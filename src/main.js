@@ -12,10 +12,11 @@ import '@/css/bootstrap-icon@1.5.0/bootstrap-icon.css'
 import '@/css/Noto-Sans-Tc.css'
 
 import VueMarkdownEditor from '@kangc/v-md-editor';
-import '@/css/base-editor.css';
-import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
+import '@kangc/v-md-editor/lib/style/base-editor.css';
+import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
+import '@kangc/v-md-editor/lib/theme/style/github.css';
+
 import createTipPlugin from '@kangc/v-md-editor/lib/plugins/tip/index';
-import '@/css/vuepress.css';
 import '@/css/tip.css';
 import createKatexPlugin from '@kangc/v-md-editor/lib/plugins/katex/cdn';
 import enUS from '@kangc/v-md-editor/lib/lang/en-US';
@@ -23,7 +24,9 @@ import enUS from '@kangc/v-md-editor/lib/lang/en-US';
 VueMarkdownEditor.use(createKatexPlugin());
 VueMarkdownEditor.use(createTipPlugin());
 VueMarkdownEditor.lang.use('en-US', enUS);
-VueMarkdownEditor.use(vuepressTheme);
+VueMarkdownEditor.use(githubTheme, {
+  Hljs: hljs,
+});
 
 Vue.use(VueMarkdownEditor);
 
