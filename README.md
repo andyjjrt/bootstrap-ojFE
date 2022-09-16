@@ -27,6 +27,7 @@ Feature:
 
 Performances:
 - Upgrade `bootstrap` to `5.2`, brings quite a few UI change
+- Add `prettier` to format old codes.
 
 To-do:
 - Redesign admin navbar
