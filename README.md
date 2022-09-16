@@ -15,11 +15,16 @@ Modify nginx config to fit port number.
 npm run build
 ```
 
-### V1.1.4
+### V1.2.0-beta1
+
 Fixed:
-- Fix code format can't display (xss issue).
-Highlights: 
-- Visible toggle button will not refresh template now.
+- Admin problem edit & create issue (URIEncode)
+
+Performances:
+- Upgrade `vue` from `2.6` to `2.7`, and migrate to `vite` to enhance building performances.
+
+To-do:
+- Redesign admin navbar
 
 ### To-dos
 - i18n (Not necessary).

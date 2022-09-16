@@ -26,12 +26,10 @@ export default {
                 data: this.ChartData,
                 options: this.Options
             };
-            console.log(config)
             this.mychart = new Chart(
                 document.getElementById('myChart'),
                 config
             )
-            console.log(this.mychart)
         }
     },
     watch:{
