@@ -8,7 +8,7 @@
           Your program shall read input from <code>stdin</code> ('Standard
           Input') and write output to <code>stdout</code> ('Standard Output')
           For example,you can use <code>scanf</code> in C or <code>cin</code> in
-          C++ to read from stdin,and use <coee>printf</coee> in C or
+          C++ to read from stdin,and use <code>printf</code> in C or
           <code>cout</code> in C++ to write to stdout. User programs are not
           allowed to read or write files, or you will get a
           <span class="badge bg-danger">Runtime Error</span> .
@@ -73,7 +73,7 @@
 
 <script>
 export default {
-  name: "Judger",
+  name: "Faq",
 };
 </script>
 

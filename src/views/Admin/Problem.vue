@@ -1174,6 +1174,7 @@ export default {
             this.upload_testcase_btn_loading = false;
             return;
           }
+          this.$success(response.data.data.id);
           this.open_problem.test_case_id = response.data.data.id;
           let fileList = response.data.data.info;
           for (let file in fileList) {

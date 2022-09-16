@@ -15,11 +15,13 @@ $danger:        #ff4444;
 $light:         #f8f9fc;
 $dark:          #5a5c69;
 
+$offcanvas-horizontal-width: 250px;
+
 @import "../../node_modules/bootstrap/scss/bootstrap.scss";
 
 @each $color, $value in $theme-colors {
     .btn-#{$color} {
-        @include button-variant($value, $value, $color: $white, $hover-color: $white, $active-color: $white);
+        @include button-variant($value, $value, $color: $white, $hover-color: $white, $active-color: $white, $disabled-color: $white);
     }
 }
   

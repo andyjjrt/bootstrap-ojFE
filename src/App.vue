@@ -1,9 +1,9 @@
 <template>
-  <div id="app" v-if="ready">
+  <div id="app">
     <Navbar v-if="$store.state.site" />
     <div><br /><br /><br /><br /></div>
     <transition name="component-fade" mode="out-in">
-      <router-view />
+      <router-view v-if="ready" />
     </transition>
     <br />
     <Footer v-if="$store.state.site" />

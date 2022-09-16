@@ -5,8 +5,81 @@
         profile.user.admin_type == 'Admin' ||
         profile.user.admin_type == 'Super Admin'
       "
+      class="d-lg-flex"
     >
-      <div class="card card-body">
+      <div class="me-4 d-none d-lg-block" style="min-width: 200px">
+        <div class="card">
+          <ul class="list-group list-group-flush">
+            <router-link
+              to="/admin"
+              class="list-group-item"
+              :class="{ active: check_active('DashBoard') }"
+            >
+              <i class="bi bi-palette-fill" style="padding-right: 5px"></i>
+              Dashboard
+            </router-link>
+            <template v-if="profile.user.admin_type == 'Super Admin'">
+              <router-link
+                :to="'/admin/users'"
+                class="list-group-item"
+                :class="{ active: check_active('Users') }"
+              >
+                <i class="bi bi-people-fill" style="padding-right: 5px"></i>
+                Users
+              </router-link>
+              <router-link
+                :to="'/admin/announce'"
+                class="list-group-item"
+                :class="{ active: check_active('Announce') }"
+              >
+                <i class="bi bi-megaphone-fill" style="padding-right: 5px"></i>
+                Announce
+              </router-link>
+              <router-link
+                :to="'/admin/config'"
+                class="list-group-item"
+                :class="{ active: check_active('Config') }"
+              >
+                <i class="bi bi-wrench" style="padding-right: 5px"></i>
+                Config
+              </router-link>
+              <router-link
+                :to="'/admin/judgeserver'"
+                class="list-group-item"
+                :class="{ active: check_active('Judge Server') }"
+              >
+                <i class="bi bi-server" style="padding-right: 5px"></i>
+                Server
+              </router-link>
+              <router-link
+                :to="'/admin/prunetestcase'"
+                class="list-group-item"
+                :class="{ active: check_active('Prune Testcase') }"
+              >
+                <i class="bi bi-safe-fill" style="padding-right: 5px"></i>
+                Prune Testcase
+              </router-link>
+            </template>
+            <router-link
+              to="/admin/problem"
+              class="list-group-item"
+              :class="{ active: check_active('Problem') }"
+            >
+              <i class="bi bi-grid-3x3-gap-fill" style="padding-right: 5px"></i>
+              Problem
+            </router-link>
+            <router-link
+              to="/admin/contest"
+              class="list-group-item"
+              :class="{ active: check_active('ContestList') }"
+            >
+              <i class="bi bi-trophy-fill" style="padding-right: 5px"></i>
+              Contest
+            </router-link>
+          </ul>
+        </div>
+      </div>
+      <!-- <div class="card card-body">
         <ul class="nav nav-pills">
           <li class="nav-item">
             <router-link
@@ -99,9 +172,98 @@
             >
           </li>
         </ul>
+      </div> -->
+      <div class="flex-lg-grow-1">
+        <h3 class="d-flex">
+          <div @click="offCanvasRef.toggle()" class="d-block d-lg-none mx-2">
+            <i class="bi bi-list" style="cursor: pointer"></i>
+          </div>
+          {{ seeroute }}
+        </h3>
+        <br />
+        <router-view />
       </div>
-      <br />
-      <router-view />
+    </div>
+    <div class="offcanvas offcanvas-start" tabindex="-1" ref="offCanvas">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Admin menu</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body p-0">
+        <ul class="list-group list-group-flush">
+          <router-link
+            to="/admin"
+            class="list-group-item"
+            :class="{ active: check_active('DashBoard') }"
+          >
+            <i class="bi bi-palette-fill" style="padding-right: 5px"></i>
+            Dashboard
+          </router-link>
+          <template v-if="profile.user.admin_type == 'Super Admin'">
+            <router-link
+              :to="'/admin/users'"
+              class="list-group-item"
+              :class="{ active: check_active('Users') }"
+            >
+              <i class="bi bi-people-fill" style="padding-right: 5px"></i>
+              Users
+            </router-link>
+            <router-link
+              :to="'/admin/announce'"
+              class="list-group-item"
+              :class="{ active: check_active('Announce') }"
+            >
+              <i class="bi bi-megaphone-fill" style="padding-right: 5px"></i>
+              Announce
+            </router-link>
+            <router-link
+              :to="'/admin/config'"
+              class="list-group-item"
+              :class="{ active: check_active('Config') }"
+            >
+              <i class="bi bi-wrench" style="padding-right: 5px"></i>
+              Config
+            </router-link>
+            <router-link
+              :to="'/admin/judgeserver'"
+              class="list-group-item"
+              :class="{ active: check_active('Judge Server') }"
+            >
+              <i class="bi bi-server" style="padding-right: 5px"></i>
+              Server
+            </router-link>
+            <router-link
+              :to="'/admin/prunetestcase'"
+              class="list-group-item"
+              :class="{ active: check_active('Prune Testcase') }"
+            >
+              <i class="bi bi-safe-fill" style="padding-right: 5px"></i>
+              Prune Testcase
+            </router-link>
+          </template>
+          <router-link
+            to="/admin/problem"
+            class="list-group-item"
+            :class="{ active: check_active('Problem') }"
+          >
+            <i class="bi bi-grid-3x3-gap-fill" style="padding-right: 5px"></i>
+            Problem
+          </router-link>
+          <router-link
+            to="/admin/contest"
+            class="list-group-item"
+            :class="{ active: check_active('ContestList') }"
+          >
+            <i class="bi bi-trophy-fill" style="padding-right: 5px"></i>
+            Contest
+          </router-link>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -110,6 +272,11 @@
 import Offcanvas from "bootstrap/js/dist/offcanvas.js";
 export default {
   name: "Admin",
+  data() {
+    return {
+      offCanvasRef: null,
+    };
+  },
   computed: {
     profile() {
       return this.$store.state.profile.data;
@@ -137,12 +304,7 @@ export default {
     }
   },
   mounted() {
-    var offcanvasElementList = [].slice.call(
-      document.querySelectorAll(".offcanvas")
-    );
-    offcanvasElementList.map(function (offcanvasEl) {
-      return new Offcanvas(offcanvasEl);
-    });
+    this.offCanvasRef = new Offcanvas(this.$refs.offCanvas);
   },
   methods: {
     check_active(name) {
