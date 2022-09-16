@@ -1,6 +1,10 @@
 // fonts
 $font-family-sans-serif: 'Noto Sans TC', Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
 
+.github-markdown-body {
+    font-family: $font-family-sans-serif;
+}
+
 // theme
 $primary:       #4285F4;
 $secondary:     #858796;
