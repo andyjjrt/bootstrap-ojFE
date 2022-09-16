@@ -15,6 +15,22 @@ Modify nginx config to fit port number.
 npm run build
 ```
 
+### V1.2.0-beta2
+
+Fix:
+- Adjust disabled buttons' text color.
+- Adjust splash page when login (all-white).
+
+Feature:
+- Admin navbar refactor.
+- Problem's code area now can be copied.
+
+Performances:
+- Upgrade `bootstrap` to `5.2`, brings quite a few UI change
+
+To-do:
+- Redesign admin navbar
+
 ### V1.2.0-beta1
 
 Fixed:

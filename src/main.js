@@ -17,6 +17,8 @@ import "@kangc/v-md-editor/lib/style/base-editor.css";
 import githubTheme from "@kangc/v-md-editor/lib/theme/github.js";
 import "@kangc/v-md-editor/lib/theme/style/github.css";
 
+import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index';
+import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';
 import createTipPlugin from "@kangc/v-md-editor/lib/plugins/tip/index";
 import "@/css/tip.css";
 import createKatexPlugin from "@kangc/v-md-editor/lib/plugins/katex/cdn";
@@ -24,6 +26,7 @@ import enUS from "@kangc/v-md-editor/lib/lang/en-US";
 
 VueMarkdownEditor.use(createKatexPlugin());
 VueMarkdownEditor.use(createTipPlugin());
+VueMarkdownEditor.use(createCopyCodePlugin());
 VueMarkdownEditor.lang.use("en-US", enUS);
 VueMarkdownEditor.use(githubTheme, {
   Hljs: hljs,
