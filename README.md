@@ -29,9 +29,6 @@ Performances:
 - Upgrade `bootstrap` to `5.2`, brings quite a few UI change
 - Add `prettier` to format old codes.
 
-To-do:
-- Redesign admin navbar
-
 ### V1.2.0-beta1
 
 Fixed:
