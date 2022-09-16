@@ -428,7 +428,7 @@
               <div class="col-sm-12">
                 <label class="btn btn-primary">
                   <input
-                    style="display:none;"
+                    style="display: none"
                     type="file"
                     @change="upload_event"
                     :disabled="upload_testcase_btn_loading"
@@ -547,7 +547,7 @@
               v-model="add_from_public_list.keyword"
             />
           </div>
-          <div class="modal-body" style="max-height: 280px;">
+          <div class="modal-body" style="max-height: 280px">
             <table
               class="table text-nowrap table-hover"
               v-if="contest.public_problems"
@@ -566,7 +566,7 @@
                   role="button"
                   @click="contest.select_import = p"
                   :class="{ 'table-primary': contest.select_import == p }"
-                  class=" text-black"
+                  class="text-black"
                 >
                   <td class="col-4">{{ p.id }}</td>
                   <td class="col-4">{{ p._id }}</td>
@@ -818,7 +818,7 @@ export default {
           title: "Katex",
           icon: "v-md-icon-code",
           action(editor) {
-            editor.insert(function(selected) {
+            editor.insert(function (selected) {
               const prefix = "$";
               const suffix = "$";
               const placeholder = "Katex";
@@ -1031,7 +1031,8 @@ export default {
         this.open_problem.rule_type = this.contest_rule;
       }
       if (this.open_problem.spj_language == null) {
-        this.open_problem.spj_language = this.languages.data.spj_languages[0].name;
+        this.open_problem.spj_language =
+          this.languages.data.spj_languages[0].name;
       }
       this.problem_language();
       this.change_problem_language();
@@ -1058,7 +1059,8 @@ export default {
       }
       this.problem_language();
       this.change_problem_language();
-      this.open_problem.spj_language = this.languages.data.spj_languages[0].name;
+      this.open_problem.spj_language =
+        this.languages.data.spj_languages[0].name;
       this.mode = "create";
     },
     save() {
