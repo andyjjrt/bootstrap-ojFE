@@ -14,6 +14,13 @@ Modify nginx config to fit port number.
 ```
 npm run build
 ```
+### V1.2.0-beta3
+Fix:
+- Fix Security page can't display.
+- Fix visible switch problem.
+
+Known error:
+- Announce can't use code.
 
 ### V1.2.0-beta2
 
