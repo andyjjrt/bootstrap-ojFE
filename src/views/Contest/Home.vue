@@ -1,11 +1,29 @@
 <template>
   <div>
     <div class="card card-body">
-      <small class="text-muted"
-        >{{ get_time(contest.data.start_time) }}~{{
-          get_time(contest.data.end_time)
-        }}</small
-      >
+      <div class="d-flex justify-content-between">
+        <small class="text-muted">
+          {{ get_time(contest.data.start_time) }}~{{
+            get_time(contest.data.end_time)
+          }}
+        </small>
+        <template v-if="$store.state.profile">
+          <template v-if="$store.state.profile.data">
+            <button
+              class="btn btn-primary btn-sm"
+              v-if="
+                $store.state.profile.data.user.admin_type == 'Admin' ||
+                $store.state.profile.data.user.admin_type == 'Super Admin'
+              "
+              @click="
+                $router.push('/admin/contest/' + $store.state.contest.data.id)
+              "
+            >
+              <i class="bi bi-pencil-square"></i>
+            </button>
+          </template>
+        </template>
+      </div>
       <hr />
       <v-md-editor
         :value="contest.data.description"

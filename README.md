@@ -14,38 +14,27 @@ Modify nginx config to fit port number.
 ```
 npm run build
 ```
-### V1.2.0-beta3
-Fix:
-- Fix Security page can't display.
-- Fix visible switch problem.
-
-Known error:
-- Announce can't use code.
-
-### V1.2.0-beta2
+### V1.2.0
 
 Fix:
+- Admin problem edit & create issue (URIEncode)
 - Adjust disabled buttons' text color.
 - Adjust splash page when login (all-white).
+- Fix visible switch problem.
+- Fix contest's title.
 
 Feature:
 - Admin navbar refactor.
 - Problem's code area now can be copied.
-
-Performances:
-- Upgrade `bootstrap` to `5.2`, brings quite a few UI change
-- Add `prettier` to format old codes.
-
-### V1.2.0-beta1
-
-Fixed:
-- Admin problem edit & create issue (URIEncode)
+- Admin now can see edit description in contest home page.
 
 Performances:
 - Upgrade `vue` from `2.6` to `2.7`, and migrate to `vite` to enhance building performances.
+- Upgrade `bootstrap` to `5.2`, brings quite a few UI change
+- Add `prettier` to format old codes.
 
-To-do:
-- Redesign admin navbar
+Known error:
+- Announce can't use code.
 
 ### To-dos
 - i18n (Not necessary).

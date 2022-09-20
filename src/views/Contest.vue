@@ -240,6 +240,10 @@ export default {
   watch: {
     $route(to) {
       this.sec_route = to.meta.contest;
+      window.document.title =
+        this.$store.state.site.data.website_name_shortcut +
+        " | " +
+        this.contest.data.title;
     },
   },
 };
