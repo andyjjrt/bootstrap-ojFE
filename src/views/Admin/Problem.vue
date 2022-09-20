@@ -1115,6 +1115,14 @@ export default {
       }
     },
     visible(problem) {
+      [
+        "description",
+        "input_description",
+        "output_description",
+        "hint",
+      ].forEach((key) => {
+        problem[key] = decodeURI(problem[key]);
+      });
       this.open_problem = problem;
       this.mode = "vis";
       this.save();
