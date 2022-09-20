@@ -20,7 +20,7 @@
     "katex": "^0.13.11",
     "papaparse": "^5.3.0",
     "prismjs": "^1.23.0",
-    "user-agent-parse": "^0.1.12",
+    "ua-parser-js": "^1.0.2",
     "v-calendar": "^2.3.0",
     "vue": "^2.7.0",
     "vue-clipboard2": "^0.3.1",

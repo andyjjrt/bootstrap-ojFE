@@ -120,10 +120,9 @@
                       }}</span>
                     </div>
                     <span class="d-none d-md-block">
-                      on {{ get_UA(session.user_agent).os }},{{
-                        get_UA(session.user_agent).name
-                      }}</span
-                    >
+                      {{ get_UA(session.user_agent).os.name }} {{ get_UA(session.user_agent).os.version }}
+                      {{ get_UA(session.user_agent).browser.name }} {{ get_UA(session.user_agent).browser.version }}
+                    </span>
                   </div>
                   <div class="d-none d-sm-block">
                     {{ date_format(new Date(session.last_activity)) }}
@@ -202,7 +201,7 @@
 
 <script>
 import Modal from "bootstrap/js/dist/modal.js";
-let UA = require("user-agent-parse");
+import { UAParser } from 'ua-parser-js'; 
 export default {
   name: "Profile",
   data() {
@@ -254,7 +253,8 @@ export default {
         });
     },
     get_UA(string) {
-      return UA.parse(string);
+      let parser = new UAParser(string);
+      return parser.getResult();
     },
     date_format(date) {
       return (
