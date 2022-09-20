@@ -1,109 +1,138 @@
 <template>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col">
-                <ProblemList :select_tag="select_tag" />
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col">
+        <ProblemList :select_tag="select_tag" />
+      </div>
+      <div class="col-3 d-none d-sm-none d-md-block">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Tags</h4>
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control form-control-sm"
+                placeholder="Search..."
+                v-model="qry_tag"
+              />
             </div>
-            <div class="col-3 d-none d-sm-none d-md-block">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Tags</h4>
-                        <div class="mb-3">
-                            <input type="text" class="form-control form-control-sm" placeholder="Search..." v-model="qry_tag">
-                        </div>
-                        <div class="d-flex flex-wrap" v-if="tags">
-                            <template v-if="qry_tags.length">
-                                <div style="padding: 3px" v-for="tag in qry_tags" :key="tag.id">
-                                    <button type="button" class="btn btn-primary btn-sm" v-if="select_tag == tag.name" @click="select_tag_func(tag.name)">{{ tag.name }}</button>
-                                    <button type="button" class="btn btn-outline-primary btn-sm" v-else @click="select_tag_func(tag.name)">{{ tag.name }}</button>
-                                </div>
-                            </template>
-                            <div v-else>
-                                No tags
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-center" v-else>
-                            <div class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="d-grid gap-2">
-                            <button class="btn btn-light text-black" type="button" @click="pick_one"><i class="bi bi-shuffle"></i>&nbsp;Pick one</button>
-                        </div>
-                    </div>
+            <div class="d-flex flex-wrap" v-if="tags">
+              <template v-if="qry_tags.length">
+                <div style="padding: 3px" v-for="tag in qry_tags" :key="tag.id">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm"
+                    v-if="select_tag == tag.name"
+                    @click="select_tag_func(tag.name)"
+                  >
+                    {{ tag.name }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary btn-sm"
+                    v-else
+                    @click="select_tag_func(tag.name)"
+                  >
+                    {{ tag.name }}
+                  </button>
                 </div>
+              </template>
+              <div v-else>No tags</div>
             </div>
+            <div class="d-flex justify-content-center" v-else>
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="d-grid gap-2">
+              <button
+                class="btn btn-light text-black"
+                type="button"
+                @click="pick_one"
+              >
+                <i class="bi bi-shuffle"></i>&nbsp;Pick one
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-import ProblemList from '@/components/Problemlist.vue'
+import ProblemList from "@/components/Problemlist.vue";
 export default {
-    name:"PublicProblemList",
-    data(){
-        return{
-            problems: null,
-            tags: null,
-            total: 0,
-            select_tag: "",
-            qry_tag: "",
-            page: 1,
-        }
+  name: "PublicProblemList",
+  data() {
+    return {
+      problems: null,
+      tags: null,
+      total: 0,
+      select_tag: "",
+      qry_tag: "",
+      page: 1,
+    };
+  },
+  components: {
+    ProblemList,
+  },
+  created() {
+    this.init();
+    this.$http
+      .get(window.location.origin + "/api/problem/tags")
+      .then((response) => {
+        this.tags = response.data;
+      });
+  },
+  methods: {
+    init() {
+      this.select_tag = this.$route.query.tag;
+      if (this.select_tag == undefined) {
+        this.select_tag = "";
+      } else {
+        this.select_tag = this.$route.query.tag;
+      }
     },
-    components:{
-        ProblemList
+    select_tag_func(name) {
+      if (this.select_tag == name) {
+        this.select_tag = "";
+      } else {
+        this.select_tag = name;
+      }
+      let que = {};
+      que.page = 1;
+      que.tag = this.select_tag != "" ? this.select_tag : undefined;
+      this.$router.push({ path: "problem", query: que });
     },
-    created() {
-        this.init()
-        this.$http.get(window.location.origin + '/api/problem/tags').then(response => {
-            this.tags = response.data
+    pick_one() {
+      this.$http
+        .get(window.location.origin + "/api/pickone")
+        .then((response) => {
+          this.$router.push({
+            name: "Problem",
+            params: { pid: response.data.data },
+          });
+          this.$success("Good luck");
         });
     },
-    methods:{
-        init(){
-            this.select_tag = this.$route.query.tag
-            if(this.select_tag == undefined){
-                this.select_tag = ""
-            }else{
-                this.select_tag = this.$route.query.tag
-            }
-        },
-        select_tag_func(name){
-            if(this.select_tag == name){
-                this.select_tag = ""
-            }else{
-                this.select_tag = name
-            }
-            let que = {}
-            que.page = 1
-            que.tag = this.select_tag != "" ? this.select_tag : undefined
-            this.$router.push({ path: 'problem', query: que})
-        },
-        pick_one(){
-            this.$http.get(window.location.origin + '/api/pickone').then(response => {
-                this.$router.push({ name: 'Problem', params: { pid:response.data.data }})
-                this.$success('Good luck')
-            });
-        }
+  },
+  computed: {
+    qry_tags() {
+      if (this.qry_tag == "") return this.tags.data;
+      return this.tags.data.filter((tag) => {
+        return tag.name.includes(this.qry_tag);
+      });
     },
-    computed: {
-        qry_tags() {
-            if(this.qry_tag == "") return this.tags.data
-            return this.tags.data.filter((tag) => {
-                return tag.name.includes(this.qry_tag)
-            })
-        }
+  },
+  watch: {
+    "$route.query.tag"() {
+      this.init();
     },
-    watch:{
-        '$route.query.tag'(){
-            this.init()
-        }
-    }
-}
+  },
+};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
