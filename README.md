@@ -14,27 +14,13 @@ Modify nginx config to fit port number.
 ```
 npm run build
 ```
-### V1.2.0
-
-Fix:
-- Admin problem edit & create issue (URIEncode)
-- Adjust disabled buttons' text color.
-- Adjust splash page when login (all-white).
-- Fix visible switch problem.
-- Fix contest's title.
+### V1.2.1-beta1
 
 Feature:
-- Admin navbar refactor.
-- Problem's code area now can be copied.
-- Admin now can see edit description in contest home page.
-
-Performances:
-- Upgrade `vue` from `2.6` to `2.7`, and migrate to `vite` to enhance building performances.
-- Upgrade `bootstrap` to `5.2`, brings quite a few UI change
-- Add `prettier` to format old codes.
+- Migrate to `bootstrap@5.3.0-beta1`, introduce dark mode.
 
 Known error:
-- Announce can't use code.
+- Some areas are always light.
 
 ### To-dos
 - i18n (Not necessary).

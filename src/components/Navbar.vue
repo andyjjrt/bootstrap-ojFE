@@ -251,7 +251,7 @@
         </div>
       </div>
     </div>
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-body">
       <div class="container-fluid position-relative">
         <router-link
           to="/"
@@ -385,7 +385,8 @@
         </div>
         <div class="position-absolute top-0 end-0 d-flex">
           <div v-if="profile != null" class="px-2">
-            <div v-if="profile.data == null">
+            <div v-if="profile.data == null" class="d-flex gap-2 align-items-center">
+              <Theme> </Theme>
               <button
                 type="button"
                 class="btn btn-primary"
@@ -458,6 +459,9 @@
                       >Management</a
                     >
                   </li>
+                  <li>
+                    <Theme> </Theme>
+                  </li>
                   <li><hr class="dropdown-divider" /></li>
                   <li>
                     <a class="dropdown-item" role="button" @click="logout"
@@ -479,8 +483,12 @@ import Modal from "bootstrap/js/dist/modal.js";
 import Collapse from "bootstrap/js/dist/collapse.js";
 import Dropdown from "bootstrap/js/dist/dropdown.js";
 import storage from "@/util/storage.js";
+import Theme from "./Theme.vue";
 
 export default {
+  components: {
+    Theme,
+  },
   data() {
     return {
       LoginModal: null,

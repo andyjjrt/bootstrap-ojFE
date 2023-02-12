@@ -1,32 +1,64 @@
-// fonts
-$font-family-sans-serif: 'Noto Sans TC', Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
-
-.github-markdown-body {
-    font-family: $font-family-sans-serif;
-}
-
 // theme
-$primary:       #4285F4;
-$secondary:     #858796;
-$success:       #00C851;
-$info:          #33b5e5;
-$warning:       #ffbb33;
-$danger:        #ff4444;
-$light:         #f8f9fc;
-$dark:          #5a5c69;
+$primary: #4285f4;
+$secondary: #858796;
+$success: #00c851;
+$info: #33b5e5;
+$warning: #ffbb33;
+$danger: #ff4444;
+$light: #f8f9fc;
+$dark: #5a5c69;
 
 $offcanvas-horizontal-width: 250px;
 
 @import "../../node_modules/bootstrap/scss/bootstrap.scss";
 
-@each $color, $value in $theme-colors {
-    .btn-#{$color} {
-        @include button-variant($value, $value, $color: $white, $hover-color: $white, $active-color: $white, $disabled-color: $white);
-    }
+// fonts
+$font-family-sans-serif: "Noto Sans TC", Arial, sans-serif, "Apple Color Emoji",
+  "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+
+.github-markdown-body,
+.v-md-editor,
+.v-md-textarea-editor textarea {
+  font-family: $font-family-sans-serif;
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color) !important;
 }
-  
+
+body {
+  background-color: #eeeeee !important;
+}
+
+[data-bs-theme="dark"] body {
+  background-color: var(--bs-body-bg) !important;
+}
+
+.can_see {
+  background-color: #edfafd;
+}
+
+[data-bs-theme="dark"] .can_see {
+  background-color: #1c3237;
+}
+
 @each $color, $value in $theme-colors {
-    .btn-outline-#{$color} {
-        @include button-outline-variant($value, $color-hover: $white, $active-color: $white);
-    }
+  .btn-#{$color} {
+    @include button-variant(
+      $value,
+      $value,
+      $color: $white,
+      $hover-color: $white,
+      $active-color: $white,
+      $disabled-color: $white
+    );
+  }
+}
+
+@each $color, $value in $theme-colors {
+  .btn-outline-#{$color} {
+    @include button-outline-variant(
+      $value,
+      $color-hover: $white,
+      $active-color: $white
+    );
+  }
 }
