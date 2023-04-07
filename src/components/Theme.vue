@@ -29,16 +29,17 @@ const setTheme = function (theme) {
     window.matchMedia("(prefers-color-scheme: dark)").matches
   ) {
     document.documentElement.setAttribute("data-bs-theme", "dark");
-    // localStorage.setItem("theme", "dark");
+    localStorage.setItem("theme", "dark");
   } else {
     document.documentElement.setAttribute("data-bs-theme", theme);
-    // localStorage.setItem("theme", theme);
+    localStorage.setItem("theme", theme);
   }
 };
 
 onMounted(() => {
-  // setTheme(getPreferredTheme());
+  setTheme(getPreferredTheme());
 });
+
 
 const toggle = () => {
   getPreferredTheme() === "light" ? setTheme("dark") : setTheme("light");
