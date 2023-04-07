@@ -14,10 +14,14 @@ Modify nginx config to fit port number.
 ```
 npm run build
 ```
-### V1.2.1-beta1
-
+### V1.2.1
 Feature:
 - Migrate to `bootstrap@5.3.0-beta1`, introduce dark mode.
+- Upgrade some packages.
+- Add support of `javascript` and `rust`
+
+Bug Fixed: 
+- Judger page will not change.
 
 Known error:
 - Some areas are always light.
