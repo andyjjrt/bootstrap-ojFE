@@ -65,7 +65,7 @@
                   </h4>
                 </div>
                 <div class="col-sm-6" :key="tests.input">
-                  <div class="p-1 border bg-light" style="height: 100%">
+                  <div class="p-1 border bg-body" style="height: 100%">
                     <pre
                       class="p-4"
                     ><code v-html="replace_n(tests.input)"/></pre>
@@ -80,7 +80,7 @@
                   </h4>
                 </div>
                 <div class="col-sm-6" :key="tests.output">
-                  <div class="p-1 border bg-light" style="height: 100%">
+                  <div class="p-1 border bg-body" style="height: 100%">
                     <pre
                       class="p-4"
                     ><code v-html="replace_n(tests.output)"/></pre>

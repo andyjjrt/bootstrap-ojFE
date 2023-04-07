@@ -251,7 +251,7 @@
         </div>
       </div>
     </div>
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-body">
       <div class="container-fluid position-relative">
         <router-link
           to="/"
@@ -381,11 +381,25 @@
                 </li>
               </ul>
             </li>
+            <li
+              class="nav-item d-block d-md-none"
+              v-if="profile != null && profile.data == null"
+            >
+              <span class="d-flex py-2 nav-link">
+                <i class="bi bi-brightness-high-fill" style="padding: 0px 6px"></i><Theme />
+              </span>
+            </li>
           </ul>
         </div>
         <div class="position-absolute top-0 end-0 d-flex">
           <div v-if="profile != null" class="px-2">
-            <div v-if="profile.data == null">
+            <div
+              v-if="profile.data == null"
+              class="d-flex gap-2 align-items-center"
+            >
+              <span class="d-none d-md-block">
+                <Theme />
+              </span>
               <button
                 type="button"
                 class="btn btn-primary"
@@ -458,6 +472,9 @@
                       >Management</a
                     >
                   </li>
+                  <li>
+                    <Theme />
+                  </li>
                   <li><hr class="dropdown-divider" /></li>
                   <li>
                     <a class="dropdown-item" role="button" @click="logout"
@@ -479,8 +496,12 @@ import Modal from "bootstrap/js/dist/modal.js";
 import Collapse from "bootstrap/js/dist/collapse.js";
 import Dropdown from "bootstrap/js/dist/dropdown.js";
 import storage from "@/util/storage.js";
+import Theme from "./Theme.vue";
 
 export default {
+  components: {
+    Theme,
+  },
   data() {
     return {
       LoginModal: null,

@@ -529,9 +529,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.can_see {
-  background-color: #edfafd;
-}
-</style>

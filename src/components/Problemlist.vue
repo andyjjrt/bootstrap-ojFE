@@ -73,7 +73,7 @@
                   <th
                     scope="col"
                     class="col-2 d-none d-sm-block"
-                    style="border-left: 5px #ffffff solid"
+                    style="border-left: 5px var(--bs-body-bg) solid"
                   >
                     #
                   </th>
