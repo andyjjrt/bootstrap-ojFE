@@ -381,12 +381,25 @@
                 </li>
               </ul>
             </li>
+            <li
+              class="nav-item d-block d-md-none"
+              v-if="profile != null && profile.data == null"
+            >
+              <span class="d-flex py-2 nav-link">
+                <i class="bi bi-brightness-high-fill" style="padding: 0px 6px"></i><Theme />
+              </span>
+            </li>
           </ul>
         </div>
         <div class="position-absolute top-0 end-0 d-flex">
           <div v-if="profile != null" class="px-2">
-            <div v-if="profile.data == null" class="d-flex gap-2 align-items-center">
-              <Theme> </Theme>
+            <div
+              v-if="profile.data == null"
+              class="d-flex gap-2 align-items-center"
+            >
+              <span class="d-none d-md-block">
+                <Theme />
+              </span>
               <button
                 type="button"
                 class="btn btn-primary"
@@ -460,7 +473,7 @@
                     >
                   </li>
                   <li>
-                    <Theme> </Theme>
+                    <Theme />
                   </li>
                   <li><hr class="dropdown-divider" /></li>
                   <li>
