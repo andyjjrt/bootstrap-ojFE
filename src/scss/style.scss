@@ -40,6 +40,11 @@ body {
   background-color: #1c3237;
 }
 
+:root {
+  --bs-body-font-family: "Noto Sans TC", Arial, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
 @each $color, $value in $theme-colors {
   .btn-#{$color} {
     @include button-variant(
