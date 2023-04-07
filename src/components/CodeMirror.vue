@@ -79,6 +79,8 @@ import "codemirror/lib/codemirror.css";
 import "codemirror/mode/clike/clike.js";
 import "codemirror/mode/python/python.js";
 import "codemirror/mode/go/go.js";
+import "codemirror/mode/javascript/javascript.js";
+import "codemirror/mode/rust/rust.js";
 import "codemirror/theme/solarized.css";
 import storage from "@/util/storage.js";
 
@@ -215,19 +217,8 @@ export default {
         });
     },
     get_mime(language) {
-      if (language == "C") {
-        this.cm_options.mode = "text/x-csrc";
-      } else if (language == "C++") {
-        this.cm_options.mode = "text/x-c++src";
-      } else if (language == "Python2") {
-        this.cm_options.mode = "text/x-cython";
-      } else if (language == "Python3") {
-        this.cm_options.mode = "text/x-cython";
-      } else if (language == "Java") {
-        this.cm_options.mode = "text/x-java";
-      } else if (language == "Golang") {
-        this.cm_options.mode = "text/x-go";
-      }
+      const languageDetail = this.$store.state.languages.data.languages.find(lang => lang.name === language);
+      this.cm_options.mode = languageDetail ? languageDetail.content_type : "text";
     },
     buildProblemCodeKey(problemID, contestID = null) {
       if (contestID) {
