@@ -3,7 +3,7 @@ import vue from "@vitejs/plugin-vue2";
 import EnvironmentPlugin from "vite-plugin-environment";
 
 const path = require("path");
-const API_BACKEND = "http://localhost:55688";
+const API_BACKEND = "https://oj.ebg.tw";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -26,9 +26,13 @@ export default defineConfig({
     proxy: {
       "^/api": {
         target: API_BACKEND,
+        changeOrigin: true,
+        headers: { referer: API_BACKEND },
       },
       "^/public": {
         target: API_BACKEND,
+        changeOrigin: true,
+        headers: { referer: API_BACKEND },
       },
     },
   },
